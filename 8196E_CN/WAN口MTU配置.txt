@@ -1,0 +1,42 @@
+*** Settings ***
+Suite Setup       打开浏览器
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
+*** Test Cases ***
+try
+    验证静态接入MTU    ${EMPTY}    MTU Size should be between 576 and 1500 bytes. Please try again.
+
+*** Keywords ***
+验证DHCP接入MTU
+    [Arguments]    ${mtu}    ${message}
+    转到DHCP接入设置页面
+    设置DHCP接入参数    mtu=${mtu}
+    显示消息    ${message}
+
+验证PPPOE接入MTU
+    [Arguments]    ${mtu}    ${message}
+    转到PPPoE接入设置页面
+    设置PPPoE接入参数    mtu=${mtu}
+    显示消息    ${message}
+
+验证静态接入MTU
+    [Arguments]    ${mtu}    ${message}
+    转到静态接入设置页面
+    设置静态接入参数    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}    mtu=${mtu}    dns1=9.9.9.9    dns2=8.8.8.8
+    显示消息    ${message}
+
+验证DHCP接入MTU最大输入长度
+    [Arguments]    ${mtu}    ${max_len}
+    转到DHCP接入设置页面
+    验证输入框最大输入长度    id=dhcp_mtu    ${mtu}    ${max_len}
+
+验证PPPOE接入MTU最大输入长度
+    [Arguments]    ${mtu}    ${max_len}
+    转到PPPoE接入设置页面
+    验证输入框最大输入长度    id=pppoe_mtu    ${mtu}    ${max_len}
+
+验证静态接入MTU最大输入长度
+    [Arguments]    ${mtu}    ${max_len}
+    转到静态接入设置页面
+    验证输入框最大输入长度    id=static_mtu    ${mtu}    ${max_len}

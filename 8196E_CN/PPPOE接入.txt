@@ -1,0 +1,82 @@
+*** Settings ***
+Suite Setup       Run Keywords    打开浏览器    AND    转到PPPOE接入设置页面
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
+*** Test Cases ***
+try
+    验证PPPOE账号    ${EMPTY}    输入值不能为空， 不能含有无法识别的字符集
+
+try2
+    验证PPPOE首选DNS    .168.1.10    Invalid IP Address! Please input another one.
+
+try3
+    验证PPPOE服务名    \\\\    No special character '"\\ or space is permitted!
+
+try4
+    验证PPPOE AC名    9 9    No special character '"\\ or space is permitted!
+
+*** Keywords ***
+验证PPPOE账号
+    [Arguments]    ${user}    ${message}
+    设置PPPoE接入参数    ${user}    969090
+    显示消息    ${message}
+
+验证PPPOE账号最大输入长度
+    [Arguments]    ${user}    ${max_len}
+    验证输入框最大输入长度    id=pppoe_username    ${user}    ${max_len}
+
+验证PPPOE密码
+    [Arguments]    ${passwd}    ${message}
+    设置PPPoE接入参数    hany    ${passwd}
+    显示消息    ${message}
+
+验证PPPOE密码最大输入长度
+    [Arguments]    ${passwd}    ${max_len}
+    验证输入框最大输入长度    id=pppoe_pwd    ${passwd}    ${max_len}
+
+验证PPPOE按需连接老化时间
+    [Arguments]    ${time}    ${message}
+    设置PPPoE接入参数    hany    969090    ${connect_mode}=2    ${outtime}=${time}
+    显示消息    ${message}
+
+验证PPPOE按需连接老化时间最大输入长度
+    [Arguments]    ${time}    ${max_len}
+    Click Element    id=ppp_connect_mode_time
+    验证输入框最大输入长度    id=ppp_time    ${time}    ${max_len}
+
+验证PPPOE服务名
+    [Arguments]    ${serviceName}    ${message}
+    设置PPPoE接入参数    hany    969090    service_name=${serviceName}
+    显示消息    ${message}
+
+验证PPPOE服务名最大输入长度
+    [Arguments]    ${serviceName}    ${max_len}
+    验证输入框最大输入长度    id=pppoe_service_name    ${serviceName}    ${max_len}
+
+验证PPPOE AC名
+    [Arguments]    ${acName}    ${message}
+    设置PPPoE接入参数    hany    969090    ac_name=${acName}
+    显示消息    ${message}
+
+验证PPPOE AC名最大输入长度
+    [Arguments]    ${acName}    ${max_len}
+    验证输入框最大输入长度    id=pppoe_ac_name    ${acName}    ${max_len}
+
+验证PPPOE首选DNS
+    [Arguments]    ${dns}    ${message}
+    设置PPPoE接入参数    hany    969090    dns1=${dns}
+    显示消息    ${message}
+
+验证PPPOE首选DNS最大输入长度
+    [Arguments]    ${dns}    ${max_len}
+    验证输入框最大输入长度    id=dns_a    ${dns}    ${max_len}
+
+验证PPPOE备选DNS
+    [Arguments]    ${dns}    ${message}
+    设置PPPoE接入参数    hany    969090    dns1=8.8.8.8    dns2=${dns}
+    显示消息    ${message}
+
+验证PPPOE备选DNS最大输入长度
+    [Arguments]    ${dns}    ${max_len}
+    验证输入框最大输入长度    id=dns_b    ${dns}    ${max_len}

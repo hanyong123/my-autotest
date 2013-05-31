@@ -1,0 +1,10 @@
+*** Settings ***
+Suite Setup       打开浏览器
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
+*** Test Cases ***
+try
+    转到MAC过滤页面
+    @{l}    Create List    id=mac_day    xpath=(//input[@id='mac_day'])[2]
+    设置MAC过滤    mac=00-00-00-00-00-0a    day_locator=@{l}

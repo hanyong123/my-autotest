@@ -1,0 +1,11 @@
+*** Variables ***
+${host_lan_ip}    192.168.1.25
+${host_wan_ip}    100.0.0.100
+${host_wan_mask}    255.255.0.0
+${router_lan_ip}    192.168.1.1
+${router_wan_ip}    100.0.10.100
+${router_wan_mask}    255.255.0.0
+${login_user}     guest
+${login_passwd}    guest
+${base_url}       http://${login_user}:${login_passwd}@${router_lan_ip}/index.htm
+${browser}        firefox

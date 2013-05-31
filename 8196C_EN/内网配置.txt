@@ -1,0 +1,29 @@
+*** Settings ***
+Suite Setup       Run Keywords    打开浏览器    AND    转到内网配置页面
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
+*** Test Cases ***
+
+*** Keywords ***
+验证路由器LAN口IP和MASK
+    [Arguments]    ${ip}    ${mask}    ${message}
+    设置LAN口IP和MASK    ${ip}    ${mask}
+    显示消息    ${message}
+
+验证LAN口IP最大输入长度
+    [Arguments]    ${ip}    ${max_len}
+    验证输入框最大输入长度    id=lan_ip    ${ip}    ${max_len}
+
+验证LAN口MASK最大输入长度
+    [Arguments]    ${mask}    ${max_len}
+    验证输入框最大输入长度    id=lan_mask    ${mask}    ${max_len}
+
+验证LAN口MAC
+    [Arguments]    ${mac}    ${message}
+    设置LAN口MAC    ${mac}
+    显示消息    ${message}
+
+验证LAN口MAC最大输入长度
+    [Arguments]    ${mac}    ${max_len}
+    验证输入框最大输入长度    id=lan_mac    ${mac}    ${max_len}
