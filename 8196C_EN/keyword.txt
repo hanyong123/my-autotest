@@ -199,7 +199,7 @@ Resource          config.txt
     Run Keyword If    '${start_port}'!='${None}'    Input text    id=ip_port_start    ${start_port}
     Run Keyword If    '${end_port}'!='${None}'    Input text    id=ip_port_end    ${end_port}
     @{day_locator}    Get Variable Value    ${day_locator}
-    :FOR    ${i}    IN    @{day_locator}
+    : FOR    ${i}    IN    @{day_locator}
     \    Run Keyword If    '${i}'!='${None}'    Click Element    ${i}
     Select From List By Value    id=start    ${start_time}
     Select From List By Value    id=end    ${end_time}
@@ -219,7 +219,7 @@ Resource          config.txt
     Select From List By Value    id=mac_rule    ${rule}
     Run Keyword If    '${mac}'!='${None}'    Input text    id=mac_filter    ${mac}
     @{day_locator}    Get Variable Value    ${day_locator}
-    :FOR    ${i}    IN    @{day_locator}
+    : FOR    ${i}    IN    @{day_locator}
     \    Click Element    ${i}
     Select From List By Value    id=start    ${start_time}
     Select From List By Value    id=end    ${end_time}
@@ -254,3 +254,31 @@ Resource          config.txt
 WAN口IP是${ip}
     ${s}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
     Should Be Equal    ${s}    ${ip}
+
+轮询WAN口直到IP是${ip}
+
+转到虚拟服务配置页面
+
+设置虚拟服务参数
+    [Arguments]    ${des}=${None}    ${ip}=${None}    ${vir_proto}=all    ${external_port}=${None}    ${internal_port}=${None}
+    [Documentation]    ${vir_proto}参数是select的value值
+
+列表${locator}里含有${string}
+
+列表${locator}第${row}行第${col}列是${string}
+
+删除列表${locator}第${row}行并显示成功消息${message}
+
+删除列表${locator}里所有条目并显示成功消息${message}
+
+修改列表${locator}第${row}行
+
+转到DMZ设置页面
+
+设置DMZ参数
+    [Arguments]    ${enable}=1    ${host_ip}=${None}
+
+转到SUPER-DMZ设置页面
+
+设置SUPER-DMZ参数
+    [Arguments]    ${enable}=1    ${mac}=${None}
