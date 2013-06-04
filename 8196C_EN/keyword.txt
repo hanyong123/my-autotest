@@ -1,6 +1,7 @@
 *** Settings ***
 Library           Selenium2Library
 Resource          config.txt
+Resource          lang_var.txt
 
 *** Keywords ***
 转到PPPoE接入设置页面
