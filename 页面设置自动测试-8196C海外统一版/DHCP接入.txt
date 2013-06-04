@@ -1,0 +1,374 @@
+*** Settings ***
+Suite Setup       打开浏览器
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
+*** Test Cases ***
+WAN_DHCP_DNS_1
+    [Documentation]    @['dhcp_dns_a']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_a    1234567890123456
+    ${v}    Get Value    id=dns_a
+    Should Be Equal    ${v}    123456789012345
+
+WAN_DHCP_DNS_10
+    [Documentation]    @['dhcp_dns_a', 'save_wan_set']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_a    .168.1.10
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=dns_a    192..1.10
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=dns_a    192.168..10
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=dns_a    192.168.1.
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_11
+    [Documentation]    @['dhcp_dns_a', 'save_wan_set']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_a    0.0.0.0
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_12
+    [Documentation]    @['dhcp_dns_a', 'save_wan_set']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_a    224.0.0.1
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=dns_a    255.0.0.1
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=dns_a    254.0.0.1
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=dns_a    223.255.255.254
+    Click Element    id=save_wan_set
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_13
+    [Documentation]    @['dhcp_dns_a', 'save_wan_set']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_a    127.0.0.1
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_14
+    [Documentation]    @['dhcp_dns_a', 'save_wan_set']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_a    0.168.1.10
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_15
+    [Documentation]    @['dhcp_dns_b']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_b    1234567890123456
+    ${v}    Get Value    id=dns_b
+    Should Be Equal    ${v}    123456789012345
+
+WAN_DHCP_DNS_16
+    [Documentation]    @['save_wan_set', 'dhcp_dns_b']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_b    10.0.0.1.
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_17
+    [Documentation]    @['save_wan_set', 'dhcp_dns_b']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_b    10.0.01
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_18
+    [Documentation]    @['save_wan_set', 'dhcp_dns_b']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_b    ${EMPTY}
+    Click Element    id=save_wan_set
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_19
+    [Documentation]    @['save_wan_set', 'dhcp_dns_b']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_b    -1.0.0.2
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=dns_b    256.0.0.1
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_2
+    [Documentation]    @['dhcp_dns_a', 'save_wan_set']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_a    10.0.0.1.
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_20
+    [Documentation]    @['save_wan_set', 'dhcp_dns_b']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_b    10.-1.0.10
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=dns_b    10.256.0.10
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_21
+    [Documentation]    @['save_wan_set', 'dhcp_dns_b']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_b    10.0.-1.10
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=dns_b    10.0.256.10
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_22
+    [Documentation]    @['save_wan_set', 'dhcp_dns_b']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_b    10.0.0.-1
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=dns_b    10.0.0.256
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_23
+    [Documentation]    @['save_wan_set', 'dhcp_dns_b']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_b    192,168;1:s
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_24
+    [Documentation]    @['save_wan_set', 'dhcp_dns_b']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_b    .168.1.10
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=dns_b    192..1.10
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=dns_b    192.168..10
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=dns_b    192.168.1.
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_25
+    [Documentation]    @['save_wan_set', 'dhcp_dns_b']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_b    0.0.0.0
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_26
+    [Documentation]    @['save_wan_set', 'dhcp_dns_b']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_b    224.0.0.1
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=dns_b    255.0.0.1
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=dns_b    254.0.0.1
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=dns_b    223.255.255.254
+    Click Element    id=save_wan_set
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_27
+    [Documentation]    @['save_wan_set', 'dhcp_dns_b']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_b    127.0.0.1
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_28
+    [Documentation]    @['save_wan_set', 'dhcp_dns_b']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_b    0.168.1.10
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_29
+    [Documentation]    @['conntype','save_wan_set']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    id=save_wan_set
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    ${i}    Get Value    id=conntype
+    Should Be Equal    ${i}    1
+    goto_test_case_page
+    ${i}    Get Value    id=conntype
+    Should Be Equal    ${i}    1
+
+WAN_DHCP_DNS_3
+    [Documentation]    @['dhcp_dns_a', 'save_wan_set']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_a    10.0.01
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_4
+    [Documentation]    @['dhcp_dns_a', 'save_wan_set']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_a    ${EMPTY}
+    Click Element    id=save_wan_set
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_5
+    [Documentation]    @['dhcp_dns_a', 'save_wan_set']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_a    -1.0.0.2
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=dns_a    256.0.0.1
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_6
+    [Documentation]    @['dhcp_dns_a', 'save_wan_set']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_a    10.-1.0.10
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=dns_a    10.256.0.10
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_7
+    [Documentation]    @['dhcp_dns_a', 'save_wan_set']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_a    10.0.-1.10
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=dns_a    10.0.256.10
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_8
+    [Documentation]    @['dhcp_dns_a', 'save_wan_set']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_a    10.0.0.-1
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=dns_a    10.0.0.256
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+WAN_DHCP_DNS_9
+    [Documentation]    @['dhcp_dns_a', 'save_wan_set']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=dns_a    192,168;1:s
+    Click Element    id=save_wan_set
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失

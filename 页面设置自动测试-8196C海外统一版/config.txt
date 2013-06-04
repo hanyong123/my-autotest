@@ -1,0 +1,6 @@
+*** Variables ***
+${router_lan_ip}    192.168.1.1
+${login_user}     guest
+${login_passwd}    guest
+${base_url}       http://${login_user}:${login_passwd}@${router_lan_ip}/index.htm
+${browser}        ie

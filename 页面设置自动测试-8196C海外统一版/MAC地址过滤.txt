@@ -1,0 +1,757 @@
+*** Settings ***
+Suite Setup       打开浏览器
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
+*** Test Cases ***
+MAC_FILTER_1
+    [Documentation]    @['mac_filter', 'add_mac_filter', 'del_mac_filter_all', 'mac_describe']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=mac_describe    ${EMPTY}
+    Input Text    id=mac_filter    00-00-00-00-00-01
+    Click Element    xpath=(//input[@id='add_mac_filter'])
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Table Should Contain    xpath=//table[@class='df_tab']    ${EMPTY}
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+MAC_FILTER_10
+    [Documentation]    @['mac_filter', 'add_mac_filter', 'del_mac_filter_all']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08-08--08-
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08-08-08-08
+    Click Element    id=add_mac_filter
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    08-02-08-08-08-08
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+MAC_FILTER_12
+    [Documentation]    @['mac_filter', 'add_mac_filter', 'del_mac_filter_all']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08-08-08-0G
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08-08-0G-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08-0G-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-0G-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-0G-08-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08-08-08-08
+    Click Element    id=add_mac_filter
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    08-02-08-08-08-08
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    0X-0Y-0Z-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    0x-0y-0z-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    0a-0b-0c-0d-0e-0f
+    Click Element    id=add_mac_filter
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    0A-0B-0C-0D-0E-0F
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Input Text    id=mac_filter    0A-0B-0C-0D-0E-0F
+    Click Element    id=add_mac_filter
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    0A-0B-0C-0D-0E-0F
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Input Text    id=mac_filter    8 - 8-08-08-08-08
+    Click Element    xpath=(//input[@id='add_mac_filter'])
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    8\-\8-08-08-08-08
+    Click Element    xpath=(//input[@id='add_mac_filter'])
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    8"-"8-08-08-08-08
+    Click Element    xpath=(//input[@id='add_mac_filter'])
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    8'-'8-08-08-08-08
+    Click Element    xpath=(//input[@id='add_mac_filter'])
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+MAC_FILTER_13
+    [Documentation]    @['mac_filter', 'add_mac_filter', 'del_mac_filter_all']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08-08-08-
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08-08--08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08--08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02--08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08--08-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    -08-08-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08-08-08-08
+    Click Element    id=add_mac_filter
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    08-02-08-08-08-08
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+MAC_FILTER_14
+    [Documentation]    @['mac_filter', 'add_mac_filter', 'del_mac_filter_all']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08-08-F-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08-F-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-F-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-F-08-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    F-08-08-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08-08-0AF-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08-0AF-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-0AF-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-0AF-08-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    0AF-08-08-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08-08-08-08
+    Click Element    id=add_mac_filter
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    08-02-08-08-08-08
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+MAC_FILTER_15
+    [Documentation]    @['mac_filter', 'add_mac_filter']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=mac_filter    00-00-00-00-00-00
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+MAC_FILTER_16
+    [Documentation]    @['mac_filter', 'add_mac_filter']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=mac_filter    FF-FF-FF-FF-FF-FF
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    ff-ff-ff-ff-ff-ff
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+MAC_FILTER_17
+    [Documentation]    @['mac_filter', 'add_mac_filter']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=mac_filter    F1-08-08-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    F3-08-08-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    F5-08-08-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    F7-08-08-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    F9-08-08-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    FB-08-08-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    FD-08-08-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    FF-08-08-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    Fb-08-08-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    Fd-08-08-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    Ff-08-08-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+MAC_FILTER_2
+    [Documentation]    @['add_mac_filter', 'mac_describe']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=mac_describe    \ \
+    Click Element    xpath=(//input[@id='add_mac_filter'])
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_string_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_describe    \\
+    Click Element    xpath=(//input[@id='add_mac_filter'])
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_string_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_describe    "
+    Click Element    xpath=(//input[@id='add_mac_filter'])
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_string_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_describe    '
+    Click Element    xpath=(//input[@id='add_mac_filter'])
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_string_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+MAC_FILTER_3
+    [Documentation]    @['mac_describe']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=mac_describe    1111111111222222222233333333334我
+    ${v}    Get Value    id=mac_describe
+    Should Be Equal    ${v}    1111111111222222222233333333334
+
+MAC_FILTER_31
+    [Documentation]    @['mac_filter', 'add_mac_filter', 'del_mac_filter_all']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=mac_filter    00-00-00-00-00-01
+    Click Element    xpath=(//input[@id='add_mac_filter'])
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+    goto_test_case_page
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+    Sleep    1
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+MAC_FILTER_33
+    [Documentation]    @['mac_filter', 'add_mac_filter', 'del_mac_filter_all']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=mac_filter    00-00-00-00-00-01
+    Click Element    xpath=(//input[@id='add_mac_filter'])
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+    Sleep    1
+    Input Text    id=mac_filter    00-00-00-00-00-01
+    Click Element    xpath=(//input[@id='add_mac_filter'])
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_occupy_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+MAC_FILTER_35
+    [Documentation]    @['mac_filter', 'add_mac_filter', 'del_mac_filter_all']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=mac_filter    00-00-00-00-00-01
+    Click Element    xpath=(//input[@id='add_mac_filter'])
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+    Sleep    2
+    Click Element    xpath=//div[@class='tab_mod_btn']
+    Input Text    id=mac_filter    00-00-00-00-00-02
+    Click Element    id=add_mac_filter
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-02
+    Sleep    1
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+MAC_FILTER_37
+    [Documentation]    @['mac_filter', 'add_mac_filter', 'del_mac_filter_all']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=mac_filter    00-00-00-00-00-01
+    Click Element    xpath=(//input[@id='add_mac_filter'])
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+    Sleep    2
+    Input Text    id=mac_filter    00-00-00-00-00-02
+    Click Element    xpath=(//input[@id='add_mac_filter'])
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-02
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+    Sleep    2
+    Click Element    xpath=//div[@class='tab_mod_btn']
+    Input Text    id=mac_filter    00-00-00-00-00-01
+    Click Element    id=add_mac_filter
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_occupy_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-02
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+    Sleep    1
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+MAC_FILTER_38
+    [Documentation]    @['mac_filter', 'add_mac_filter', 'del_mac_filter_all']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=mac_filter    00-00-00-00-00-01
+    Click Element    xpath=(//input[@id='add_mac_filter'])
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+    Sleep    1
+    Click Element    xpath=//div[@class='tab_del_btn']
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_one_tip}
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Run Keyword And Expect Error    *    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+
+MAC_FILTER_39
+    [Documentation]    @['mac_filter', 'add_mac_filter', 'del_mac_filter_all']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=mac_filter    00-00-00-00-00-01
+    Click Element    xpath=(//input[@id='add_mac_filter'])
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+    Sleep    1
+    Input Text    id=mac_filter    00-00-00-00-00-02
+    Click Element    xpath=(//input[@id='add_mac_filter'])
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-02
+    Sleep    1
+    Input Text    id=mac_filter    00-00-00-00-00-0f
+    Click Element    xpath=(//input[@id='add_mac_filter'])
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-0F
+    Sleep    1
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Run Keyword And Expect Error    *    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-0F
+    Run Keyword And Expect Error    *    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-02
+    Run Keyword And Expect Error    *    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+
+MAC_FILTER_4
+    [Documentation]    @['mac_filter', 'add_mac_filter', 'del_mac_filter_all', 'mac_describe']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=mac_describe    111111111122222222223333333333我
+    Input Text    id=mac_filter    00-00-00-00-00-01
+    Click Element    xpath=(//input[@id='add_mac_filter'])
+    Sleep    5
+    Table Should Contain    xpath=//table[@class='df_tab']    111111111122222222223333333333
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+MAC_FILTER_5
+    [Documentation]    @['mac_filter', 'add_mac_filter']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=mac_filter    ${EMPTY}
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+MAC_FILTER_6
+    [Documentation]    @['mac_filter']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=mac_filter    123456789012345678
+    ${v}    Get Value    id=mac_filter
+    Should Be Equal    ${v}    12345678901234567
+
+MAC_FILTER_7
+    [Documentation]    @['mac_filter', 'add_mac_filter']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=mac_filter    00-00-00-00-00-0
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+MAC_FILTER_8
+    [Documentation]    @['mac_filter', 'add_mac_filter', 'del_mac_filter_all']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08-08-08:08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08-08:08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08:08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02:08-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08:02-08-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08-08-08-08
+    Click Element    id=add_mac_filter
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    08-02-08-08-08-08
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+MAC_FILTER_9
+    [Documentation]    @['mac_filter', 'add_mac_filter', 'del_mac_filter_all']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08-08-08:08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08-08:08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02-08:08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08-02:08-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08:02-08-08-08-08
+    Click Element    id=add_mac_filter
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=mac_filter    08:02:08:08:08:08
+    Click Element    id=add_mac_filter
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    08-02-08-08-08-08
+    Click Element    xpath=(//input[@id='del_mac_filter_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失

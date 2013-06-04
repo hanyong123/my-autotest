@@ -1,0 +1,28 @@
+*** Settings ***
+Resource          config.txt
+Library           HttpLibrary.HTTP
+Library           Selenium2Library
+Library           autoTestInit.py
+
+*** Test Cases ***
+autoTestInit
+    Create HTTP Context    ${router_lan_ip}
+    Comment    Set Basic Auth    ${login_user}    ${login_passwd}
+    GET    /config/config.js
+    ${html}    get_response_body
+    ${content}    convert_string_to_utf8    ${html}
+    get_all_mould_applications    ${content}
+    Create HTTP Context    ${router_lan_ip}
+    GET    /config/language_us.js
+    ${html}    get_response_body
+    ${content}    convert_string_to_utf8    ${html}
+    get_lang_var    ${content}
+    Create HTTP Context    ${router_lan_ip}
+    GET    /config/log.js
+    ${html}    get_response_body
+    ${content}    convert_string_to_utf8    ${html}
+    get_log_string    ${content}
+    Open Browser    ${base_url}    ${browser}    hany
+    Wait Until Page Contains Element    id=f_main_bg    15
+    select_test_case
+    Close Browser

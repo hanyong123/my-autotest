@@ -1,0 +1,1050 @@
+*** Settings ***
+Suite Setup       打开浏览器
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
+*** Test Cases ***
+IPMAC_BING_35
+    [Documentation]    @['binds_ip', 'add_binds', 'del_binds_all', 'binds_des', 'binds_mac']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=binds_des    CD-netcore-abcd234
+    Input Text    id=binds_ip    192.168.1.224
+    Input Text    id=binds_mac    00-00-00-00-00-01
+    Click Element    xpath=(//input[@id='add_binds'])
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Table Should Contain    xpath=//table[@class='df_tab']    CD-netcore-abcd234
+    Table Should Contain    xpath=//table[@class='df_tab']    192.168.1.224
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+    Sleep    1
+    Input Text    id=binds_des    CD-netcore-abcd
+    Input Text    id=binds_ip    192.168.1.224
+    Input Text    id=binds_mac    00-00-00-00-00-0f
+    Click Element    xpath=(//input[@id='add_binds'])
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_occupy_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_36
+    [Documentation]    @['binds_ip', 'add_binds', 'del_binds_all', 'binds_des', 'binds_mac']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=binds_des    CD-netcore-abcd234
+    Input Text    id=binds_ip    192.168.1.224
+    Input Text    id=binds_mac    00-00-00-00-00-01
+    Click Element    xpath=(//input[@id='add_binds'])
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    CD-netcore-abcd234
+    Table Should Contain    xpath=//table[@class='df_tab']    192.168.1.224
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+    Sleep    1
+    Input Text    id=binds_des    CD-netcore-abcd
+    Input Text    id=binds_ip    192.168.1.222
+    Input Text    id=binds_mac    00-00-00-00-00-01
+    Click Element    xpath=(//input[@id='add_binds'])
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_occupy_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_37
+    [Documentation]    @['binds_ip', 'add_binds', 'del_binds_all', 'binds_des', 'binds_mac']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=binds_des    CD-netcore-abcd234
+    Input Text    id=binds_ip    192.168.1.224
+    Input Text    id=binds_mac    00-00-00-00-00-01
+    Click Element    xpath=(//input[@id='add_binds'])
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    CD-netcore-abcd234
+    Table Should Contain    xpath=//table[@class='df_tab']    192.168.1.224
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+    Sleep    2
+    Click Element    xpath=//div[@class='tab_mod_btn']
+    Input Text    id=binds_des    CD-netcore-abcd
+    Input Text    id=binds_ip    192.168.1.222
+    Input Text    id=binds_mac    00-00-00-00-00-02
+    Click Element    id=add_binds
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    CD-netcore-abcd
+    Table Should Contain    xpath=//table[@class='df_tab']    192.168.1.222
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-02
+    Sleep    1
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_38
+    [Documentation]    @['binds_ip', 'add_binds', 'del_binds_all', 'binds_des', 'binds_mac']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=binds_des    CD-netcore-abcd234
+    Input Text    id=binds_ip    192.168.1.224
+    Input Text    id=binds_mac    00-00-00-00-00-01
+    Click Element    xpath=(//input[@id='add_binds'])
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    CD-netcore-abcd234
+    Table Should Contain    xpath=//table[@class='df_tab']    192.168.1.224
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+    Sleep    2
+    Input Text    id=binds_des    SZ-netcore-abcd234
+    Input Text    id=binds_ip    192.168.1.225
+    Input Text    id=binds_mac    00-00-00-00-00-02
+    Click Element    xpath=(//input[@id='add_binds'])
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    SZ-netcore-abcd234
+    Table Should Contain    xpath=//table[@class='df_tab']    192.168.1.225
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-02
+    Table Should Contain    xpath=//table[@class='df_tab']    CD-netcore-abcd234
+    Table Should Contain    xpath=//table[@class='df_tab']    192.168.1.224
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+    Sleep    2
+    Click Element    xpath=//div[@class='tab_mod_btn']
+    Input Text    id=binds_des    CD-netcore-abcd
+    Input Text    id=binds_ip    192.168.1.225
+    Input Text    id=binds_mac    00-00-00-00-00-03
+    Click Element    id=add_binds
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_occupy_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    SZ-netcore-abcd234
+    Table Should Contain    xpath=//table[@class='df_tab']    192.168.1.225
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-02
+    Table Should Contain    xpath=//table[@class='df_tab']    CD-netcore-abcd234
+    Table Should Contain    xpath=//table[@class='df_tab']    192.168.1.224
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+    Sleep    1
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_39
+    [Documentation]    @['binds_ip', 'add_binds', 'del_binds_all', 'binds_des', 'binds_mac']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=binds_des    CD-netcore-abcd234
+    Input Text    id=binds_ip    192.168.1.224
+    Input Text    id=binds_mac    00-00-00-00-00-01
+    Click Element    xpath=(//input[@id='add_binds'])
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    CD-netcore-abcd234
+    Table Should Contain    xpath=//table[@class='df_tab']    192.168.1.224
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+    Sleep    2
+    Input Text    id=binds_des    SZ-netcore-abcd234
+    Input Text    id=binds_ip    192.168.1.225
+    Input Text    id=binds_mac    00-00-00-00-00-02
+    Click Element    xpath=(//input[@id='add_binds'])
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    SZ-netcore-abcd234
+    Table Should Contain    xpath=//table[@class='df_tab']    192.168.1.225
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-02
+    Table Should Contain    xpath=//table[@class='df_tab']    CD-netcore-abcd234
+    Table Should Contain    xpath=//table[@class='df_tab']    192.168.1.224
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+    Sleep    2
+    Click Element    //div[@class='tab_mod_btn']
+    Input Text    id=binds_des    CD-netcore-abcd
+    Input Text    id=binds_ip    192.168.1.226
+    Input Text    id=binds_mac    00-00-00-00-00-02
+    Click Element    id=add_binds
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_occupy_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    SZ-netcore-abcd234
+    Table Should Contain    xpath=//table[@class='df_tab']    192.168.1.225
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-02
+    Table Should Contain    xpath=//table[@class='df_tab']    CD-netcore-abcd234
+    Table Should Contain    xpath=//table[@class='df_tab']    192.168.1.224
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+    Sleep    1
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_41
+    [Documentation]    @['binds_ip', 'add_binds', 'del_binds_all', 'binds_des', 'binds_mac']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=binds_des    CD-netcore-abcd234
+    Input Text    id=binds_ip    192.168.1.224
+    Input Text    id=binds_mac    00-00-00-00-00-01
+    Click Element    xpath=(//input[@id='add_binds'])
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    CD-netcore-abcd234
+    Table Should Contain    xpath=//table[@class='df_tab']    192.168.1.224
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+    Sleep    1
+    Click Element    //div[@class='tab_del_btn']
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_one_tip}
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Run Keyword And Expect Error    *    Table Should Contain    xpath=//table[@class='df_tab']    192.168.1.224
+
+IPMAC_BING_42
+    [Documentation]    @['binds_ip', 'add_binds', 'del_binds_all', 'binds_des', 'binds_mac']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=binds_des    CD-netcore-abcd234
+    Input Text    id=binds_ip    192.168.1.224
+    Input Text    id=binds_mac    00-00-00-00-00-01
+    Click Element    xpath=(//input[@id='add_binds'])
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    CD-netcore-abcd234
+    Table Should Contain    xpath=//table[@class='df_tab']    192.168.1.224
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+    Sleep    2
+    Input Text    id=binds_des    SZ-netcore-abcd234
+    Input Text    id=binds_ip    192.168.1.225
+    Input Text    id=binds_mac    00-00-00-00-00-02
+    Click Element    xpath=(//input[@id='add_binds'])
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    SZ-netcore-abcd234
+    Table Should Contain    xpath=//table[@class='df_tab']    192.168.1.225
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-02
+    Table Should Contain    xpath=//table[@class='df_tab']    CD-netcore-abcd234
+    Table Should Contain    xpath=//table[@class='df_tab']    192.168.1.224
+    Table Should Contain    xpath=//table[@class='df_tab']    00-00-00-00-00-01
+    Sleep    2
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Run Keyword And Expect Error    *    Table Should Contain    xpath=//table[@class='df_tab']    192.168.1.224
+
+IPMAC_BING_IP_1
+    [Documentation]    @['binds_ip']
+    [Tags]    include
+    goto_test_case_page
+    Sleep    1
+    Input Text    id=binds_ip    1234567890123456
+    ${v}    Get Value    id=binds_ip
+    Should Be Equal    ${v}    123456789012345
+
+IPMAC_BING_IP_10
+    [Documentation]    @['binds_ip', 'add_binds']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=binds_ip    .168.1.10
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=binds_ip    192..1.10
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=binds_ip    192.168..10
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=binds_ip    192.168.1.
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_IP_11
+    [Documentation]    @['binds_ip', 'add_binds']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=binds_ip    0.0.0.0
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_IP_12
+    [Documentation]    @['binds_ip', 'add_binds']
+    [Tags]    include
+    goto_test_case_page
+    Sleep    3
+    Input Text    id=binds_ip    224.0.0.1
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=binds_ip    255.0.0.1
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=binds_ip    254.0.0.1
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_IP_13
+    [Documentation]    @['binds_ip', 'add_binds']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=binds_ip    127.0.0.1
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_IP_14
+    [Documentation]    @['binds_ip', 'add_binds']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=binds_ip    0.168.1.10
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_IP_2
+    [Documentation]    @['binds_ip', 'add_binds']
+    [Tags]    include
+    goto_test_case_page
+    Sleep    1
+    Input Text    id=binds_ip    10.0.0.1.
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_IP_3
+    [Documentation]    @['binds_ip', 'add_binds']
+    [Tags]    include
+    goto_test_case_page
+    Sleep    1
+    Input Text    id=binds_ip    10.0.01
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_IP_4
+    [Documentation]    @['binds_ip', 'add_binds']
+    [Tags]    include
+    goto_test_case_page
+    Sleep    1
+    Input Text    id=binds_ip    ${EMPTY}
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_IP_5
+    [Documentation]    @['binds_ip', 'add_binds']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=binds_ip    -1.0.0.2
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=binds_ip    256.0.0.1
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_IP_6
+    [Documentation]    @['binds_ip', 'add_binds']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=binds_ip    10.-1.0.10
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=binds_ip    10.256.0.10
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_IP_7
+    [Documentation]    @['binds_ip', 'add_binds']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=binds_ip    10.0.-1.10
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=binds_ip    10.0.256.10
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_IP_8
+    [Documentation]    @['binds_ip', 'add_binds']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=binds_ip    10.0.0.-1
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=binds_ip    10.0.0.256
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_IP_9
+    [Documentation]    @['binds_ip', 'add_binds']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=binds_ip    192,168;1:s
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_MAC_15
+    [Documentation]    @['binds_ip', 'add_binds', 'binds_mac']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=binds_ip    192.168.1.220
+    Input Text    id=binds_mac    ${EMPTY}
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_MAC_16
+    [Documentation]    @['binds_mac']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=binds_mac    123456789012345678
+    ${v}    Get Value    id=binds_mac
+    Should Be Equal    ${v}    12345678901234567
+
+IPMAC_BING_MAC_17
+    [Documentation]    @['binds_ip', 'add_binds', 'binds_mac']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=binds_ip    192.168.1.220
+    Input Text    id=binds_mac    00-00-00-00-00-0
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_MAC_18
+    [Documentation]    @['binds_ip', 'add_binds', 'del_binds_all', 'binds_mac']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_ip    192.168.1.220
+    Input Text    id=binds_mac    08-02-08-08-08:08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    3    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02-08-08:08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02-08:08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02:08-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08:02-08-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02-08-08-08-08
+    Click Element    id=add_binds
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    08-02-08-08-08-08
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_MAC_19
+    [Documentation]    @['binds_ip', 'add_binds', 'del_binds_all', 'binds_mac']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_ip    192.168.1.220
+    Input Text    id=binds_mac    08-02-08-08-08:08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02-08-08:08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02-08:08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02:08-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08:02-08-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08:02:08:08:08:08
+    Click Element    id=add_binds
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    08-02-08-08-08-08
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_MAC_20
+    [Documentation]    @['binds_ip', 'add_binds', 'del_binds_all', 'binds_mac']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_ip    192.168.1.220
+    Input Text    id=binds_mac    08-02-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02-08-08--08-
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02-08-08-08-08
+    Click Element    id=add_binds
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    08-02-08-08-08-08
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_MAC_22
+    [Documentation]    @['binds_ip', 'add_binds', 'del_binds_all', 'binds_mac']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_ip    192.168.1.220
+    Input Text    id=binds_mac    08-02-08-08-08-0G
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02-08-08-0G-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02-08-0G-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02-0G-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-0G-08-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02-08-08-08-08
+    Click Element    id=add_binds
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    08-02-08-08-08-08
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_ip    192.168.1.220
+    Input Text    id=binds_mac    0X-0Y-0Z-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    0x-0y-0z-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_ip    192.168.1.220
+    Input Text    id=binds_mac    0a-0b-0c-0d-0e-0f
+    Click Element    id=add_binds
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    0A-0B-0C-0D-0E-0F
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Input Text    id=binds_ip    192.168.1.220
+    Input Text    id=binds_mac    0A-0B-0C-0D-0E-0F
+    Click Element    id=add_binds
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    0A-0B-0C-0D-0E-0F
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Input Text    id=binds_ip    192.168.1.220
+    Input Text    id=binds_mac    8 - 8-08-08-08-08
+    Click Element    xpath=(//input[@id='add_binds'])
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_ip    192.168.1.220
+    Input Text    id=binds_mac    8\-\8-08-08-08-08
+    Click Element    xpath=(//input[@id='add_binds'])
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_ip    192.168.1.220
+    Input Text    id=binds_mac    8"-"8-08-08-08-08
+    Click Element    xpath=(//input[@id='add_binds'])
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_ip    192.168.1.220
+    Input Text    id=binds_mac    8'-'8-08-08-08-08
+    Click Element    xpath=(//input[@id='add_binds'])
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_MAC_23
+    [Documentation]    @['binds_ip', 'add_binds', 'del_binds_all', 'binds_mac']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    4
+    Input Text    id=binds_ip    192.168.1.220
+    Input Text    id=binds_mac    08-02-08-08-08-
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02-08-08--08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02-08--08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02--08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08--08-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    -08-08-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02-08-08-08-08
+    Click Element    id=add_binds
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    08-02-08-08-08-08
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_MAC_24
+    [Documentation]    @['binds_ip', 'add_binds', 'del_binds_all', 'binds_mac']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_ip    192.168.1.220
+    Input Text    id=binds_mac    08-02-08-08-F-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02-08-F-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02-F-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-F-08-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    F-08-08-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02-08-08-0AF-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02-08-0AF-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02-0AF-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-0AF-08-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    0AF-08-08-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    08-02-08-08-08-08
+    Click Element    id=add_binds
+    Sleep    1
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    1
+    Table Should Contain    xpath=//table[@class='df_tab']    08-02-08-08-08-08
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_MAC_25
+    [Documentation]    @['binds_ip', 'add_binds', 'binds_mac']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=binds_ip    192.168.1.220
+    Input Text    id=binds_mac    00-00-00-00-00-00
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_MAC_26
+    [Documentation]    @['binds_ip', 'add_binds', 'binds_mac']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=binds_ip    192.168.1.220
+    Input Text    id=binds_mac    FF-FF-FF-FF-FF-FF
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    ff-ff-ff-ff-ff-ff
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_MAC_27
+    [Documentation]    @['binds_ip', 'add_binds', 'binds_mac']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=binds_ip    192.168.1.220
+    Input Text    id=binds_mac    F1-08-08-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    F3-08-08-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    F5-08-08-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    F7-08-08-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    F9-08-08-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    FB-08-08-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    FD-08-08-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    FF-08-08-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    Fb-08-08-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    Fd-08-08-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_mac    Ff-08-08-08-08-08
+    Click Element    id=add_binds
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_NAME_29
+    [Documentation]    @['binds_ip', 'add_binds', 'del_binds_all', 'binds_des', 'binds_mac']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=binds_des    ${EMPTY}
+    Input Text    id=binds_ip    192.168.1.220
+    Input Text    id=binds_mac    00-00-00-00-00-01
+    Click Element    xpath=(//input[@id='add_binds'])
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Table Should Contain    xpath=//table[@class='df_tab']    ${EMPTY}
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_NAME_30
+    [Documentation]    @['add_binds', 'binds_des']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=binds_des    \\
+    Click Element    xpath=(//input[@id='add_binds'])
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_string_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_des    "
+    Click Element    xpath=(//input[@id='add_binds'])
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_string_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    2
+    Input Text    id=binds_des    '
+    Click Element    xpath=(//input[@id='add_binds'])
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_string_err}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+IPMAC_BING_NAME_31
+    [Documentation]    @['binds_des']
+    [Tags]    include
+    goto_test_case_page
+    Input Text    id=binds_des    1111111111222222222233333333334我
+    ${v}    Get Value    id=binds_des
+    Should Be Equal    ${v}    1111111111222222222233333333334
+
+IPMAC_BING_NAME_32
+    [Documentation]    @['binds_ip', 'add_binds', 'del_binds_all', 'binds_des', 'binds_mac']
+    [Tags]    include
+    goto_test_case_page
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Sleep    3
+    Input Text    id=binds_des    111111111122222222223333333333我
+    Input Text    id=binds_ip    192.168.1.220
+    Input Text    id=binds_mac    00-00-00-00-00-01
+    Click Element    xpath=(//input[@id='add_binds'])
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_default}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    Table Should Contain    xpath=//table[@class='df_tab']    111111111122222222223333333333
+    Click Element    xpath=(//input[@id='del_binds_all'])
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
