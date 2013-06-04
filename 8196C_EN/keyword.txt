@@ -282,3 +282,34 @@ WAN口IP是${ip}
 
 设置SUPER-DMZ参数
     [Arguments]    ${enable}=1    ${mac}=${None}
+
+转到静态NAT设置页面
+
+设置静态NAT参数
+    [Arguments]    ${lan_ip}=${None}    ${wan_ip}=${None}
+
+转到UPNP设置页面
+
+设置UPNP参数
+    [Arguments]    ${enable}=1    ${upnp_time}=${None}
+
+转到动态域名设置页面
+
+设置动态域名参数
+    [Arguments]    ${enable}=1    ${service_provider}=0    ${user}=${None}    ${passwd}=${None}    ${port}=${None}    ${domain}=${None}
+
+转到FTP私有端口设置页面
+
+设置FTP私有端口参数
+    [Arguments]    ${enable}=1    ${rule_name}=${None}    ${port}=${None}
+
+转到端口触发页面
+
+设置端口触发参数
+    [Arguments]    ${predefined_rule}=${None}    ${rule}=${None}    ${trigger_protocol}=${None}    ${start_trigger_port}=${None}    ${end_trigger_port}=${None}    ${forward_protocol}=${None}
+    ...    ${start_forward_port}=${None}    ${end_forward_port}=${None}
+
+转到系统访问控制
+
+设置系统访问控制参数
+    [Arguments]    ${enable}=1    ${port}=${None}
