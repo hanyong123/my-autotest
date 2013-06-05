@@ -9,3 +9,4 @@ ${login_user}     guest
 ${login_passwd}    guest
 ${base_url}       http://${router_lan_ip}/index.htm
 ${browser}        firefox
+${er}             aa
