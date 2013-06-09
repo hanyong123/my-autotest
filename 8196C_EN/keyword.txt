@@ -59,13 +59,11 @@ Resource          lang_var.txt
     Should Not Contain    ${string}    Saved Successfully!
 
 转到DHCP接入设置页面
-    Set Selenium Speed    .5
-    Wait Until Page Contains Element    css=#p_menu_network > div.m_p_txt
-    Click Element    css=#p_menu_network > div.m_p_txt
-    Click Element    css=#c_menu_wan > div.m_c_txt
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="wan";$.load("wan")
     Wait Until Page Contains Element    id=conntype
-    Select From List By Label    id=conntype    DHCP(Cable Modem)
-    Click Element    id=show_wan_advance
+    Select From List By Value    id=conntype    1
+    Run Keyword And Ignore Error    Click Element    id=show_wan_advance
 
 设置DHCP接入参数
     [Arguments]    ${mac}=${None}    ${mtu}=${None}    ${dns1}=${None}    ${dns2}=${None}
@@ -94,13 +92,11 @@ Resource          lang_var.txt
     Length Should Be    ${v}    ${max_len}
 
 转到静态接入设置页面
-    Set Selenium Speed    .5
-    Wait Until Page Contains Element    css=#p_menu_network > div.m_p_txt
-    Click Element    css=#p_menu_network > div.m_p_txt
-    Click Element    css=#c_menu_wan > div.m_c_txt
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="wan";$.load("wan")
     Wait Until Page Contains Element    id=conntype
-    Select From List By Label    id=conntype    Static IP
-    Click Element    id=show_wan_advance
+    Select From List By Value    id=conntype    0
+    Run Keyword And Ignore Error    Click Element    id=show_wan_advance
 
 设置静态接入参数
     [Arguments]    ${wan_static_ip}    ${wan_static_mask}    ${wan_static_gw}    ${mac}=${None}    ${mtu}=${None}    ${dns1}=${None}
@@ -115,10 +111,8 @@ Resource          lang_var.txt
     Click Button    id=save_wan_set
 
 转到内网配置页面
-    Set Selenium Speed    .5
-    Wait Until Page Contains Element    css=#p_menu_network > div.m_p_txt
-    Click Element    css=#p_menu_network > div.m_p_txt
-    Click Element    id=id=c_menu_lan
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="lan";$.load("lan")
 
 设置LAN口MAC
     [Arguments]    ${mac}
@@ -135,32 +129,26 @@ Resource          lang_var.txt
 
 设置DHCP服务器
     [Arguments]    ${start_ip}    ${end_ip}    ${enable}=1
-    转到内网配置页面
     Run Keyword If    '${enable}'==1    Click Element    id=dhcp_enable_on
     Run Keyword If    '${enable}'==0    Click Element    id=dhcp_enable_off
     Run Keyword If    '${enable}'==1    Input Text    id=dhcp_start_ip    ${start_ip}
     Run Keyword If    '${enable}'==1    Input Text    id=dhcp_end_ip    ${end_ip}
     Click Button    id=save_dhcp_server
 
+转到DHCP保留地址设置页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="address_reservation";$.load("address_reservation")
+
 设置DHCP服务器保留地址
     [Arguments]    ${des}    ${ip}    ${mac}
-    转到DHCP保留地址设置页面
     Input Text    id=descrip    ${des}
     Input Text    id=reserve_ip    ${ip}
     Input Text    id=reserve_mac    ${mac}
     Click Button    id=add_reservation
 
-转到DHCP保留地址设置页面
-    Set Selenium Speed    .5
-    Wait Until Page Contains Element    css=#p_menu_network > div.m_p_txt
-    Click Element    css=#p_menu_network > div.m_p_txt
-    Click Element    css=#c_menu_address_reservation > div.m_c_txt
-
 转到IP/MAC绑定页面
-    Set Selenium Speed    .5
-    Wait Until Page Contains Element    css=#p_menu_advanced > div.m_p_txt
-    Click Element    css=#p_menu_advanced > div.m_p_txt
-    Click Element    css=#c_menu_binds > div.m_c_txt
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="binds";$.load("binds")
 
 设置IP/MAC绑定
     [Arguments]    ${des}    ${ip}    ${mac}    ${interface}=lan
@@ -172,10 +160,8 @@ Resource          lang_var.txt
     Click Element    id=add_binds
 
 转到IP过滤页面
-    Set Selenium Speed    .5
-    Wait Until Page Contains Element    css=#p_menu_management > div.m_p_txt
-    Click Element    css=#p_menu_management > div.m_p_txt
-    Click Element    css=#c_menu_ip_filter > div.m_c_txt
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="ip_filter";$.load("ip_filter")
 
 设置IP过滤
     [Arguments]    ${des}=${None}    ${rule}=1    ${shost}=all    ${sip}=${None}    ${smask}=${None}    ${start_sip}=${None}
@@ -206,10 +192,8 @@ Resource          lang_var.txt
     Click Element    id=add_ip_filter
 
 转到MAC过滤页面
-    Set Selenium Speed    .5
-    Wait Until Page Contains Element    css=#p_menu_management > div.m_p_txt
-    Click Element    css=#p_menu_management > div.m_p_txt
-    Click Element    css=#c_menu_mac_filter > div.m_c_txt
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="mac_filter";$.load("mac_filter")
 
 设置MAC过滤
     [Arguments]    ${des}=${None}    ${rule}=1    ${mac}=${None}    ${day_locator}=${None}    ${start_time}=0    ${end_time}=0
@@ -226,10 +210,8 @@ Resource          lang_var.txt
     Click Element    id=add_mac_filter
 
 转到恢复缺省页面
-    Set Selenium Speed    .5
-    Wait Until Page Contains Element    css=#p_menu_misc > div.m_p_txt
-    Click Element    css=#p_menu_misc > div.m_p_txt
-    Click Element    css=#c_menu_default > div.m_c_txt
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="default";$.load("default")
 
 恢复出厂设置
     转到恢复缺省页面
@@ -246,9 +228,8 @@ Resource          lang_var.txt
     Wait Until Keyword Succeeds    60    5    Page Should Not Contain Element    id=lock_bg
 
 转到接口状态页面
-    Set Selenium Speed    .5
-    Wait Until Page Contains Element    css=div.m_p_txt
-    Click Element    css=div.m_p_txt
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="status";$.load("status")
 
 WAN口IP是${ip}
     ${s}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
@@ -257,6 +238,8 @@ WAN口IP是${ip}
 轮询WAN口直到IP是${ip}
 
 转到虚拟服务配置页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="virtual";$.load("virtual")
 
 设置虚拟服务参数
     [Arguments]    ${des}=${None}    ${ip}=${None}    ${vir_proto}=all    ${external_port}=${None}    ${internal_port}=${None}
@@ -273,11 +256,15 @@ WAN口IP是${ip}
 修改列表${locator}第${row}行
 
 转到DMZ设置页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="dmz";$.load("dmz")
 
 设置DMZ参数
     [Arguments]    ${enable}=1    ${host_ip}=${None}
 
 转到SUPER-DMZ设置页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="dmz";$.load("dmz")
 
 设置SUPER-DMZ参数
     [Arguments]    ${enable}=1    ${mac}=${None}
@@ -288,21 +275,29 @@ WAN口IP是${ip}
     [Arguments]    ${lan_ip}=${None}    ${wan_ip}=${None}
 
 转到UPNP设置页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="upnp";$.load("upnp")
 
 设置UPNP参数
     [Arguments]    ${enable}=1    ${upnp_time}=${None}
 
 转到动态域名设置页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="ddns";$.load("ddns")
 
 设置动态域名参数
     [Arguments]    ${enable}=1    ${service_provider}=0    ${user}=${None}    ${passwd}=${None}    ${port}=${None}    ${domain}=${None}
 
 转到FTP私有端口设置页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="ftp";$.load("ftp")
 
 设置FTP私有端口参数
     [Arguments]    ${enable}=1    ${rule_name}=${None}    ${port}=${None}
 
 转到端口触发页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="portTrigger";$.load("portTrigger")
 
 设置端口触发参数
     [Arguments]    ${predefined_rule}=${None}    ${rule}=${None}    ${trigger_protocol}=${None}    ${start_trigger_port}=${None}    ${end_trigger_port}=${None}    ${forward_protocol}=${None}
@@ -314,14 +309,23 @@ WAN口IP是${ip}
     [Arguments]    ${enable}=1    ${port}=${None}
 
 转到Russia-PPPoE接入页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="wan";$.load("wan")
+    Wait Until Page Contains Element    id=conntype
+    Select From List By Value    id=conntype    4
+    Run Keyword And Ignore Error    Click Element    id=show_wan_advance
 
 设置Russia-PPPoE参数
     [Arguments]    ${user}=${None}    ${password}=${None}    ${mac}=${None}    ${mtu}=${None}    ${serverName}=${None}    ${acName}=${None}
     ...    ${dns1}=${None}    ${dns2}=${None}    ${connectMode}=${None}    ${timeout}=${None}
 
 转到Unifi-PPPoE设置页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="wan";$.load("wan")
+    Wait Until Page Contains Element    id=conntype
+    Select From List By Value    id=conntype    5
+    Run Keyword And Ignore Error    Click Element    id=show_wan_advance
 
 设置Unifi-PPPoE参数
     [Arguments]    ${user}=${Nione}    ${password}=${None}    ${mac}=${None}    ${mtu}=${None}    ${serverName}=${None}    ${acName}=${None}
     ...    ${dns1}=${None}    ${dns2}=${None}    ${connectMode}=${None}    ${timeout}=${None}
-
