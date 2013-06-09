@@ -251,3 +251,17 @@ Resource          config.txt
 WAN口IP是${ip}
     ${s}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
     Should Be Equal    ${s}    ${ip}
+
+转到基于AP模式的无线基本配置页面
+    Set Selenium Speed    .5
+    Wait Until Page Contains Element    css=#p_menu_wireless > div.m_p_txt
+    click element    css=#p_menu_wireless > div.m_p_txt
+    click element    css=#c_menu_base > div.m_c_txt
+
+设置基于AP模式的无线基本配置参数
+    [Arguments]    ${wl_mac}=${none}    ${wl_ssid}=${none}    ${enable}=1
+    Run Keyword If    ${enable}==1    click element    wl_enable_on
+    Run Keyword If    ${enable}==0    click element    wl_enable_off
+    Run Keyword If    ${enable}==1    Input text    wl_mac    ${wl_mac}
+    Run Keyword If    ${enable}==1    Input text    ssid    ${wl_ssid}
+    click element    save_wl_base

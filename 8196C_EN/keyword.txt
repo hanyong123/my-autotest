@@ -324,3 +324,4 @@ WAN口IP是${ip}
 设置Unifi-PPPoE参数
     [Arguments]    ${user}=${Nione}    ${password}=${None}    ${mac}=${None}    ${mtu}=${None}    ${serverName}=${None}    ${acName}=${None}
     ...    ${dns1}=${None}    ${dns2}=${None}    ${connectMode}=${None}    ${timeout}=${None}
+
