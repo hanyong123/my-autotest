@@ -5,13 +5,11 @@ Resource          lang_var.txt
 
 *** Keywords ***
 转到PPPoE接入设置页面
-    Set Selenium Speed    .5
-    Wait Until Page Contains Element    css=#p_menu_network > div.m_p_txt
-    Click Element    css=#p_menu_network > div.m_p_txt
-    Click Element    css=#c_menu_wan > div.m_c_txt
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="wan";$.load("wan")
     Wait Until Page Contains Element    id=conntype
-    Select From List By Label    id=conntype    PPPoE
-    Click Element    id=show_wan_advance
+    Select From List By Value    id=conntype    3
+    Run Keyword And Ignore Error    Click Element    id=show_wan_advance
 
 设置PPPoE接入参数
     [Arguments]    ${user}=hany    ${password}=969090    ${service_name}=${None}    ${ac_name}=${None}    ${mac}=${None}    ${mtu}=${None}
@@ -314,3 +312,15 @@ WAN口IP是${ip}
 
 设置系统访问控制参数
     [Arguments]    ${enable}=1    ${port}=${None}
+
+转到Russia-PPPoE接入页面
+
+设置Russia-PPPoE参数
+    [Arguments]    ${user}=${None}    ${password}=${None}    ${mac}=${None}    ${mtu}=${None}    ${serverName}=${None}    ${acName}=${None}
+    ...    ${dns1}=${None}    ${dns2}=${None}    ${connectMode}=${None}    ${timeout}=${None}
+
+转到Unifi-PPPoE设置页面
+
+设置Unifi-PPPoE参数
+    [Arguments]    ${user}=${Nione}    ${password}=${None}    ${mac}=${None}    ${mtu}=${None}    ${serverName}=${None}    ${acName}=${None}
+    ...    ${dns1}=${None}    ${dns2}=${None}    ${connectMode}=${None}    ${timeout}=${None}
