@@ -345,7 +345,30 @@ WAN口IP是${ip}
 
 设置Russia-PPPoE参数
     [Arguments]    ${user}=${None}    ${password}=${None}    ${mac}=${None}    ${mtu}=${None}    ${serverName}=${None}    ${acName}=${None}
-    ...    ${dns1}=${None}    ${dns2}=${None}    ${connectMode}=${None}    ${timeout}=${None}
+    ...    ${dns1}=${None}    ${dns2}=${None}    ${connectMode}=${None}    ${timeout}=5
+    [Documentation]    ${connectMode} 1:auto \ 2:time_requrie 3:manual
+    Wait Until Keyword Succeeds    5    1    Element Should Be Visible    id=pppoe_username
+    ${ruser}    process_special_charators    ${user}
+    Run Keyword If    '${ruser}'!='${None}'    Input Text    id=pppoe_username    ${user}
+    ${rpassword}    process_special_charators    ${password}
+    Run Keyword If    '${rpassword}'!='${None}'    Input Text    id=pppoe_pwd    ${password}
+    ${rmac}    process_special_charators    ${mac}
+    Run Keyword If    '${rmac}'!='${None}'    Input Text    id=mac_addr    ${mac}
+    ${rmtu}    process_special_charators    ${mtu}
+    Run Keyword If    '${rmtu}'!='${None}'    Input Text    id=pppoe_mtu    ${mtu}
+    ${rserverName}    process_special_charators    ${serverName}
+    Run Keyword If    '${rserverName}'!='${None}'    Input Text    id=pppoe_service_name    ${serverName}
+    ${racName}    process_special_charators    ${acName}
+    Run Keyword If    '${racName}'!='${None}'    Input Text    id=pppoe_ac_name    ${acName}
+    ${rdns1}    process_special_charators    ${dns1}
+    Run Keyword If    '${rdns1}'!='${None}'    Input Text    id=dns_a    ${dns1}
+    ${rdns2}    process_special_charators    ${dns2}
+    Run Keyword If    '${rdns2}'!='${None}'    Input Text    id=dns_b    ${dns2}
+    Run Keyword If    '${connectMode}'=='1'    Click Element    id=ppp_connect_mode_auto
+    Run Keyword If    '${connectMode}'=='2'    Click Element    id=ppp_connect_mode_time
+    Run Keyword If    '${connectMode}'=='3'    Click Element    id=ppp_connect_mode_hand
+    Run Keyword If    '${connectMode}' == '2'    Input Text    id=ppp_time    ${timeout}
+    Click Button    id=save_wan_set
 
 转到Unifi-PPPoE设置页面
     Set Selenium Speed    0.5
@@ -357,3 +380,26 @@ WAN口IP是${ip}
 设置Unifi-PPPoE参数
     [Arguments]    ${user}=${Nione}    ${password}=${None}    ${mac}=${None}    ${mtu}=${None}    ${serverName}=${None}    ${acName}=${None}
     ...    ${dns1}=${None}    ${dns2}=${None}    ${connectMode}=${None}    ${timeout}=${None}
+    [Documentation]    ${connectMode} 1:auto \ 2:time_requrie 3:manual
+    Wait Until Keyword Succeeds    5    1    Element Should Be Visible    id=pppoe_username
+    ${ruser}    process_special_charators    ${user}
+    Run Keyword If    '${ruser}'!='${None}'    Input Text    id=pppoe_username    ${user}
+    ${rpassword}    process_special_charators    ${password}
+    Run Keyword If    '${rpassword}'!='${None}'    Input Text    id=pppoe_pwd    ${password}
+    ${rmac}    process_special_charators    ${mac}
+    Run Keyword If    '${rmac}'!='${None}'    Input Text    id=mac_addr    ${mac}
+    ${rmtu}    process_special_charators    ${mtu}
+    Run Keyword If    '${rmtu}'!='${None}'    Input Text    id=pppoe_mtu    ${mtu}
+    ${rserverName}    process_special_charators    ${serverName}
+    Run Keyword If    '${rserverName}'!='${None}'    Input Text    id=pppoe_service_name    ${serverName}
+    ${racName}    process_special_charators    ${acName}
+    Run Keyword If    '${racName}'!='${None}'    Input Text    id=pppoe_ac_name    ${acName}
+    ${rdns1}    process_special_charators    ${dns1}
+    Run Keyword If    '${rdns1}'!='${None}'    Input Text    id=dns_a    ${dns1}
+    ${rdns2}    process_special_charators    ${dns2}
+    Run Keyword If    '${rdns2}'!='${None}'    Input Text    id=dns_b    ${dns2}
+    Run Keyword If    '${connectMode}'=='1'    Click Element    id=ppp_connect_mode_auto
+    Run Keyword If    '${connectMode}'=='2'    Click Element    id=ppp_connect_mode_time
+    Run Keyword If    '${connectMode}'=='3'    Click Element    id=ppp_connect_mode_hand
+    Run Keyword If    '${connectMode}' == '2'    Input Text    id=ppp_time    ${timeout}
+    Click Button    id=save_wan_set
