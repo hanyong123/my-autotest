@@ -17,11 +17,11 @@ autoTestInit
     ${html}    get_response_body
     ${content}    convert_string_to_utf8    ${html}
     get_lang_var    ${content}
-    Create HTTP Context    ${router_lan_ip}
-    GET    /config/log.js
-    ${html}    get_response_body
-    ${content}    convert_string_to_utf8    ${html}
-    get_log_string    ${content}
+    Comment    Create HTTP Context    ${router_lan_ip}
+    Comment    GET    /config/log.js
+    Comment    ${html}    get_response_body
+    Comment    ${content}    convert_string_to_utf8    ${html}
+    Comment    get_log_string    ${content}
     Comment    Open Browser    ${base_url}    ${browser}    hany
     Comment    Wait Until Page Contains Element    id=f_main_bg    15
     Comment    select_test_case

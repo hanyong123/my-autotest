@@ -7,6 +7,5 @@ ${router_wan_ip}    100.0.10.100
 ${router_wan_mask}    255.255.0.0
 ${login_user}     guest
 ${login_passwd}    guest
-${base_url}       http://${router_lan_ip}/index.htm
+${base_url}       http://${login_user}:${login_passwd}@${router_lan_ip}/index.htm
 ${browser}        firefox
-
