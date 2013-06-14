@@ -2,16 +2,15 @@
 Library           Selenium2Library
 Resource          config.txt
 Resource          lang_var.txt
+Library           common.py
 
 *** Keywords ***
 转到PPPoE接入设置页面
-    Set Selenium Speed    .5
-    Wait Until Page Contains Element    css=#p_menu_network > div.m_p_txt
-    Click Element    css=#p_menu_network > div.m_p_txt
-    Click Element    css=#c_menu_wan > div.m_c_txt
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="wan";$.load("wan")
     Wait Until Page Contains Element    id=conntype
-    Select From List By Label    id=conntype    PPPoE
-    Click Element    id=show_wan_advance
+    Select From List By Value    id=conntype    3
+    Run Keyword And Ignore Error    Click Element    id=show_wan_advance
 
 设置PPPoE接入参数
     [Arguments]    ${user}=hany    ${password}=969090    ${service_name}=${None}    ${ac_name}=${None}    ${mac}=${None}    ${mtu}=${None}
@@ -19,12 +18,18 @@ Resource          lang_var.txt
     Wait Until Keyword Succeeds    5    1    Element Should Be Visible    id=pppoe_username
     Input Text    id=pppoe_username    ${user}
     Input Password    id=pppoe_pwd    ${password}
-    Run Keyword If    '${service_name}'!='${None}'    Input Text    id=pppoe_service_name    ${service_name}
-    Run Keyword If    '${ac_name}'!='${None}'    Input Text    id=pppoe_ac_name    ${ac_name}
-    Run Keyword If    '${mac}' != '${None}'    Input Text    id=mac_addr    ${mac}
-    Run Keyword If    '${mtu}'!='${None}'    Input Text    id=pppoe_mtu    ${mtu}
-    Run Keyword If    '${dns1}'!='${None}'    Input Text    id=dns_a    ${dns1}
-    Run Keyword If    '${dns2}'!='${None}'    Input Text    id=dns_b    ${dns2}
+    ${rservice_name}    process_special_charators    ${service_name}
+    Run Keyword If    '${rservice_name}'!='${None}'    Input Text    id=pppoe_service_name    ${service_name}
+    ${rac_name}    process_special_charators    ${ac_name}
+    Run Keyword If    '${rac_name}'!='${None}'    Input Text    id=pppoe_ac_name    ${ac_name}
+    ${rmac}    process_special_charators    ${mac}
+    Run Keyword If    '${rmac}' != '${None}'    Input Text    id=mac_addr    ${mac}
+    ${rmtu}    process_special_charators    ${mtu}
+    Run Keyword If    '${rmtu}'!='${None}'    Input Text    id=pppoe_mtu    ${mtu}
+    ${rdns1}    process_special_charators    ${dns1}
+    Run Keyword If    '${rdns1}'!='${None}'    Input Text    id=dns_a    ${dns1}
+    ${rdns2}    process_special_charators    ${dns2}
+    Run Keyword If    '${rdns2}'!='${None}'    Input Text    id=dns_b    ${dns2}
     Run Keyword If    '${connect_mode}'=='1'    Click Element    id=ppp_connect_mode_auto
     Run Keyword If    '${connect_mode}'=='2'    Click Element    id=ppp_connect_mode_time
     Run Keyword If    '${connect_mode}'=='3'    Click Element    id=ppp_connect_mode_hand
@@ -61,20 +66,22 @@ Resource          lang_var.txt
     Should Not Contain    ${string}    Saved Successfully!
 
 转到DHCP接入设置页面
-    Set Selenium Speed    .5
-    Wait Until Page Contains Element    css=#p_menu_network > div.m_p_txt
-    Click Element    css=#p_menu_network > div.m_p_txt
-    Click Element    css=#c_menu_wan > div.m_c_txt
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="wan";$.load("wan")
     Wait Until Page Contains Element    id=conntype
-    Select From List By Label    id=conntype    DHCP(Cable Modem)
-    Click Element    id=show_wan_advance
+    Select From List By Value    id=conntype    1
+    Run Keyword And Ignore Error    Click Element    id=show_wan_advance
 
 设置DHCP接入参数
     [Arguments]    ${mac}=${None}    ${mtu}=${None}    ${dns1}=${None}    ${dns2}=${None}
-    Run Keyword If    '${mac}'!='${None}'    Input Text    id=mac_addr    ${mac}
-    Run Keyword If    '${mtu}'!='${None}'    Input Text    id=dhcp_mtu    ${mtu}
-    Run Keyword If    '${dns1}'!='${None}'    Input Text    id=dns_a    ${dns1}
-    Run Keyword If    '${dns2}'!='${None}'    Input Text    id=dns_b    ${dns2}
+    ${rmac}    process_special_charators    ${mac}
+    Run Keyword If    '${rmac}'!='${None}'    Input Text    id=mac_addr    ${mac}
+    ${rmtu}    process_special_charators    ${mtu}
+    Run Keyword If    '${rmtu}'!='${None}'    Input Text    id=dhcp_mtu    ${mtu}
+    ${rdns1}    process_special_charators    ${dns1}
+    Run Keyword If    '${rdns1}'!='${None}'    Input Text    id=dns_a    ${dns1}
+    ${rdns2}    process_special_charators    ${dns2}
+    Run Keyword If    '${rdns2}'!='${None}'    Input Text    id=dns_b    ${dns2}
     Click Button    id=save_wan_set
 
 打开浏览器
@@ -96,13 +103,11 @@ Resource          lang_var.txt
     Length Should Be    ${v}    ${max_len}
 
 转到静态接入设置页面
-    Set Selenium Speed    .5
-    Wait Until Page Contains Element    css=#p_menu_network > div.m_p_txt
-    Click Element    css=#p_menu_network > div.m_p_txt
-    Click Element    css=#c_menu_wan > div.m_c_txt
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="wan";$.load("wan")
     Wait Until Page Contains Element    id=conntype
-    Select From List By Label    id=conntype    Static IP
-    Click Element    id=show_wan_advance
+    Select From List By Value    id=conntype    0
+    Run Keyword And Ignore Error    Click Element    id=show_wan_advance
 
 设置静态接入参数
     [Arguments]    ${wan_static_ip}    ${wan_static_mask}    ${wan_static_gw}    ${mac}=${None}    ${mtu}=${None}    ${dns1}=${None}
@@ -110,17 +115,19 @@ Resource          lang_var.txt
     Input Text    id=wan_ip    ${wan_static_ip}
     Input Text    id=wan_mask    ${wan_static_mask}
     Input Text    id=wan_gw    ${wan_static_gw}
-    Run Keyword If    '${mac}'!='${None}'    Input Text    id=mac_addr    ${mac}
-    Run Keyword If    '${mtu}'!='${None}'    Input Text    id=static_mtu    ${mtu}
-    Run Keyword If    '${dns1}'!='${None}'    Input Text    id=dns_a    ${dns1}
-    Run Keyword If    '${dns2}'!='${None}'    Input Text    id=dns_b    ${dns2}
+    ${rmac}    process_special_charators    ${mac}
+    Run Keyword If    '${rmac}'!='${None}'    Input Text    id=mac_addr    ${mac}
+    ${rmtu}    process_special_charators    ${mtu}
+    Run Keyword If    '${rmtu}'!='${None}'    Input Text    id=static_mtu    ${mtu}
+    ${rdns1}    process_special_charators    ${dns1}
+    Run Keyword If    '${rdns1}'!='${None}'    Input Text    id=dns_a    ${dns1}
+    ${rdns2}    process_special_charators    ${dns2}
+    Run Keyword If    '${rdns2}'!='${None}'    Input Text    id=dns_b    ${dns2}
     Click Button    id=save_wan_set
 
 转到内网配置页面
-    Set Selenium Speed    .5
-    Wait Until Page Contains Element    css=#p_menu_network > div.m_p_txt
-    Click Element    css=#p_menu_network > div.m_p_txt
-    Click Element    id=id=c_menu_lan
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="lan";$.load("lan")
 
 设置LAN口MAC
     [Arguments]    ${mac}
@@ -137,32 +144,26 @@ Resource          lang_var.txt
 
 设置DHCP服务器
     [Arguments]    ${start_ip}    ${end_ip}    ${enable}=1
-    转到内网配置页面
     Run Keyword If    '${enable}'==1    Click Element    id=dhcp_enable_on
     Run Keyword If    '${enable}'==0    Click Element    id=dhcp_enable_off
     Run Keyword If    '${enable}'==1    Input Text    id=dhcp_start_ip    ${start_ip}
     Run Keyword If    '${enable}'==1    Input Text    id=dhcp_end_ip    ${end_ip}
     Click Button    id=save_dhcp_server
 
+转到DHCP保留地址设置页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="address_reservation";$.load("address_reservation")
+
 设置DHCP服务器保留地址
     [Arguments]    ${des}    ${ip}    ${mac}
-    转到DHCP保留地址设置页面
     Input Text    id=descrip    ${des}
     Input Text    id=reserve_ip    ${ip}
     Input Text    id=reserve_mac    ${mac}
     Click Button    id=add_reservation
 
-转到DHCP保留地址设置页面
-    Set Selenium Speed    .5
-    Wait Until Page Contains Element    css=#p_menu_network > div.m_p_txt
-    Click Element    css=#p_menu_network > div.m_p_txt
-    Click Element    css=#c_menu_address_reservation > div.m_c_txt
-
 转到IP/MAC绑定页面
-    Set Selenium Speed    .5
-    Wait Until Page Contains Element    css=#p_menu_advanced > div.m_p_txt
-    Click Element    css=#p_menu_advanced > div.m_p_txt
-    Click Element    css=#c_menu_binds > div.m_c_txt
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="binds";$.load("binds")
 
 设置IP/MAC绑定
     [Arguments]    ${des}    ${ip}    ${mac}    ${interface}=lan
@@ -174,31 +175,40 @@ Resource          lang_var.txt
     Click Element    id=add_binds
 
 转到IP过滤页面
-    Set Selenium Speed    .5
-    Wait Until Page Contains Element    css=#p_menu_management > div.m_p_txt
-    Click Element    css=#p_menu_management > div.m_p_txt
-    Click Element    css=#c_menu_ip_filter > div.m_c_txt
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="ip_filter";$.load("ip_filter")
 
 设置IP过滤
     [Arguments]    ${des}=${None}    ${rule}=1    ${shost}=all    ${sip}=${None}    ${smask}=${None}    ${start_sip}=${None}
     ...    ${end_sip}=${None}    ${dhost}=all    ${dip}=${None}    ${dmask}=${None}    ${start_dip}=${None}    ${end_dip}=${None}
     ...    ${protcol}=ALL    ${start_port}=${None}    ${end_port}=${None}    ${day_locator}=${None}    ${start_time}=0    ${end_time}=0
     ...    ${allday_locator}=${None}
-    Run Keyword If    '${des}'!='${None}'    Input text    id=ip_describe    ${des}
+    ${rdes}    process_special_charators    ${des}
+    Run Keyword If    '${rdes}'!='${None}'    Input text    id=ip_describe    ${des}
     Select From List By Value    id=ip_rule    ${rule}
     Select From List By Value    id=ip_src_sele    ${shost}
-    Run Keyword If    '${sip}'!='${None}'    Input text    id=ip_src_ip    ${sip}
-    Run Keyword If    '${smask}'!='${None}'    Input text    id=ip_src_mask    ${smask}
-    Run Keyword If    '${start_sip}'!='${None}'    Input text    id=ip_src_start    ${start_sip}
-    Run Keyword If    '${end_sip}'!='${None}'    Input text    id=ip_src_end    ${end_sip}
+    ${rsip}    process_special_charators    ${sip}
+    Run Keyword If    '${rsip}'!='${None}'    Input text    id=ip_src_ip    ${sip}
+    ${rsmask}    process_special_charators    ${smask}
+    Run Keyword If    '${rsmask}'!='${None}'    Input text    id=ip_src_mask    ${smask}
+    ${rstart_sip}    process_special_charators    ${start_sip}
+    Run Keyword If    '${rstart_sip}'!='${None}'    Input text    id=ip_src_start    ${start_sip}
+    ${rend_sip}    process_special_charators    ${end_sip}
+    Run Keyword If    '${rend_sip}'!='${None}'    Input text    id=ip_src_end    ${end_sip}
     Select From List By Value    id=ip_des_sele    ${dhost}
-    Run Keyword If    '${dip}'!='${None}'    Input text    id=ip_des_ip    ${dip}
-    Run Keyword If    '${dmask}'!='${None}'    Input text    id=ip_des_mask    ${dmask}
-    Run Keyword If    '${start_dip}'!='${None}'    Input text    id=ip_des_start    ${start_dip}
-    Run Keyword If    '${end_dip}'!='${None}'    Input text    id=ip_des_end    ${end_dip}
+    ${rdip}    process_special_charators    ${dip}
+    Run Keyword If    '${rdip}'!='${None}'    Input text    id=ip_des_ip    ${dip}
+    ${rdmask}    process_special_charators    ${dmask}
+    Run Keyword If    '${rdmask}'!='${None}'    Input text    id=ip_des_mask    ${dmask}
+    ${rstart_dip}    process_special_charators    ${start_dip}
+    Run Keyword If    '${rstart_dip}'!='${None}'    Input text    id=ip_des_start    ${start_dip}
+    ${rend_dip}    process_special_charators    ${end_dip}
+    Run Keyword If    '${rend_dip}'!='${None}'    Input text    id=ip_des_end    ${end_dip}
     Select From List By Value    id=ip_proto    ${protcol}
-    Run Keyword If    '${start_port}'!='${None}'    Input text    id=ip_port_start    ${start_port}
-    Run Keyword If    '${end_port}'!='${None}'    Input text    id=ip_port_end    ${end_port}
+    ${rstart_port}    process_special_charators    ${start_port}
+    Run Keyword If    '${rstart_port}'!='${None}'    Input text    id=ip_port_start    ${start_port}
+    ${rend_port}    process_special_charators    ${end_port}
+    Run Keyword If    '${rend_port}'!='${None}'    Input text    id=ip_port_end    ${end_port}
     @{day_locator}    Get Variable Value    ${day_locator}
     : FOR    ${i}    IN    @{day_locator}
     \    Run Keyword If    '${i}'!='${None}'    Click Element    ${i}
@@ -208,17 +218,17 @@ Resource          lang_var.txt
     Click Element    id=add_ip_filter
 
 转到MAC过滤页面
-    Set Selenium Speed    .5
-    Wait Until Page Contains Element    css=#p_menu_management > div.m_p_txt
-    Click Element    css=#p_menu_management > div.m_p_txt
-    Click Element    css=#c_menu_mac_filter > div.m_c_txt
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="mac_filter";$.load("mac_filter")
 
 设置MAC过滤
     [Arguments]    ${des}=${None}    ${rule}=1    ${mac}=${None}    ${day_locator}=${None}    ${start_time}=0    ${end_time}=0
     ...    ${allday_locator}=${None}
-    Run Keyword If    '${des}'!='${None}'    Input text    id=mac_describe    ${des}
+    ${rdes}    process_special_charators    ${des}
+    Run Keyword If    '${rdes}'!='${None}'    Input text    id=mac_describe    ${des}
     Select From List By Value    id=mac_rule    ${rule}
-    Run Keyword If    '${mac}'!='${None}'    Input text    id=mac_filter    ${mac}
+    ${rmac}    process_special_charators    ${mac}
+    Run Keyword If    '${rmac}'!='${None}'    Input text    id=mac_filter    ${mac}
     @{day_locator}    Get Variable Value    ${day_locator}
     : FOR    ${i}    IN    @{day_locator}
     \    Click Element    ${i}
@@ -228,10 +238,8 @@ Resource          lang_var.txt
     Click Element    id=add_mac_filter
 
 转到恢复缺省页面
-    Set Selenium Speed    .5
-    Wait Until Page Contains Element    css=#p_menu_misc > div.m_p_txt
-    Click Element    css=#p_menu_misc > div.m_p_txt
-    Click Element    css=#c_menu_default > div.m_c_txt
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="default";$.load("default")
 
 恢复出厂设置
     转到恢复缺省页面
@@ -248,9 +256,8 @@ Resource          lang_var.txt
     Wait Until Keyword Succeeds    60    5    Page Should Not Contain Element    id=lock_bg
 
 转到接口状态页面
-    Set Selenium Speed    .5
-    Wait Until Page Contains Element    css=div.m_p_txt
-    Click Element    css=div.m_p_txt
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="status";$.load("status")
 
 WAN口IP是${ip}
     ${s}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
@@ -259,6 +266,8 @@ WAN口IP是${ip}
 轮询WAN口直到IP是${ip}
 
 转到虚拟服务配置页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="virtual";$.load("virtual")
 
 设置虚拟服务参数
     [Arguments]    ${des}=${None}    ${ip}=${None}    ${vir_proto}=all    ${external_port}=${None}    ${internal_port}=${None}
@@ -275,11 +284,15 @@ WAN口IP是${ip}
 修改列表${locator}第${row}行
 
 转到DMZ设置页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="dmz";$.load("dmz")
 
 设置DMZ参数
     [Arguments]    ${enable}=1    ${host_ip}=${None}
 
 转到SUPER-DMZ设置页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="dmz";$.load("dmz")
 
 设置SUPER-DMZ参数
     [Arguments]    ${enable}=1    ${mac}=${None}
@@ -290,21 +303,29 @@ WAN口IP是${ip}
     [Arguments]    ${lan_ip}=${None}    ${wan_ip}=${None}
 
 转到UPNP设置页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="upnp";$.load("upnp")
 
 设置UPNP参数
     [Arguments]    ${enable}=1    ${upnp_time}=${None}
 
 转到动态域名设置页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="ddns";$.load("ddns")
 
 设置动态域名参数
     [Arguments]    ${enable}=1    ${service_provider}=0    ${user}=${None}    ${passwd}=${None}    ${port}=${None}    ${domain}=${None}
 
 转到FTP私有端口设置页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="ftp";$.load("ftp")
 
 设置FTP私有端口参数
     [Arguments]    ${enable}=1    ${rule_name}=${None}    ${port}=${None}
 
 转到端口触发页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="portTrigger";$.load("portTrigger")
 
 设置端口触发参数
     [Arguments]    ${predefined_rule}=${None}    ${rule}=${None}    ${trigger_protocol}=${None}    ${start_trigger_port}=${None}    ${end_trigger_port}=${None}    ${forward_protocol}=${None}
@@ -315,3 +336,70 @@ WAN口IP是${ip}
 设置系统访问控制参数
     [Arguments]    ${enable}=1    ${port}=${None}
 
+转到Russia-PPPoE接入页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="wan";$.load("wan")
+    Wait Until Page Contains Element    id=conntype
+    Select From List By Value    id=conntype    4
+    Run Keyword And Ignore Error    Click Element    id=show_wan_advance
+
+设置Russia-PPPoE参数
+    [Arguments]    ${user}=${None}    ${password}=${None}    ${mac}=${None}    ${mtu}=${None}    ${serverName}=${None}    ${acName}=${None}
+    ...    ${dns1}=${None}    ${dns2}=${None}    ${connectMode}=${None}    ${timeout}=5
+    [Documentation]    ${connectMode} 1:auto \ 2:time_requrie 3:manual
+    Wait Until Keyword Succeeds    5    1    Element Should Be Visible    id=pppoe_username
+    ${ruser}    process_special_charators    ${user}
+    Run Keyword If    '${ruser}'!='${None}'    Input Text    id=pppoe_username    ${user}
+    ${rpassword}    process_special_charators    ${password}
+    Run Keyword If    '${rpassword}'!='${None}'    Input Text    id=pppoe_pwd    ${password}
+    ${rmac}    process_special_charators    ${mac}
+    Run Keyword If    '${rmac}'!='${None}'    Input Text    id=mac_addr    ${mac}
+    ${rmtu}    process_special_charators    ${mtu}
+    Run Keyword If    '${rmtu}'!='${None}'    Input Text    id=pppoe_mtu    ${mtu}
+    ${rserverName}    process_special_charators    ${serverName}
+    Run Keyword If    '${rserverName}'!='${None}'    Input Text    id=pppoe_service_name    ${serverName}
+    ${racName}    process_special_charators    ${acName}
+    Run Keyword If    '${racName}'!='${None}'    Input Text    id=pppoe_ac_name    ${acName}
+    ${rdns1}    process_special_charators    ${dns1}
+    Run Keyword If    '${rdns1}'!='${None}'    Input Text    id=dns_a    ${dns1}
+    ${rdns2}    process_special_charators    ${dns2}
+    Run Keyword If    '${rdns2}'!='${None}'    Input Text    id=dns_b    ${dns2}
+    Run Keyword If    '${connectMode}'=='1'    Click Element    id=ppp_connect_mode_auto
+    Run Keyword If    '${connectMode}'=='2'    Click Element    id=ppp_connect_mode_time
+    Run Keyword If    '${connectMode}'=='3'    Click Element    id=ppp_connect_mode_hand
+    Run Keyword If    '${connectMode}' == '2'    Input Text    id=ppp_time    ${timeout}
+    Click Button    id=save_wan_set
+
+转到Unifi-PPPoE设置页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="wan";$.load("wan")
+    Wait Until Page Contains Element    id=conntype
+    Select From List By Value    id=conntype    5
+    Run Keyword And Ignore Error    Click Element    id=show_wan_advance
+
+设置Unifi-PPPoE参数
+    [Arguments]    ${user}=${Nione}    ${password}=${None}    ${mac}=${None}    ${mtu}=${None}    ${serverName}=${None}    ${acName}=${None}
+    ...    ${dns1}=${None}    ${dns2}=${None}    ${connectMode}=${None}    ${timeout}=${None}
+    [Documentation]    ${connectMode} 1:auto \ 2:time_requrie 3:manual
+    Wait Until Keyword Succeeds    5    1    Element Should Be Visible    id=pppoe_username
+    ${ruser}    process_special_charators    ${user}
+    Run Keyword If    '${ruser}'!='${None}'    Input Text    id=pppoe_username    ${user}
+    ${rpassword}    process_special_charators    ${password}
+    Run Keyword If    '${rpassword}'!='${None}'    Input Text    id=pppoe_pwd    ${password}
+    ${rmac}    process_special_charators    ${mac}
+    Run Keyword If    '${rmac}'!='${None}'    Input Text    id=mac_addr    ${mac}
+    ${rmtu}    process_special_charators    ${mtu}
+    Run Keyword If    '${rmtu}'!='${None}'    Input Text    id=pppoe_mtu    ${mtu}
+    ${rserverName}    process_special_charators    ${serverName}
+    Run Keyword If    '${rserverName}'!='${None}'    Input Text    id=pppoe_service_name    ${serverName}
+    ${racName}    process_special_charators    ${acName}
+    Run Keyword If    '${racName}'!='${None}'    Input Text    id=pppoe_ac_name    ${acName}
+    ${rdns1}    process_special_charators    ${dns1}
+    Run Keyword If    '${rdns1}'!='${None}'    Input Text    id=dns_a    ${dns1}
+    ${rdns2}    process_special_charators    ${dns2}
+    Run Keyword If    '${rdns2}'!='${None}'    Input Text    id=dns_b    ${dns2}
+    Run Keyword If    '${connectMode}'=='1'    Click Element    id=ppp_connect_mode_auto
+    Run Keyword If    '${connectMode}'=='2'    Click Element    id=ppp_connect_mode_time
+    Run Keyword If    '${connectMode}'=='3'    Click Element    id=ppp_connect_mode_hand
+    Run Keyword If    '${connectMode}' == '2'    Input Text    id=ppp_time    ${timeout}
+    Click Button    id=save_wan_set

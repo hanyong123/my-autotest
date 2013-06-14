@@ -6,8 +6,7 @@ Resource          keyword.txt
 *** Test Cases ***
 try
     转到IP过滤页面
-    @{l}    Create List    id=ip_day    xpath=(//input[@id="ip_day"])[2]
-    设置IP过滤    day_locator=@{l}
+    验证IP过滤规则名    aa'aa    sdsdsds
 
 *** Keywords ***
 验证IP过滤规则名

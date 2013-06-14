@@ -4,17 +4,11 @@ Suite Teardown    关闭浏览器
 Resource          keyword.txt
 
 *** Test Cases ***
-try
-    验证PPPOE账号    ${EMPTY}    Null key is not permitted. And no unidentified characters!
+pppoe_ui_test_1
+    验证PPPOE账号    ${EMPTY}    ${common_string_null}
 
-try2
-    验证PPPOE首选DNS    .168.1.10    Invalid IP Address! Please input another one.
-
-try3
-    验证PPPOE服务名    \\\\    No special character '"\\ or space is permitted!
-
-try4
-    验证PPPOE AC名    9 9    No special character '"\\ or space is permitted!
+pppoe_ui_test_2
+    验证PPPOE账号最大输入长度    12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678    127
 
 *** Keywords ***
 验证PPPOE账号
