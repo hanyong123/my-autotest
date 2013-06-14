@@ -86,6 +86,7 @@ Library           common.py
 
 打开浏览器
     Open Browser    ${base_url}    ${browser}
+    Wait Until Page Contains Element    id=content_layer    20
 
 关闭浏览器
     Close Browser
@@ -204,7 +205,7 @@ Library           common.py
     Run Keyword If    '${rstart_dip}'!='${None}'    Input text    id=ip_des_start    ${start_dip}
     ${rend_dip}    process_special_charators    ${end_dip}
     Run Keyword If    '${rend_dip}'!='${None}'    Input text    id=ip_des_end    ${end_dip}
-    Select From List By Value    id=ip_proto    ${protcol}
+    Select From List By Label    id=ip_proto    ${protcol}
     ${rstart_port}    process_special_charators    ${start_port}
     Run Keyword If    '${rstart_port}'!='${None}'    Input text    id=ip_port_start    ${start_port}
     ${rend_port}    process_special_charators    ${end_port}
@@ -263,25 +264,33 @@ WAN口IP是${ip}
     ${s}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
     Should Be Equal    ${s}    ${ip}
 
-轮询WAN口直到IP是${ip}
+轮询WAN口直到IP是
+    [Arguments]    ${ip}
+    Wait Until Keyword Succeeds    15    5    WAN口IP是${ip}
 
 转到虚拟服务配置页面
     Set Selenium Speed    0.5
     Execute JavaScript    $.CurrentApp="virtual";$.load("virtual")
 
 设置虚拟服务参数
-    [Arguments]    ${des}=${None}    ${ip}=${None}    ${vir_proto}=all    ${external_port}=${None}    ${internal_port}=${None}
+    [Arguments]    ${des}=${None}    ${ip}=${None}    ${vir_proto}=ALL    ${start_external_port}=${None}    ${end_external_port}=${None}    ${start_internal_port}=${None}
+    ...    ${end_internal_port}=${None}
     [Documentation]    ${vir_proto}参数是select的value值
-
-列表${locator}里含有${string}
-
-列表${locator}第${row}行第${col}列是${string}
-
-删除列表${locator}第${row}行并显示成功消息${message}
-
-删除列表${locator}里所有条目并显示成功消息${message}
-
-修改列表${locator}第${row}行
+    Wait Until Keyword Succeeds    5    1    Element Should Be Visible    id=vir_ip
+    ${rdes}    process_special_charators    ${des}
+    Run Keyword If    '${rdes}'!='${None}'    Input Text    id=vir_name    ${des}
+    ${rip}    process_special_charators    ${ip}
+    Run Keyword If    '${ip}'!='${None}'    Input Text    id=vir_ip    ${ip}
+    Select From List By Label    id=vir_proto    ${vir_proto}
+    ${rstart_external_port}    process_special_charators    ${start_external_port}
+    Run Keyword If    '${start_external_port}'!='${None}'    Input Text    id=vir_outport_start    ${start_external_port}
+    ${rend_external_port}    process_special_charators    ${end_external_port}
+    Run Keyword If    '${rend_external_port}'!='${None}'    Input Text    id=vir_outport_end    ${end_external_port}
+    ${rstart_internal_port}    process_special_charators    ${start_internal_port}
+    Run Keyword If    '${rstart_internal_port}'!='${None}'    Input Text    id=vir_inport_start    ${start_internal_port}
+    ${rend_internal_port}    process_special_charators    ${end_internal_port}
+    Run Keyword If    '${rend_internal_port}'    Input Text    id=vir_inport_end    ${end_internal_port}
+    Click Element    id=save_virtual
 
 转到DMZ设置页面
     Set Selenium Speed    0.5
@@ -358,12 +367,12 @@ WAN口IP是${ip}
     Run Keyword If    '${predefined_rule}'!='${None}'    Select From List By Value    id=port_select    ${predefined_rule}
     ${rrule}    process_special_charators    ${rule}
     Run Keyword If    '${rrule}'!='${None}'    Input Text    id=app_name    ${rule}
-    Run Keyword If    '${trigger_protocol}'!='${None}'    Select From List By Value    id=trigger_proto    ${trigger_protocol}
+    Run Keyword If    '${trigger_protocol}'!='${None}'    Select From List By Label    id=trigger_proto    ${trigger_protocol}
     ${rstart_trigger_port}    process_special_charators    ${start_trigger_port}
     Run Keyword If    '${rstart_trigger_port}'!='${None}'    Input Text    id=app_port_start    ${start_trigger_port}
     ${rend_trigger_port}    process_special_charators    ${end_trigger_port}
     Run Keyword If    '${rend_trigger_port}'!='${None}'    Input Text    id=app_port_end    ${end_trigger_port}
-    Run Keyword If    '${forward_protocol}'!='${None}'    Select From List By Value    id=forward_proto    ${forward_protocol}
+    Run Keyword If    '${forward_protocol}'!='${None}'    Select From List By Label    id=forward_proto    ${forward_protocol}
     ${rstart_forward_port}    process_special_charators    ${start_forward_port}
     Run Keyword If    '${rstart_forward_port}'!='${None}'    Input Text    id=forward_port_start    ${start_forward_port}
     ${rend_forward_port}    process_special_charators    ${end_forward_port}
