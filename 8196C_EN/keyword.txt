@@ -429,7 +429,7 @@ WAN口IP是${ip}
 转到Unifi-PPPoE设置页面
     Set Selenium Speed    0.5
     Execute JavaScript    $.CurrentApp="wan";$.load("wan")
-    Wait Until Page Contains Element    id=conntype
+    Wait Until Page Contains Element    id=conntype    15
     Select From List By Value    id=conntype    5
     Run Keyword And Ignore Error    Click Element    id=show_wan_advance
 
@@ -459,3 +459,35 @@ WAN口IP是${ip}
     Run Keyword If    '${connectMode}'=='3'    Click Element    id=ppp_connect_mode_hand
     Run Keyword If    '${connectMode}' == '2'    Input Text    id=ppp_time    ${timeout}
     Click Button    id=save_wan_set
+
+转到AP模式的无线基本设置页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="base";$.load("base")
+    Wait Until Page Contains Element    id=net_mode    15
+    Select From List By Label    id=net_mode    Access Point
+
+设置AP模式的无线基本参数
+    [Arguments]    ${enable}=1    ${radio_band}=${None}    ${ssid}=${None}    ${ssid_broadcast}=1    ${region}=${None}    ${channel_width}=1
+    ...    ${channel}=${None}    ${control_side}=0    ${auth_type}=${None}    ${encryption_type}=3    ${key_mode}=1    ${passwd}=${None}
+    Run Keyword If    '${enable}'==1    Click Element    id=wl_enable_on
+    Run Keyword If    '${enable}'==0    Click Element    id=wl_enable_off
+    Run Keyword If    '${radio_band}'!='${None}'    Select From List By Label    id=wl_stand    ${radio_band}
+    ${rssid}    process_special_charators    ${ssid}
+    Run Keyword If    '${rssid}'!='${None}'    Input Text    id=ssid    ${ssid}
+    Run Keyword If    '${ssid_broadcast}'==1     Click Element    id=ssid_broad_on
+    Run Keyword If    '${ssid_broadcast}'==0     Click Element    id=ssid_broad_off
+    Run Keyword If    '${region}'!='${None}'    Select From List By Label    id=region    ${region}
+    Run Keyword If    '${channel_width}'==1    Click Element    id=channel_width_40
+    Run Keyword If    '${channel_width}'==0    Click Element    id=channel_width_20
+    Run Keyword If    '${channel}'!='${None}'    Select From List By Label    id=channel    ${channel}
+    Run Keyword If    '${control_side}'==0    Click Element    id=channel_bind_down
+    Run Keyword If    '${control_side}'==1    Click Element    id=channel_bind_up
+    Run Keyword If    '${auth_type}'!='${None}'    Select From List By Label    id=sec_mode    ${auth_type}
+    Run Keyword If    '${encryption_type}'==1    Click Element    id=key_type_t
+    Run Keyword If    '${encryption_type}'==2    Click Element    id=key_type_a
+    Run Keyword If    '${encryption_type}'==3    Click Element    id=key_type_ta
+    Run Keyword If    '${key_mode}'==0    Click Element    id=key_mode_wpa_hex
+    Run Keyword If    '${key_mode}'==1    Click Element    id=key_mode_wpa_asc
+    ${rpasswd}    process_special_charators    ${passwd}
+    Run Keyword If    '${rpasswd}'!='${None}'    Input Text    id=key_wpa    ${passwd}
+    Click Element    id=save_wl_base
