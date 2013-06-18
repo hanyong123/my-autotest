@@ -1,1 +1,104 @@
+*** Settings ***
+Suite Setup       Run Keywords    打开浏览器    AND    转到端口触发页面
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
 *** Test Cases ***
+PortTri_RuleName_test_1
+    [Template]
+    验证规则名    ${EMPTY}    ${common_unlock_save}
+    端口触发列表第${row}行第${col}列是${string}    1    2    ${EMPTY}
+
+PortTri_RuleName_test_2
+    [Template]    验证规则名
+    '    ${common_string_null_err}
+    \\    ${common_string_null_err}
+    "    ${common_string_null_err}
+
+PortTri_RuleNameMaxLen_test_3
+    [Template]    验证规则名最大长度
+    fdsafdsafgdsafdsfdsafdsssssssssssdfdsafdsafdsafdsa    31
+
+PortTri_RuleName_test_4
+    [Template]
+    删除所有端口触发条目并显示成功消息${message}
+    验证规则名    abcdefghijklmnopqrstuvwxyz1234你    ${common_unlock_error}
+
+PortTri_TriPort_test_5
+    [Template]    验证触发端口
+    ${empty}    ${empty}    ${common_port_err}
+    \    \    ${common_port_err}
+    ${empty}    2123    ${common_port_err}
+
+PortTri_TriPort_test_6
+    删除所有端口触发条目并显示成功消息${message}
+    验证触发端口    8888    ${EMPTY}    ${common_unlock_save}
+    端口触发列表第${row}行第${col}列是${string}     1    4    8888-8888
+
+PortTri_ForwardPort_test_7
+    [Template]    验证转发端口
+     ${EMPTY}    123    ${common_port_err}
+    \    \    ${common_port_err}
+
+PortTri_ForwardPort_test_8
+    [Template]
+    删除所有端口触发条目并显示成功消息${message}
+    验证转发端口    1234    \    ${common_unlock_save}
+    端口触发列表第${row}行第${col}列是${string}    1    6    1234-1234
+
+PortTri_TriPortMAXLen_test_9
+    [Template]
+    验证端口触发的端口长度    app_port_start    243243242    5
+
+PortTri_TriPortMAXLen_test_10
+    [Template]
+    验证端口触发的端口长度    app_port_start    243243242    5
+
+PortTri_TriPortMAXLen_test_11
+    验证端口触发的端口长度    forward_port_start    243243242    5
+
+PortTri_TriPortMAXLen_test_12
+    验证端口触发的端口长度    forward_port_end    243243242    5
+
+*** Keywords ***
+验证规则名
+    [Arguments]    ${rule}    ${message}
+    设置端口触发参数    ${None}    ${rule}    TCP    222    222    TCP
+    ...    1234    1234
+    显示消息    ${message}
+
+验证规则名最大长度
+    [Arguments]    ${rule}    ${maxlen}
+    验证输入框最大输入长度    app_name    ${rule}     ${maxlen}
+
+验证触发端口
+    [Arguments]    ${start_port}    ${end_port}    ${message}
+    设置端口触发参数    ${None}    rulename    TCP    ${start_port}    ${end_port}    TCP
+    ...    1234    1234
+    显示消息    ${message}
+
+端口触发列表里含有${string}
+    [Arguments]    ${string}
+    Table Should Contain    xpath=//table[@class="df_tab"]    ${string}
+
+端口触发列表第${row}行第${col}列是${string}
+    [Arguments]    ${row}    ${col}    ${string}
+    ${row}    Evaluate    int(${row})+1
+    ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    ${col}
+    Should Be Equal    ${v}    ${string}
+
+删除所有端口触发条目并显示成功消息${message}
+    Click Element    del_app_port_all
+    Choose Ok On Next Confirmation
+    ${common_del_tip}    Confirm Action
+    显示消息    ${common_unlock_delete}
+
+验证转发端口
+    [Arguments]    ${start_port}    ${end_port}    ${message}
+    设置端口触发参数    ${None}    rulename    TCP    222    222    TCP
+    ...    ${start_port}    ${end_port}
+    显示消息    ${message}
+
+验证端口触发的端口长度
+    [Arguments]    ${id}    ${port}    ${maxlen}
+    验证输入框最大输入长度    ${id}     ${port}    ${maxlen}
