@@ -3,62 +3,268 @@ Suite Setup       Run Keywords    打开浏览器    AND    转到端口触发�
 Suite Teardown    关闭浏览器
 Resource          keyword.txt
 
+*** Variables ***
+@{port}           1    2    3    4    5    6    7
+...               8    9    10    11    12    13    14
+...               15    16    17    18    19    20    21
+...               22    23    24    25    26    27    28
+
 *** Test Cases ***
 PortTri_RuleName_test_1
+    [Documentation]    *规则名称允许为空，为空时能够保存成功；规则列表中展示出的该条规则的规则名为空*
+    [Setup]    删除所有端口触发条目并显示成功消息
     [Template]
     验证规则名    ${EMPTY}    ${common_unlock_save}
     端口触发列表第${row}行第${col}列是${string}    1    2    ${EMPTY}
 
 PortTri_RuleName_test_2
+    [Documentation]    *规则名称输入数据带有 '"\或空格 ，提示“ 不能含有特殊字符 \ '"\和空格 ”*
     [Template]    验证规则名
     '    ${common_string_null_err}
     \\    ${common_string_null_err}
     "    ${common_string_null_err}
 
 PortTri_RuleNameMaxLen_test_3
+    [Documentation]    *规则名长度最大31个字符，超过31字符无法输入*
     [Template]    验证规则名最大长度
     fdsafdsafgdsafdsfdsafdsssssssssssdfdsafdsafdsafdsa    31
 
 PortTri_RuleName_test_4
+    [Documentation]    *规则名输入30个字符，再输入一个中文，导致超过31个字符，提示“规则名过长，已经自动截断”。*
     [Template]
-    删除所有端口触发条目并显示成功消息${message}
+    删除所有端口触发条目并显示成功消息
     验证规则名    abcdefghijklmnopqrstuvwxyz1234你    ${common_unlock_error}
 
 PortTri_TriPort_test_5
+    [Documentation]    *触发端口起始端口不能为空*
     [Template]    验证触发端口
     ${empty}    ${empty}    ${common_port_err}
     \    \    ${common_port_err}
     ${empty}    2123    ${common_port_err}
 
 PortTri_TriPort_test_6
-    删除所有端口触发条目并显示成功消息${message}
+    [Documentation]    *触发端口结束端口可以为空；当起始端口不为空，而结束端口为空时，表示触发端口为起始端口的值。*
+    删除所有端口触发条目并显示成功消息
     验证触发端口    8888    ${EMPTY}    ${common_unlock_save}
-    端口触发列表第${row}行第${col}列是${string}     1    4    8888-8888
+    端口触发列表第${row}行第${col}列是${string}    1    4    8888-8888
 
 PortTri_ForwardPort_test_7
+    [Documentation]    *转发端口起始端口不能为空*
     [Template]    验证转发端口
-     ${EMPTY}    123    ${common_port_err}
+    ${EMPTY}    123    ${common_port_err}
     \    \    ${common_port_err}
 
 PortTri_ForwardPort_test_8
+    [Documentation]    *转发端口结束端口可以为空*
     [Template]
-    删除所有端口触发条目并显示成功消息${message}
+    删除所有端口触发条目并显示成功消息
     验证转发端口    1234    \    ${common_unlock_save}
     端口触发列表第${row}行第${col}列是${string}    1    6    1234-1234
 
 PortTri_TriPortMAXLen_test_9
+    [Documentation]    *触发端口起始端口超过5个字符后，无法输入*
     [Template]
     验证端口触发的端口长度    app_port_start    243243242    5
 
 PortTri_TriPortMAXLen_test_10
+    [Documentation]    *触发端口结束端口超过5个字符后，无法输入*
     [Template]
-    验证端口触发的端口长度    app_port_start    243243242    5
+    验证端口触发的端口长度    app_port_end    243243242    5
+    [Teardown]
 
 PortTri_TriPortMAXLen_test_11
+    [Documentation]    *转发端口起始端口超过5个字符后，无法输入*
     验证端口触发的端口长度    forward_port_start    243243242    5
 
 PortTri_TriPortMAXLen_test_12
+    [Documentation]    *转发端口结束端口超过5个字符后，无法输入*
     验证端口触发的端口长度    forward_port_end    243243242    5
+
+PortTri_TriPortRange_test_13
+    [Documentation]    *触发端口起始端口，数字不在1~65535的范围内，提示端口范围为1~65535*
+    [Template]    验证触发端口
+    0    \    ${common_port_err}
+    -1213    \    ${common_port_err}
+    65536    \    ${common_port_err}
+    80000    \    ${common_port_err}
+
+PortTri_TriPortRange_test_14
+    [Documentation]    *触发端口结束端口，数字不在1~65535的范围内，提示端口范围为1~65535*
+    [Template]    验证触发端口
+    1    0    ${common_port_err}
+    1    -1213    ${common_port_err}
+    1    65536    ${common_port_err}
+    1    65537    ${common_port_err}
+    1    80000    ${common_port_err}
+
+PortTri_ForwardPortRange_test_15
+    [Documentation]    *转发端口起始端口，数字不在1~65535的范围内，提示端口范围为1~65535*
+    [Template]    验证转发端口
+    0    \    ${common_port_err}
+    -1213    \    ${common_port_err}
+    65536    \    ${common_port_err}
+    80000    \    ${common_port_err}
+
+PortTri_ForwardPortRange_test_16
+    [Documentation]    *转发端口结束端口，数字不在1~65535的范围内，提示端口范围为1~65535*
+    [Template]    验证转发端口
+    1    0    ${common_port_err}
+    1    -1213    ${common_port_err}
+    1    65536    ${common_port_err}
+    1    80000    ${common_port_err}
+
+PortTri_TriPortRange_test_17
+    [Documentation]    *触发端口起始端口，端口不为正整数，提示不能含有非数字字符*
+    [Template]    验证触发端口
+    \\    \    ${common_port_err}
+    '    \    ${common_port_err}
+    "    \    ${common_port_err}
+    =_{}    \    ${common_port_err}
+    @`~    \    ${common_port_err}
+    a    \    ${common_port_err}
+    A    \    ${common_port_err}
+    12#2    \    ${common_port_err}
+    12%2    \    ${common_port_err}
+    100 0    \    ${common_port_err}
+
+PortTri_TriPortRange_test_18
+    [Documentation]    *触发端口结束端口，端口不为正整数，提示不能含有非数字字符*
+    [Template]    验证触发端口
+    1    \\    ${common_port_err}
+    1    '    ${common_port_err}
+    1    "    ${common_port_err}
+    1    =_{}    ${common_port_err}
+    1    @`~    ${common_port_err}
+    1    a    ${common_port_err}
+    1    A    ${common_port_err}
+    1    12#2    ${common_port_err}
+    1    12%2    ${common_port_err}
+    1    100 0    ${common_port_err}
+
+PortTri_ForwardPortRange_test_19
+    [Documentation]    *转发端口起始端口，端口不为正整数，提示不能含有非数字字符*
+    [Template]    验证转发端口
+    \\    \    ${common_port_err}
+    '    \    ${common_port_err}
+    "    \    ${common_port_err}
+    =_{}    \    ${common_port_err}
+    @`~    \    ${common_port_err}
+    a    \    ${common_port_err}
+    A    \    ${common_port_err}
+    12#2    \    ${common_port_err}
+    12%2    \    ${common_port_err}
+    100 0    \    ${common_port_err}
+
+PortTri_ForwardPortRange_test_20
+    [Template]    验证转发端口
+    1    \\    ${common_port_err}
+    1    '    ${common_port_err}
+    1    "    ${common_port_err}
+    1    =_{}    ${common_port_err}
+    1    @`~    ${common_port_err}
+    1    a    ${common_port_err}
+    1    A    ${common_port_err}
+    1    12#2    ${common_port_err}
+    1    12%2    ${common_port_err}
+    1    100 0    ${common_port_err}
+
+PortTri_TriPortCmp_test_21
+    [Documentation]    *设置触发端口的起始端口小于结束端口，保存成功*
+    删除所有端口触发条目并显示成功消息
+    验证触发端口    222    333    ${common_unlock_save}
+    端口触发列表第${row}行第${col}列是${string}    1    4    222-333
+
+PortTri_TriPortCmp_test_22
+    删除所有端口触发条目并显示成功消息
+    验证触发端口    222    222    ${common_unlock_save}
+    端口触发列表第${row}行第${col}列是${string}    1    4    222-222
+
+PortTri_TriPortCmp_test_23
+    [Documentation]    *设置触发端口的起始端口大于结束端口，保存失败，提示“起始端口不能大于结束端口”*
+    验证触发端口    123    34    ${common_cmp_port_err}
+
+PortTri_ForwardPortCmp_test_24
+    [Documentation]    *设置转发端口的起始端口小于结束端口，保存成功*
+    删除所有端口触发条目并显示成功消息
+    验证转发端口    222    333    ${common_unlock_save}
+    端口触发列表第${row}行第${col}列是${string}    1    6    222-333
+
+PortTri_ForwardPortCmp_test_25
+    [Documentation]    *设置转发端口的起始端口等于结束端口，保存成功*
+    删除所有端口触发条目并显示成功消息
+    验证转发端口    1234    1234    ${common_unlock_save}
+    端口触发列表第${row}行第${col}列是${string}    1    6    1234-1234
+
+PortTri_ForwardPortCmp_test_26
+    [Documentation]    *设置转发端口的起始端口大于结束端口，保存失败，提示“起始端口不能大于结束端口”*
+    验证转发端口    10000    9999    ${common_cmp_port_err}
+
+PortTri_TotalItem_test_28
+    [Documentation]    *端口触发条目总数超过10条，不能再添加新的条目，提示端口触发条目已满*
+    验证条目总数
+
+PortTri_SameItem_test_29_1
+    [Documentation]    *验证触发协议为TCP的触发端口重复*
+    [Setup]    删除所有端口触发条目并显示成功消息
+    [Template]    验证触发端口重复
+    TCP    200    500    2345    ${common_unlock_save}
+    TCP    200    \    1234    ${common_port_occupy_err}
+    TCP    190    200    1234    ${common_port_occupy_err}
+    TCP    190    300    1234    ${common_port_occupy_err}
+    TCP    210    300    1234    ${common_port_occupy_err}
+    TCP    300    1000    1234    ${common_port_occupy_err}
+    TCP    500    1000    1234    ${common_port_occupy_err}
+
+PortTri_SameItem_test_29_2
+    [Documentation]    *验证触发协议为UDP的触发端口重复*
+    [Setup]    删除所有端口触发条目并显示成功消息
+    [Template]    验证触发端口重复
+    UDP    200    500    2345    ${common_unlock_save}
+    UDP    200    \    1234    ${common_port_occupy_err}
+    UDP    190    200    1234    ${common_port_occupy_err}
+    UDP    190    300    1234    ${common_port_occupy_err}
+    UDP    210    300    1234    ${common_port_occupy_err}
+    UDP    300    1000    1234    ${common_port_occupy_err}
+    UDP    500    1000    1234    ${common_port_occupy_err}
+    [Teardown]
+
+PortTri_SameItem_test_29_3
+    [Documentation]    *验证转发协议为TCP的转发端口重复*
+    [Setup]    删除所有端口触发条目并显示成功消息
+    [Template]    验证转发端口重复
+    2000    TCP    200    500    ${common_unlock_save}
+    2001    TCP    200    \    ${common_port_occupy_err}
+    2001    TCP    190    200    ${common_port_occupy_err}
+    2001    TCP    190    300    ${common_port_occupy_err}
+    2001    TCP    210    300    ${common_port_occupy_err}
+    2001    TCP    300    1000    ${common_port_occupy_err}
+    2001    TCP    500    1000    ${common_port_occupy_err}
+
+PortTri_SameItem_test_29_4
+    [Documentation]    *验证转发协议为UDP的转发端口重复*
+    [Setup]    删除所有端口触发条目并显示成功消息
+    [Template]    验证转发端口重复
+    2000    UDP    200    500    ${common_unlock_save}    #成功保存一个条目
+    2001    UDP    200    \    ${common_port_occupy_err}
+    2001    UDP    190    200    ${common_port_occupy_err}
+    2001    UDP    190    300    ${common_port_occupy_err}
+    2001    UDP    210    300    ${common_port_occupy_err}
+    2001    UDP    300    1000    ${common_port_occupy_err}
+    2001    UDP    500    1000    ${common_port_occupy_err}
+
+PortTri_SameItem_test_29_5
+    [Documentation]    *成功保存触发端口相同但是协议不同的条目*
+    [Setup]    删除所有端口触发条目并显示成功消息
+    [Template]    验证触发端口重复
+    TCP    200    500    2345    ${common_unlock_save}
+    UDP    200    500    1234    ${common_unlock_save}
+
+PortTri_SameItem_test_29_6
+    [Documentation]    *成功保存转发端口相同但是协议不同的条目*
+    [Setup]    删除所有端口触发条目并显示成功消息
+    [Template]    验证转发端口重复
+    2000    UDP    200    500    ${common_unlock_save}
+    2001    TCP    200    500    ${common_unlock_save}
 
 *** Keywords ***
 验证规则名
@@ -69,7 +275,7 @@ PortTri_TriPortMAXLen_test_12
 
 验证规则名最大长度
     [Arguments]    ${rule}    ${maxlen}
-    验证输入框最大输入长度    app_name    ${rule}     ${maxlen}
+    验证输入框最大输入长度    app_name    ${rule}    ${maxlen}
 
 验证触发端口
     [Arguments]    ${start_port}    ${end_port}    ${message}
@@ -87,7 +293,7 @@ PortTri_TriPortMAXLen_test_12
     ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    ${col}
     Should Be Equal    ${v}    ${string}
 
-删除所有端口触发条目并显示成功消息${message}
+删除所有端口触发条目并显示成功消息
     Click Element    del_app_port_all
     Choose Ok On Next Confirmation
     ${common_del_tip}    Confirm Action
@@ -101,4 +307,25 @@ PortTri_TriPortMAXLen_test_12
 
 验证端口触发的端口长度
     [Arguments]    ${id}    ${port}    ${maxlen}
-    验证输入框最大输入长度    ${id}     ${port}    ${maxlen}
+    验证输入框最大输入长度    ${id}    ${port}    ${maxlen}
+
+验证条目总数
+    删除所有端口触发条目并显示成功消息
+    : FOR    ${i}    IN    @{port}
+    \    设置端口触发参数    ${None}    ${i}    TCP    ${i}    ${EMPTY}
+    \    ...    TCP    ${i}    ${EMPTY}
+    \    run keyword if    ${i}=="19"    显示消息    ${common_unlock_save}
+    \    run keyword if    ${i}!="19"    显示消息    ${common_unlock_save}
+    \    sleep    2s
+
+验证触发端口重复
+    [Arguments]    ${tri_pro}    ${triport_start}    ${triport_end}    ${forward_port}    ${message}
+    设置端口触发参数    ${None}    rulename    ${tri_pro}    ${triport_start}    ${triport_end}    TCP
+    ...    ${forward_port}     ${EMPTY}
+    显示消息    ${message}
+
+验证转发端口重复
+    [Arguments]    ${triport_start}    ${forward_pro}    ${forward_start}    ${forward_end}    ${message}
+    设置端口触发参数    ${None}    rulename    TCP    ${triport_start}    ${EMPTY}    ${forward_pro}
+    ...    ${forward_start}     ${forward_end}
+    显示消息    ${message}
