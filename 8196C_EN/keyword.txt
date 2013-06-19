@@ -86,7 +86,7 @@ Library           common.py
 
 打开浏览器
     Open Browser    ${base_url}    ${browser}
-    Wait Until Page Contains Element    id=content_layer    20
+    Wait Until Page Contains Element    id=p_menu_status    20
 
 关闭浏览器
     Close Browser
@@ -351,8 +351,8 @@ WAN口IP是${ip}
 
 设置FTP私有端口参数
     [Arguments]    ${enable}=1    ${rule_name}=${None}    ${port}=${None}
-    Run Keyword If    '${enable}'='1'    Click Element    id=ftp_enable_on
-    Run Keyword If    '${enable}'='0'    Click Element    id=ftp_enable_off
+    Run Keyword If    '${enable}'=='1'    Click Element    id=ftp_enable_on
+    Run Keyword If    '${enable}'=='0'    Click Element    id=ftp_enable_off
     ${rport}    process_special_charators    ${port}
     Run Keyword If    '${rport}'!='${None}'    Input Text    id=ftp_port    ${port}
     Click Element    id=save_ftp
@@ -377,7 +377,7 @@ WAN口IP是${ip}
     Run Keyword If    '${rstart_forward_port}'!='${None}'    Input Text    id=forward_port_start    ${start_forward_port}
     ${rend_forward_port}    process_special_charators    ${end_forward_port}
     Run Keyword If    '${rend_forward_port}'!='${None}'    Input Text    id=forward_port_end    ${end_forward_port}
-    Click Element    id=save
+    Click Element    id=save_app
 
 转到系统访问控制
     Set Selenium Speed    0.5

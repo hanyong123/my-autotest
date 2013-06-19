@@ -1,1 +1,40 @@
+*** Settings ***
+Suite Setup       Run Keywords    打开浏览器    AND    转到FTP私有端口设置页面
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
 *** Test Cases ***
+FTP_PORT_test_5
+    [Template]    验证端口在1到65535
+    0    ${common_port_err}
+    0.1    ${common_port_err}
+    -1    ${common_port_err}
+
+FTP_PORT_test_6
+    [Template]    验证端口在1到65535
+    65536    ${common_port_err}
+    65537    ${common_port_err}
+
+FTP_PORT_test_7
+    [Template]    验证端口非法字符
+    ${empty}    ${common_port_err}
+    "    ${common_port_err}
+    '    ${common_port_err}
+    \\    ${common_port_err}
+    q%$    ${common_port_err}
+    =_()    ${common_port_err}
+
+FTP_PORT_test_8
+    [Template]    验证端口在1到65535
+    345    ${common_unlock_save}
+
+*** Keywords ***
+验证端口在1到65535
+    [Arguments]    ${port}    ${message}
+    设置FTP私有端口参数    1    \    ${port}
+    显示消息    ${message}
+
+验证端口非法字符
+    [Arguments]    ${port}    ${message}
+    设置FTP私有端口参数    1    \    ${port}
+    显示消息    ${message}
