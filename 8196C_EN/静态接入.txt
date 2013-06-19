@@ -4,14 +4,429 @@ Suite Teardown    关闭浏览器
 Resource          keyword.txt
 
 *** Test Cases ***
-try
-    验证静态接入地址    ${EMPTY}    255.255.255.0    192.168.1.1    Invalid IP Address! Please input another one.
+static_ip_test_1
+    验证静态IP地址最大输入长度    1234567890123456    15
+
+static_ip_test_2
+    [Template]    验证静态接入地址
+    10.0.0.1.    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_3
+    [Template]    验证静态接入地址
+    10.0.01    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_4
+    [Template]    验证静态接入地址
+    ${EMPTY}    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_5
+    [Template]    验证静态接入地址
+    -1.0.0.2    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+    256.0.0.1    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_6
+    [Template]    验证静态接入地址
+    10.-1.0.10    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+    10.256.0.10    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_7
+    [Template]    验证静态接入地址
+    10.0.-1.10    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+    10.0.256.10    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_8
+    [Template]    验证静态接入地址
+    10.0.0.-1    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+    10.0.0.256    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_9
+    [Template]    验证静态接入地址
+    192,168;1:s    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_10
+    [Template]    验证静态接入地址
+    .168.1.10    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+    192..1.10    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+    192.168..10    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+    192.168.1.    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_11
+    [Template]    验证静态接入地址
+    0.0.0.0    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_12
+    [Template]    验证静态接入地址
+    224.0.0.1    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+    255.0.0.1    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+    254.0.0.1    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_13
+    [Template]    验证静态接入地址
+    127.0.0.1    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_14
+    [Template]    验证静态接入地址
+    0.168.1.10    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_15
+    [Template]    验证静态接入地址
+    192.168.1.0    255.255.255.0    192.168.1.1    ${common_segment_err}
+    172.16.0.0    255.255.0.0    172.16.1.1    ${common_segment_err}
+    10.0.0.0    255.0.0.0    10.1.2.3    ${common_segment_err}
+
+static_ip_test_16
+    [Template]    验证静态接入地址
+    192.168.1.255    255.255.255.0    192.168.1.1    ${common_Bcast_err}
+    172.16.255.255    255.255.0.0    172.16.1.1    ${common_Bcast_err}
+    10.255.255.255    255.0.0.0    10.1.1.2    ${common_Bcast_err}
+
+static_mask_test_17
+    [Template]
+    验证静态子网掩码最大输入长度    1234567890123456    15
+
+static_mask_test_18
+    [Template]    验证静态接入地址
+    10.0.0.100    255.0.0.0.    10.0.10.100    ${common_mask_addr_err}
+
+static_mask_test_19
+    [Template]    验证静态接入地址
+    10.0.0.100    255.0.0    10.0.10.100    ${common_mask_addr_err}
+
+static_mask_test_20
+    [Template]    验证静态接入地址
+    10.0.0.100    ${EMPTY}    10.0.10.100    ${common_mask_addr_err}
+
+static_mask_test_21
+    [Template]    验证静态接入地址
+    10.0.0.100    255.0.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    254.0.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    252.0.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    248.0.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    240.0.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    224.0.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    192.0.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    128.0.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    129.0.0.0    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    253.0.0.0    10.0.0.10    ${common_mask_addr_err}
+
+static_mask_test_22
+    [Template]    验证静态接入地址
+    10.0.0.100    255.255.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.254.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.252.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.248.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.240.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.224.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.192.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.128.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.129.0.0    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    255.253.0.0    10.0.0.10    ${common_mask_addr_err}
+
+static_mask_test_23
+    [Template]    验证静态接入地址
+    10.0.0.100    255.255.255.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.255.254.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.255.252.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.255.248.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.255.240.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.255.224.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.255.192.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.255.128.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.255.129.0    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    255.255.253.0    10.0.0.10    ${common_mask_addr_err}
+
+static_mask_test_24
+    [Template]    验证静态接入地址
+    10.0.0.1    255.255.255.255    10.0.0.1    ${common_unlock_error}
+    10.0.0.1    255.255.255.254    10.0.0.1    ${common_Bcast_err}
+    10.0.0.1    255.255.255.252    10.0.0.1    ${common_unlock_save}
+    10.0.0.1    255.255.255.248    10.0.0.1    ${common_unlock_save}
+    10.0.0.1    255.255.255.240    10.0.0.1    ${common_unlock_save}
+    10.0.0.1    255.255.255.224    10.0.0.1    ${common_unlock_save}
+    10.0.0.1    255.255.255.192    10.0.0.1    ${common_unlock_save}
+    10.0.0.1    255.255.255.129    10.0.0.1    ${common_unlock_save}
+    10.0.0.1    255.255.255.253    10.0.0.1    ${common_mask_addr_err}
+
+static_mask_test_25
+    [Template]    验证静态接入地址
+    10.0.0.1    255,255;0:s    10.0.0.1    ${common_mask_addr_err}
+
+static_mask_test_26
+    [Template]    验证静态接入地址
+    10.0.0.1    .255.0.0    10.0.0.1    ${common_mask_addr_err}
+    10.0.0.1    255..0.0    10.0.0.1    ${common_mask_addr_err}
+    10.0.0.1    255.255..0    10.0.0.1    ${common_mask_addr_err}
+    10.0.0.1    255.255.0.    10.0.0.1    ${common_mask_addr_err}
+
+static_mask_test_27
+    [Template]    验证静态接入地址
+    10.0.0.1    0.0.0.0    10.0.0.1    ${common_mask_addr_err}
+    10.0.0.1    255.255.255.255    10.0.0.1    ${common_mask_addr_err}
+
+static_mask_test_28
+    [Template]    验证静态接入地址
+    10.0.0.100    254.255.255.128    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    255.254.255.128    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    255.255.254.128    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    255.255.255.128    10.0.0.10    ${common_unlock_save}
+
+static_mask_test_29
+    [Template]    验证静态接入地址
+    10.0.0.100    254.255.128.0    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    255.254.128.0    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    255.255.128.255    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    255.255.128.0    10.0.0.10    ${common_unlock_save}
+
+static_mask_test_30
+    [Template]    验证静态接入地址
+    10.0.0.100    254.128.0.0    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    255.128.254.0    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    255.128.0.254    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    255.128.0.0    10.0.0.10    ${common_unlock_save}
+
+static_mask_test_31
+    [Template]    验证静态接入地址
+    10.0.0.100    128.254.0.0    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    128.0.254.0    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    128.0.0.254    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    128.0.0.0    10.0.0.10    ${common_unlock_save}
+
+static_gw_test_32
+    验证静态默认网关最大输入长度    1234567890123456    15
+
+static_gw_test_33
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    10.0.0.1.    ${common_ip_addr_err}
+
+static_gw_test_34
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    10.0.01    ${common_ip_addr_err}
+
+static_gw_test_35
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    ${EMPTY}    ${common_ip_addr_err}
+
+static_gw_test_36
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    -1.0.0.2    ${common_ip_addr_err}
+    10.0.0.1    255.0.0.0    256.0.0.1    ${common_ip_addr_err}
+
+static_gw_test_37
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    10.-1.0.10    ${common_ip_addr_err}
+    10.0.0.1    255.0.0.0    10.256.0.10    ${common_ip_addr_err}
+
+static_gw_test_38
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    10.0.-1.10    ${common_ip_addr_err}
+    10.0.0.1    255.0.0.0    10.0.256.10    ${common_ip_addr_err}
+
+static_gw_test_39
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    10.0.0.-1    ${common_ip_addr_err}
+    10.0.0.1    255.0.0.0    10.0.0.256    ${common_ip_addr_err}
+
+static_gw_test_40
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    192,168;1:s    ${common_ip_addr_err}
+
+static_gw_test_41
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    .168.1.10    ${common_ip_addr_err}
+    10.0.0.1    255.0.0.0    192..1.10    ${common_ip_addr_err}
+    10.0.0.1    255.0.0.0    192.168..10    ${common_ip_addr_err}
+    10.0.0.1    255.0.0.0    192.168.1.    ${common_ip_addr_err}
+
+static_gw_test_43
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    0.0.0.0    ${common_ip_addr_err}
+
+static_gw_test_44
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    224.0.0.1    ${common_ip_addr_err}
+    10.0.0.1    255.0.0.0    255.0.0.1    ${common_ip_addr_err}
+    10.0.0.1    255.0.0.0    254.0.0.1    ${common_ip_addr_err}
+
+static_gw_test_45
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    127.0.0.1    ${common_ip_addr_err}
+
+static_gw_test_46
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    0.168.1.10    ${common_ip_addr_err}
+
+static_gw_test_47
+    [Template]    验证静态接入地址
+    192.168.1.100    255.255.255.0    192.168.1.0    ${common_segment_err}
+    172.16.1.100    255.255.0.0    172.16.0.0    ${common_segment_err}
+    10.0.0.100    255.0.0.0    10.0.0.0    ${common_segment_err}
+
+static_gw_test_48
+    [Template]    验证静态接入地址
+    192.168.1.100    255.255.255.0    192.168.1.255    ${common_Bcast_err}
+    172.16.1.100    255.255.0.0    172.16.255.255    ${common_Bcast_err}
+    10.0.0.100    255.0.0.0    10.255.255.255    ${common_Bcast_err}
+
+static_gw_test_49
+    [Template]    验证静态接入地址
+    192.168.1.100    255.255.255.0    192.168.2.100    ${common_segment_len_err}
+    172.16.1.100    255.255.0.0    172.17.1.100    ${common_segment_len_err}
+    10.0.0.100    255.0.0.0    11.0.0.100    ${common_segment_len_err}
+
+static_dns_test_50
+    验证静态首选DNS最大输入长度    1234567890123456    15
+
+static_dns_test_51
+    [Template]    验证静态首选DNS
+    10.0.0.1.    ${common_ip_addr_err}
+
+static_dns_test_52
+    [Template]    验证静态首选DNS
+    10.0.01    ${common_ip_addr_err}
+
+static_dns_test_53
+    [Template]    验证静态DNS
+    ${EMPTY}    ${EMPTY}    ${common_dns_null_err}
+    8.8.8.8    ${EMPTY}    ${common_unlock_save}
+    ${EMPTY}    10.10.10.10    ${common_unlock_save}
+
+static_dns_test_54
+    [Template]    验证静态首选DNS
+    -1.0.0.2    ${common_ip_addr_err}
+    256.0.0.1    ${common_ip_addr_err}
+
+static_dns_test_55
+    [Template]    验证静态首选DNS
+    10.-1.0.10    ${common_ip_addr_err}
+    10.256.0.10    ${common_ip_addr_err}
+
+static_dns_test_56
+    [Template]    验证静态首选DNS
+    10.0.-1.10    ${common_ip_addr_err}
+    10.0.256.10    ${common_ip_addr_err}
+
+static_dns_test_57
+    [Template]    验证静态首选DNS
+    10.0.0.-1    ${common_ip_addr_err}
+    10.0.0.256    ${common_ip_addr_err}
+
+static_dns_test_58
+    [Template]    验证静态首选DNS
+    192,168;1:s    ${common_ip_addr_err}
+
+static_dns_test_59
+    [Template]    验证静态首选DNS
+    .168.1.10    ${common_ip_addr_err}
+    192..1.10    ${common_ip_addr_err}
+    192.168..10    ${common_ip_addr_err}
+    192.168.1.    ${common_ip_addr_err}
+
+static_dns_test_61
+    [Template]    验证静态首选DNS
+    0.0.0.0    ${common_ip_addr_err}
+
+static_dns_test_62
+    [Template]    验证静态首选DNS
+    224.0.0.1    ${common_ip_addr_err}
+    255.0.0.1    ${common_ip_addr_err}
+    254.0.0.1    ${common_ip_addr_err}
+    223.255.255.254    ${common_unlock_save}
+
+static_dns_test_63
+    [Template]    验证静态首选DNS
+    127.0.0.1    ${common_ip_addr_err}
+
+static_dns_test_64
+    [Template]    验证静态首选DNS
+    0.168.1.10    ${common_ip_addr_err}
+
+static_dns_test_65
+    [Template]
+    验证静态备选DNS最大输入长度    1234567890123456    15
+
+static_dns_test_66
+    [Template]    验证静态备选DNS
+    10.0.0.1.    ${common_ip_addr_err}
+
+static_dns_test_67
+    [Template]    验证静态备选DNS
+    10.0.01    ${common_ip_addr_err}
+
+static_dns_test_68
+    [Template]    验证静态备选DNS
+    -1.0.0.2    ${common_ip_addr_err}
+    256.0.0.1    ${common_ip_addr_err}
+
+static_dns_test_69
+    [Template]    验证静态备选DNS
+    10.-1.0.10    ${common_ip_addr_err}
+    10.256.0.10    ${common_ip_addr_err}
+
+static_dns_test_70
+    [Template]    验证静态备选DNS
+    10.0.-1.10    ${common_ip_addr_err}
+    10.0.256.10    ${common_ip_addr_err}
+
+static_dns_test_71
+    [Template]    验证静态备选DNS
+    10.0.0.-1    ${common_ip_addr_err}
+    10.0.0.256    ${common_ip_addr_err}
+
+static_dns_test_72
+    [Template]    验证静态备选DNS
+    192,168;1:s    ${common_ip_addr_err}
+
+static_dns_test_73
+    [Template]    验证静态备选DNS
+    .168.1.10    ${common_ip_addr_err}
+    192..1.10    ${common_ip_addr_err}
+    192.168..10    ${common_ip_addr_err}
+    192.168.1.    ${common_ip_addr_err}
+
+static_dns_test_75
+    [Template]    验证静态备选DNS
+    0.0.0.0    ${common_ip_addr_err}
+
+static_dns_test_76
+    [Template]    验证静态备选DNS
+    224.0.0.1    ${common_ip_addr_err}
+    255.0.0.1    ${common_ip_addr_err}
+    254.0.0.1    ${common_ip_addr_err}
+    223.255.255.254    ${common_unlock_save}
+
+static_dns_test_77
+    [Template]    验证静态备选DNS
+    127.0.0.1    ${common_ip_addr_err}
+
+static_dns_test_78
+    [Template]    验证静态备选DNS
+    0.168.1.10    ${common_ip_addr_err}
+
+static_dns_test_79
+    [Template]
+    设置静态接入参数    10.0.0.100    255.0.0.0    10.0.0.10    dns1=8.8.8.8    dns2=88.88.88.88
+    显示消息    ${common_unlock_save}
+    Sleep    15
+    Execute JavaScript    $.CurrentApp="wan";$.load("wan")
+    Wait Until Page Contains Element    id=wan_ip    15
+    ${v}    Get Value    id=wan_ip
+    Should Be Equal    ${v}    10.0.0.100
+    ${v}    Get Value    id=wan_mask
+    Should Be Equal    ${v}    255.0.0.0
+    ${v}    Get Value    id=wan_gw
+    Should Be Equal    ${v}    10.0.0.10
+    ${v}    Get Value    id=dns_a
+    Should Be Equal    ${v}    8.8.8.8
+    ${v}    Get Value    id=dns_b
+    Should Be Equal    ${v}    88.88.88.88
 
 *** Keywords ***
 验证静态接入地址
     [Arguments]    ${ip}    ${mask}    ${gw}    ${message}
     设置静态接入参数    ${ip}    ${mask}    ${gw}    dns1=8.8.8.8    dns2=9.9.9.9
     显示消息    ${message}
+    ${rmessage}    process_special_charators    ${message}
+    Run Keyword If    '${rmessage}'=='${common_unlock_save}'    Sleep    15
 
 验证静态IP地址最大输入长度
     [Arguments]    ${ip}    ${max_len}
@@ -29,11 +444,15 @@ try
     [Arguments]    ${dns}    ${message}
     设置静态接入参数    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}    dns1=${dns}    dns2=8.8.8.8
     显示消息    ${message}
+    ${rmessage}    process_special_charators    ${message}
+    Run Keyword If    '${rmessage}'=='${common_unlock_save}'    Sleep    15
 
 验证静态备选DNS
     [Arguments]    ${dns}    ${message}
     设置静态接入参数    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}    dns1=8.8.8.8    dns2=${dns}
     显示消息    ${message}
+    ${rmessage}    process_special_charators    ${message}
+    Run Keyword If    '${rmessage}'=='${common_unlock_save}'    Sleep    15
 
 验证静态首选DNS最大输入长度
     [Arguments]    ${dns}    ${max_len}
@@ -42,3 +461,10 @@ try
 验证静态备选DNS最大输入长度
     [Arguments]    ${dns}    ${max_len}
     验证输入框最大输入长度    id=dns_b    ${dns}    ${max_len}
+
+验证静态DNS
+    [Arguments]    ${dns1}    ${dns2}    ${message}
+    设置静态接入参数    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}    dns1=${dns1}    dns2=${dns2}
+    显示消息    ${message}
+    ${rmessage}    process_special_charators    ${message}
+    Run Keyword If    '${rmessage}'=='${common_unlock_save}'    Sleep    15

@@ -4,11 +4,145 @@ Suite Teardown    关闭浏览器
 Resource          keyword.txt
 
 *** Test Cases ***
-try
-    验证DHCP首选DNS    .168.1.10    Invalid IP Address! Please input another one.
+dhcp_dns_test_1
+    验证DHCP首选DNS最大输入长度    1234567890123456    15
 
-try1
-    验证DHCP备选DNS    .168.1.10    Invalid IP Address! Please input another one.
+dhcp_dns_test_2
+    [Template]    验证DHCP首选DNS
+    10.0.0.1.    ${common_ip_addr_err}
+
+dhcp_dns_test_3
+    [Template]    验证DHCP首选DNS
+    10.0.01    ${common_ip_addr_err}
+
+dhcp_dns_test_4
+    [Template]    验证DHCP首选DNS
+    ${EMPTY}    ${common_unlock_save}
+
+dhcp_dns_test_5
+    [Template]    验证DHCP首选DNS
+    -1.0.0.2    ${common_ip_addr_err}
+    256.0.0.1    ${common_ip_addr_err}
+
+dhcp_dns_test_6
+    [Template]    验证DHCP首选DNS
+    10.-1.0.10    ${common_ip_addr_err}
+    10.256.0.10    ${common_ip_addr_err}
+
+dhcp_dns_test_7
+    [Template]    验证DHCP首选DNS
+    10.0.-1.10    ${common_ip_addr_err}
+    10.0.256.10    ${common_ip_addr_err}
+
+dhcp_dns_test_8
+    [Template]    验证DHCP首选DNS
+    10.0.0.-1    ${common_ip_addr_err}
+    10.0.0.256    ${common_ip_addr_err}
+
+dhcp_dns_test_9
+    [Template]    验证DHCP首选DNS
+    192,168;1:s    ${common_ip_addr_err}
+
+dhcp_dns_test_10
+    [Template]    验证DHCP首选DNS
+    .168.1.10    ${common_ip_addr_err}
+    192..1.10    ${common_ip_addr_err}
+    192.168..10    ${common_ip_addr_err}
+    192.168.1.    ${common_ip_addr_err}
+
+dhcp_dns_test_11
+    [Template]    验证DHCP首选DNS
+    0.0.0.0    ${common_ip_addr_err}
+
+dhcp_dns_test_12
+    [Template]    验证DHCP首选DNS
+    224.0.0.1    ${common_ip_addr_err}
+    255.0.0.1    ${common_ip_addr_err}
+    254.0.0.1    ${common_ip_addr_err}
+    223.255.255.254    ${common_unlock_save}
+
+dhcp_dns_test_13
+    [Template]    验证DHCP首选DNS
+    127.0.0.1    ${common_ip_addr_err}
+
+dhcp_dns_test_14
+    [Template]    验证DHCP首选DNS
+    0.168.1.10    ${common_ip_addr_err}
+
+dhcp_dns_test_15
+    验证DHCP备选DNS最大输入长度    1234567890123456    15
+
+dhcp_dns_test_16
+    [Template]    验证DHCP备选DNS
+    10.0.0.1.    ${common_ip_addr_err}
+
+dhcp_dns_test_17
+    [Template]    验证DHCP备选DNS
+    10.0.01    ${common_ip_addr_err}
+
+dhcp_dns_test_18
+    [Template]    验证DHCP备选DNS
+    ${EMPTY}    ${common_unlock_save}
+
+dhcp_dns_test_19
+    [Template]    验证DHCP备选DNS
+    -1.0.0.2    ${common_ip_addr_err}
+    256.0.0.1    ${common_ip_addr_err}
+
+dhcp_dns_test_20
+    [Template]    验证DHCP备选DNS
+    10.-1.0.10    ${common_ip_addr_err}
+    10.256.0.10    ${common_ip_addr_err}
+
+dhcp_dns_test_21
+    [Template]    验证DHCP备选DNS
+    10.0.-1.10    ${common_ip_addr_err}
+    10.0.256.10    ${common_ip_addr_err}
+
+dhcp_dns_test_22
+    [Template]    验证DHCP备选DNS
+    10.0.0.-1    ${common_ip_addr_err}
+    10.0.0.256    ${common_ip_addr_err}
+
+dhcp_dns_test_23
+    [Template]    验证DHCP备选DNS
+    192,168;1:s    ${common_ip_addr_err}
+
+dhcp_dns_test_24
+    [Template]    验证DHCP备选DNS
+    .168.1.10    ${common_ip_addr_err}
+    192..1.10    ${common_ip_addr_err}
+    192.168..10    ${common_ip_addr_err}
+    192.168.1.    ${common_ip_addr_err}
+
+dhcp_dns_test_25
+    [Template]    验证DHCP备选DNS
+    0.0.0.0    ${common_ip_addr_err}
+
+dhcp_dns_test_26
+    [Template]    验证DHCP备选DNS
+    224.0.0.1    ${common_ip_addr_err}
+    255.0.0.1    ${common_ip_addr_err}
+    254.0.0.1    ${common_ip_addr_err}
+    223.255.255.254    ${common_unlock_save}
+
+dhcp_dns_test_27
+    [Template]    验证DHCP备选DNS
+    127.0.0.1    ${common_ip_addr_err}
+
+dhcp_dns_test_28
+    [Template]    验证DHCP备选DNS
+    0.168.1.10    ${common_ip_addr_err}
+
+dhcp_dns_test_29
+    [Template]
+    设置DHCP接入参数    dns2=7.7.7.7
+    显示消息    ${common_unlock_save}
+    Sleep    15
+    Execute JavaScript    $.CurrentApp="wan";$.load("wan")
+    Wait Until Page Contains Element    id=conntype    15
+    ${v}    Get Selected List Label    id=conntype
+    Should Contain    ${v}    DHCP
 
 *** Keywords ***
 验证DHCP首选DNS
@@ -18,7 +152,7 @@ try1
 
 验证DHCP首选DNS最大输入长度
     [Arguments]    ${dns}    ${max_len}
-    验证输入框最大输入长度    id=dns_a    ${dns}    {max_len}
+    验证输入框最大输入长度    id=dns_a    ${dns}    ${max_len}
 
 验证DHCP备选DNS
     [Arguments]    ${dns}    ${message}
@@ -27,4 +161,4 @@ try1
 
 验证DHCP备选DNS最大输入长度
     [Arguments]    ${dns}    ${max_len}
-    验证输入框最大输入长度    id=dns_b    ${dns}    {max_len}
+    验证输入框最大输入长度    id=dns_b    ${dns}    ${max_len}
