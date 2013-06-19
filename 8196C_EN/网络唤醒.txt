@@ -1,0 +1,44 @@
+*** Settings ***
+Suite Setup       Run Keywords    打开浏览器    AND    转到网络唤醒页面
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
+*** Test Cases ***
+WakeUP_MAC_test_14
+    [Template]    验证网络唤醒MAC
+    00-00-00-00-00-ew    ${common_mac_addr_err}
+    wd:00:00:00:00:00    ${common_mac_addr_err}
+    00-4r-00-00-00-00    ${common_mac_addr_err}
+    00-4e-0m-00-00-00    ${common_mac_addr_err}
+    00-4%-0=-00-00-00    ${common_mac_addr_err}
+    00-48-09-h*-00-00    ${common_mac_addr_err}
+    00-48-09-89-78-i\    ${common_mac_addr_err}
+
+WakeUP_MAC_test_15
+    [Template]    验证网络唤醒MAC
+    00-00-00-00-00-你方    ${common_mac_addr_err}
+    "":\\:00:00:00:00    ${common_mac_addr_err}
+    中文    ${common_mac_addr_err}
+
+WakeUP_MACMaxLen_test_16
+    验证输入框最大输入长度    wakeup_mac    fdsafdsafdsafdsadgdsagdsa    17
+
+WakeUP_MAC_test_17
+    [Template]    验证网络唤醒MAC
+    00-00-00-00-00+99    ${common_mac_addr_err}
+    00-00-00-00-0099    ${common_mac_addr_err}
+    00800-00-00-00-99    ${common_mac_addr_err}
+    00-00-00-00-0099-    ${common_mac_addr_err}
+    00:00-00-00-0099-    ${common_mac_addr_err}
+    00:00:00:00:00%99    ${common_mac_addr_err}
+
+WakeUP_MAC_test_18
+    [Template]    验证网络唤醒MAC
+    ${EMPTY}    ${common_mac_addr_err}
+
+*** Keywords ***
+验证网络唤醒MAC
+    [Arguments]    ${wakeup_mac}    ${message}
+    设置网络唤醒参数    ${wakeup_mac}
+    显示消息    ${message}
+    sleep    1s

@@ -214,6 +214,7 @@ PortTri_SameItem_test_29_1
     TCP    210    300    1234    ${common_port_occupy_err}
     TCP    300    1000    1234    ${common_port_occupy_err}
     TCP    500    1000    1234    ${common_port_occupy_err}
+    TCP    190    1000    1234    ${common_port_occupy_err}
 
 PortTri_SameItem_test_29_2
     [Documentation]    *验证触发协议为UDP的触发端口重复*
@@ -226,6 +227,7 @@ PortTri_SameItem_test_29_2
     UDP    210    300    1234    ${common_port_occupy_err}
     UDP    300    1000    1234    ${common_port_occupy_err}
     UDP    500    1000    1234    ${common_port_occupy_err}
+    UDP    190    1000    1234    ${common_port_occupy_err}
     [Teardown]
 
 PortTri_SameItem_test_29_3
@@ -239,6 +241,7 @@ PortTri_SameItem_test_29_3
     2001    TCP    210    300    ${common_port_occupy_err}
     2001    TCP    300    1000    ${common_port_occupy_err}
     2001    TCP    500    1000    ${common_port_occupy_err}
+    2001    TCP    190    1000    ${common_port_occupy_err}
 
 PortTri_SameItem_test_29_4
     [Documentation]    *验证转发协议为UDP的转发端口重复*
@@ -251,6 +254,7 @@ PortTri_SameItem_test_29_4
     2001    UDP    210    300    ${common_port_occupy_err}
     2001    UDP    300    1000    ${common_port_occupy_err}
     2001    UDP    500    1000    ${common_port_occupy_err}
+    2001    UDP    190    1000    ${common_port_occupy_err}
 
 PortTri_SameItem_test_29_5
     [Documentation]    *成功保存触发端口相同但是协议不同的条目*
@@ -265,6 +269,43 @@ PortTri_SameItem_test_29_6
     [Template]    验证转发端口重复
     2000    UDP    200    500    ${common_unlock_save}
     2001    TCP    200    500    ${common_unlock_save}
+
+PortTri_ModifiItem_test_30
+    [Documentation]    *成功修改一条条目，自动刷新后改变*
+    [Setup]    删除所有端口触发条目并显示成功消息
+    保存两个条目
+    #修改并验证第二行条目
+    验证修改${row}条目    2    11    UDP    121    121    UDP
+    ...    121    121    ${common_unlock_save}
+    验证${row}所有列包含的string    2    11    UDP    121-121    UDP    121-121
+    #修改并验证第一行条目
+    验证修改${row}条目    1    22    TCP    131    200    TCP
+    ...    131    300    ${common_unlock_save}
+    验证${row}所有列包含的string    1    22    TCP    131-200    TCP    131-300
+
+PortTri_ModifiItem_test_32
+    [Documentation]    *添加一条条目，内容和已添加条目中的一条条目存在以下内容的全部重复：｛协议、触发端口、转发端口｝，提示条目已存在，添加失败。*
+    [Setup]    删除所有端口触发条目并显示成功消息
+    保存两个条目
+    #验证修改触发端口条目
+    验证修改${row}条目    2    11    UDP    1    13    UDP
+    ...    121    121    ${common_port_occupy_err}
+    验证修改${row}条目    2    11    UDP    11    15    UDP
+    ...    121    121    ${common_port_occupy_err}
+    验证修改${row}条目    2    11    UDP    13    15    UDP
+    ...    121    121    ${common_port_occupy_err}
+    #验证修改转发端口条目
+    验证修改${row}条目    2    11    TCP    12    12    UDP
+    ...    1    13    ${common_port_occupy_err}
+    验证修改${row}条目    2    11    TCP    12    12    UDP
+    ...    11    15    ${common_port_occupy_err}
+    验证修改${row}条目    2    11    TCP    12    12    UDP
+    ...    13    15    ${common_port_occupy_err}
+
+PortTri_DelItem_test_33
+    [Setup]    删除所有端口触发条目并显示成功消息
+    保存两个条目
+    删除端口触发表里第${row}行显示成功消息${message}    2    ${common_unlock_delete}
 
 *** Keywords ***
 验证规则名
@@ -321,11 +362,44 @@ PortTri_SameItem_test_29_6
 验证触发端口重复
     [Arguments]    ${tri_pro}    ${triport_start}    ${triport_end}    ${forward_port}    ${message}
     设置端口触发参数    ${None}    rulename    ${tri_pro}    ${triport_start}    ${triport_end}    TCP
-    ...    ${forward_port}     ${EMPTY}
+    ...    ${forward_port}    ${EMPTY}
     显示消息    ${message}
 
 验证转发端口重复
     [Arguments]    ${triport_start}    ${forward_pro}    ${forward_start}    ${forward_end}    ${message}
     设置端口触发参数    ${None}    rulename    TCP    ${triport_start}    ${EMPTY}    ${forward_pro}
-    ...    ${forward_start}     ${forward_end}
+    ...    ${forward_start}    ${forward_end}
+    显示消息    ${message}
+
+点击端口触发表里第${row}行修改按钮
+    [Arguments]    ${row}
+    Click Element    xpath=(//div[@class="tab_mod_btn"][${row}])
+
+验证${row}所有列包含的string
+    [Arguments]    ${row}    ${rule_name}    ${tri_pro}    ${tri_prort}    ${forward_pro}    ${forward_port}
+    端口触发列表第${row}行第${col}列是${string}    ${row}    2    ${rule_name}
+    端口触发列表第${row}行第${col}列是${string}    ${row}    3    ${tri_pro}
+    端口触发列表第${row}行第${col}列是${string}    ${row}    4    ${tri_prort}
+    端口触发列表第${row}行第${col}列是${string}    ${row}    5    ${forward_pro}
+    端口触发列表第${row}行第${col}列是${string}    ${row}    6    ${forward_port}
+
+保存两个条目
+    设置端口触发参数    ${None}    1    TCP    12    12    TCP
+    ...    12    12
+    sleep    2s
+    设置端口触发参数    ${None}    2    UDP    13    13    UDP
+    ...    13    13
+    sleep    2s
+
+验证修改${row}条目
+    [Arguments]    ${row}    ${rule_name}    ${tri_pro}    ${triport_start}    ${triport_end}    ${forward_pro}
+    ...    ${forwardprot_start}    ${forwardprot_end}    ${message}
+    点击端口触发表里第${row}行修改按钮    ${row}
+    设置端口触发参数    ${None}    ${rule_name}    ${tri_pro}    ${triport_start}    ${triport_end}    ${forward_pro}
+    ...    ${forwardprot_start}    ${forwardprot_end}
+    显示消息    ${message}
+
+删除端口触发表里第${row}行显示成功消息${message}
+    [Arguments]    ${row}    ${message}
+    Click Element    xpath=(//div[@id='${${row}-1}'])[2]
     显示消息    ${message}

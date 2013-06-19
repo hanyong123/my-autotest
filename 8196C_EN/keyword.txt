@@ -491,3 +491,12 @@ WAN口IP是${ip}
     ${rpasswd}    process_special_charators    ${passwd}
     Run Keyword If    '${rpasswd}'!='${None}'    Input Text    id=key_wpa    ${passwd}
     Click Element    id=save_wl_base
+
+转到网络唤醒页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="wakeup";$.load("wakeup")
+
+设置网络唤醒参数
+    [Arguments]    ${wakeup_mac}={None}
+    Run Keyword If    '${wakeup_mac}'!='{None}'    Input Text    id=wakeup_mac    ${wakeup_mac}
+    Click Element    id=save_wakeup
