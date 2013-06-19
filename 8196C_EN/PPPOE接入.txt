@@ -4,11 +4,251 @@ Suite Teardown    关闭浏览器
 Resource          keyword.txt
 
 *** Test Cases ***
-pppoe_ui_test_1
+pppoe_name_test_1
     验证PPPOE账号    ${EMPTY}    ${common_string_null}
 
-pppoe_ui_test_2
+pppoe_name_test_2
     验证PPPOE账号最大输入长度    12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678    127
+
+pppoe_name_test_3
+    [Template]    验证PPPOE账号
+    9 9    ${common_string_err}
+    \\    ${common_string_err}
+    "    ${common_string_err}
+    '    ${common_string_err}
+
+pppoe_name_test_4
+    [Template]    验证PPPOE账号
+    NIHAO你好    ${common_string_null}
+    繁體    ${common_string_null}
+
+pppoe_passwd_test_5
+    验证PPPOE密码    ${EMPTY}    ${common_string_null}
+
+pppoe_passwd_test_6
+    验证PPPOE密码最大输入长度    12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678    127
+
+pppoe_passwd_test_7
+    [Template]    验证PPPOE密码
+    9 9    ${common_string_err}
+    \\    ${common_string_err}
+    "    ${common_string_err}
+    '    ${common_string_err}
+
+pppoe_passwd_test_8
+    PPPOE密码输入框是密文显示
+
+pppoe_passwd_test_10
+    [Template]    验证PPPOE密码
+    NIHAO你好    ${common_string_null}
+    繁體    ${common_string_null}
+
+pppoe_demandTime_test_11
+    验证PPPOE按需连接老化时间    ${EMPTY}    ${common_int_number_err}
+
+pppoe_demandTime_test_12
+    验证PPPOE按需连接老化时间最大输入长度    999    2
+
+pppoe_demandTime_test_13
+    [Template]    验证PPPOE按需连接老化时间
+    0    ${common_auto_disconnect_time_err}
+    31    ${common_auto_disconnect_time_err}
+    1    ${common_unlock_save}
+    30    ${common_unlock_save}
+
+pppoe_demandTime_test_14
+    [Template]    验证PPPOE按需连接老化时间
+    \ 9    ${common_int_number_err}
+    \\    ${common_int_number_err}
+    "    ${common_int_number_err}
+    '    ${common_int_number_err}
+    09    ${common_int_number_err}
+    @    ${common_int_number_err}
+    好    ${common_int_number_err}
+
+pppoe_serviceName_test_15
+    验证PPPOE服务名    ${EMPTY}    ${common_unlock_save}
+
+pppoe_serviceName_test_16
+    验证PPPOE服务名最大输入长度    12345678901234567890123456789012345678901    40
+
+pppoe_serviceName_test_17
+    [Template]    验证PPPOE服务名
+    9 9    ${common_string_err}
+    \\    ${common_string_err}
+    "    ${common_string_err}
+    '    ${common_string_err}
+
+pppoe_serviceName_test_18
+    [Template]    验证PPPOE服务名
+    NIHAO你好    ${common_string_null}
+    繁體    ${common_string_null}
+    netcore&netis&baidu.com    ${common_unlock_save}
+
+pppoe_acName_test_19
+    验证PPPOE AC名    ${EMPTY}    ${common_unlock_save}
+
+pppoe_acName_test_20
+    验证PPPOE AC名最大输入长度    12345678901234567890123456789012345678901    40
+
+pppoe_acName_test_21
+    [Template]    验证PPPOE AC名
+    9 9    ${common_string_err}
+    \\    ${common_string_err}
+    "    ${common_string_err}
+    '    ${common_string_err}
+
+pppoe_acName_test_22
+    [Template]    验证PPPOE AC名
+    NIHAO你好    ${common_string_null}
+    繁體    ${common_string_null}
+    netcore&netis&baidu.com    ${common_unlock_save}
+
+pppoe_dns_test_23
+    验证PPPOE首选DNS最大输入长度    1234567890123456    15
+
+pppoe_dns_test_24
+    验证PPPOE首选DNS    10.0.0.1.    ${common_ip_addr_err}
+
+pppoe_dns_test_25
+    验证PPPOE首选DNS    10.0.01    ${common_ip_addr_err}
+
+pppoe_dns_test_26
+    验证PPPOE首选DNS    ${EMPTY}    ${common_unlock_save}
+
+pppoe_dns_test_27
+    [Template]    验证PPPOE首选DNS
+    -1.0.0.2    ${common_ip_addr_err}
+    256.0.0.1    ${common_ip_addr_err}
+
+pppoe_dns_test_28
+    [Template]    验证PPPOE首选DNS
+    10.-1.0.10    ${common_ip_addr_err}
+    10.256.0.10    ${common_ip_addr_err}
+
+pppoe_dns_test_29
+    [Template]    验证PPPOE首选DNS
+    10.0.-1.10    ${common_ip_addr_err}
+    10.0.256.10    ${common_ip_addr_err}
+
+pppoe_dns_test_30
+    [Template]    验证PPPOE首选DNS
+    10.0.0.-1    ${common_ip_addr_err}
+    10.0.0.256    ${common_ip_addr_err}
+
+pppoe_dns_test_31
+    [Template]    验证PPPOE首选DNS
+    192,168;1:s    ${common_ip_addr_err}
+
+pppoe_dns_test_32
+    [Template]    验证PPPOE首选DNS
+    .168.1.10    ${common_ip_addr_err}
+    192..1.10    ${common_ip_addr_err}
+    192.168..10    ${common_ip_addr_err}
+    192.168.1.    ${common_ip_addr_err}
+
+pppoe_dns_test_33
+    [Template]    验证PPPOE首选DNS
+    0.0.0.0    ${common_ip_addr_err}
+
+pppoe_dns_test_34
+    [Template]    验证PPPOE首选DNS
+    224.0.0.1    ${common_ip_addr_err}
+    255.0.0.1    ${common_ip_addr_err}
+    254.0.0.1    ${common_ip_addr_err}
+    223.255.255.254    ${common_unlock_save}
+
+pppoe_dns_test_35
+    [Template]    验证PPPOE首选DNS
+    127.0.0.1    ${common_ip_addr_err}
+
+pppoe_dns_test_36
+    [Template]    验证PPPOE首选DNS
+    0.168.1.10    ${common_ip_addr_err}
+
+pppoe_dns_test_37
+    [Template]
+    验证PPPOE备选DNS最大输入长度    1234567890123456    15
+
+pppoe_dns_test_38
+    [Template]    验证PPPOE备选DNS
+    10.0.0.1.    ${common_ip_addr_err}
+
+pppoe_dns_test_39
+    [Template]    验证PPPOE备选DNS
+    10.0.01    ${common_ip_addr_err}
+
+pppoe_dns_test_40
+    [Template]    验证PPPOE备选DNS
+    ${EMPTY}    ${common_unlock_save}
+
+pppoe_dns_test_41
+    [Template]    验证PPPOE备选DNS
+    -1.0.0.2    ${common_ip_addr_err}
+    256.0.0.1    ${common_ip_addr_err}
+
+pppoe_dns_test_42
+    [Template]    验证PPPOE备选DNS
+    10.-1.0.10    ${common_ip_addr_err}
+    10.256.0.10    ${common_ip_addr_err}
+
+pppoe_dns_test_43
+    [Template]    验证PPPOE备选DNS
+    10.0.-1.10    ${common_ip_addr_err}
+    10.0.256.10    ${common_ip_addr_err}
+
+pppoe_dns_test_44
+    [Template]    验证PPPOE备选DNS
+    10.0.0.-1    ${common_ip_addr_err}
+    10.0.0.256    ${common_ip_addr_err}
+
+pppoe_dns_test_45
+    [Template]    验证PPPOE备选DNS
+    192,168;1:s    ${common_ip_addr_err}
+
+pppoe_dns_test_46
+    [Template]    验证PPPOE备选DNS
+    .168.1.10    ${common_ip_addr_err}
+    192..1.10    ${common_ip_addr_err}
+    192.168..10    ${common_ip_addr_err}
+    192.168.1.    ${common_ip_addr_err}
+
+pppoe_dns_test_47
+    [Template]    验证PPPOE备选DNS
+    0.0.0.0    ${common_ip_addr_err}
+
+pppoe_dns_test_48
+    [Template]    验证PPPOE备选DNS
+    224.0.0.1    ${common_ip_addr_err}
+    255.0.0.1    ${common_ip_addr_err}
+    254.0.0.1    ${common_ip_addr_err}
+    223.255.255.254    ${common_unlock_save}
+
+pppoe_dns_test_49
+    [Template]    验证PPPOE备选DNS
+    127.0.0.1    ${common_ip_addr_err}
+
+pppoe_dns_test_50
+    [Template]    验证PPPOE备选DNS
+    0.168.1.10    ${common_ip_addr_err}
+
+pppoe_dns_test_51
+    [Template]
+    设置PPPoE接入参数    1    1    mtu=1492    dns1=8.8.8.8    dns2=7.7.7.7
+    显示消息    ${common_unlock_save}
+    Sleep    15
+    Execute JavaScript    $.CurrentApp="wan";$.load("wan")
+    Wait Until Page Contains Element    id=pppoe_username    15
+    ${v}    Get Value    id=pppoe_username
+    Should Be Equal    ${v}    1
+    ${v}    Get Value    id=pppoe_pwd
+    Should Be Equal    ${v}    1
+    ${v}    Get Value    id=pppoe_mtu
+    Should Be Equal    ${v}    1492
+    ${v}    Get Value    id=dns_a
+    Should Be Equal    ${v}    8.8.8.8
+    ${v}    Get Value    id=dns_b
+    Should Be Equal    ${v}    7.7.7.7
 
 *** Keywords ***
 验证PPPOE账号
@@ -31,8 +271,10 @@ pppoe_ui_test_2
 
 验证PPPOE按需连接老化时间
     [Arguments]    ${time}    ${message}
-    设置PPPoE接入参数    hany    969090    ${connect_mode}=2    ${outtime}=${time}
+    设置PPPoE接入参数    hany    969090    connect_mode=2    outtime=${time}
     显示消息    ${message}
+    ${rmessage}    process_special_charators    ${message}
+    Run Keyword If    '${rmessage}'=='${common_unlock_save}'    设置成功PPPOE按需连接时间${time}
 
 验证PPPOE按需连接老化时间最大输入长度
     [Arguments]    ${time}    ${max_len}
@@ -43,6 +285,8 @@ pppoe_ui_test_2
     [Arguments]    ${serviceName}    ${message}
     设置PPPoE接入参数    hany    969090    service_name=${serviceName}
     显示消息    ${message}
+    ${rmessage}    process_special_charators    ${message}
+    Run Keyword If    '${rmessage}'=='${common_unlock_save}'    设置成功PPPOE服务器名是${serviceName}
 
 验证PPPOE服务名最大输入长度
     [Arguments]    ${serviceName}    ${max_len}
@@ -52,6 +296,8 @@ pppoe_ui_test_2
     [Arguments]    ${acName}    ${message}
     设置PPPoE接入参数    hany    969090    ac_name=${acName}
     显示消息    ${message}
+    ${rmessage}    process_special_charators    ${message}
+    Run Keyword If    '${rmessage}'=='${common_unlock_save}'    设置成功PPPOE AC名是${acName}
 
 验证PPPOE AC名最大输入长度
     [Arguments]    ${acName}    ${max_len}
@@ -74,3 +320,25 @@ pppoe_ui_test_2
 验证PPPOE备选DNS最大输入长度
     [Arguments]    ${dns}    ${max_len}
     验证输入框最大输入长度    id=dns_b    ${dns}    ${max_len}
+
+PPPOE密码输入框是密文显示
+    ${type}    Get Element Attribute    pppoe_pwd@type
+    Should Be Equal    ${type}    password
+
+设置成功PPPOE按需连接时间${t}
+    Sleep    10
+    转到PPPoE接入设置页面
+    ${v}    Get Value    id=ppp_time
+    Should Be Equal    ${v}    ${t}
+
+设置成功PPPOE服务器名是${name}
+    Sleep    10
+    转到PPPoE接入设置页面
+    ${v}    Get Value    id=pppoe_service_name
+    Should Be Equal    ${v}    ${name}
+
+设置成功PPPOE AC名是${name}
+    Sleep    10
+    转到PPPoE接入设置页面
+    ${v}    Get Value    id=pppoe_ac_name
+    Should Be Equal    ${v}    ${name}

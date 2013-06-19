@@ -68,7 +68,7 @@ Library           common.py
 转到DHCP接入设置页面
     Set Selenium Speed    0.5
     Execute JavaScript    $.CurrentApp="wan";$.load("wan")
-    Wait Until Page Contains Element    id=conntype
+    Wait Until Page Contains Element    id=conntype    15
     Select From List By Value    id=conntype    1
     Run Keyword And Ignore Error    Click Element    id=show_wan_advance
 
@@ -94,8 +94,8 @@ Library           common.py
 显示消息
     [Arguments]    ${message}
     Set Selenium Speed    0
-    Wait Until Keyword Succeeds    5    0    弹出对话框    ${message}
-    Wait Until Keyword Succeeds    15    5    弹出对话框消失
+    Wait Until Keyword Succeeds    20    0    弹出对话框    ${message}
+    Wait Until Keyword Succeeds    20    5    弹出对话框消失
 
 验证输入框最大输入长度
     [Arguments]    ${locator}    ${content}    ${max_len}
@@ -106,7 +106,7 @@ Library           common.py
 转到静态接入设置页面
     Set Selenium Speed    0.5
     Execute JavaScript    $.CurrentApp="wan";$.load("wan")
-    Wait Until Page Contains Element    id=conntype
+    Wait Until Page Contains Element    id=conntype    15
     Select From List By Value    id=conntype    0
     Run Keyword And Ignore Error    Click Element    id=show_wan_advance
 
@@ -401,7 +401,8 @@ WAN口IP是${ip}
 
 设置Russia-PPPoE参数
     [Arguments]    ${user}=${None}    ${password}=${None}    ${mac}=${None}    ${mtu}=${None}    ${serverName}=${None}    ${acName}=${None}
-    ...    ${dns1}=${None}    ${dns2}=${None}    ${connectMode}=${None}    ${timeout}=5
+    ...    ${dns1}=${None}    ${dns2}=${None}    ${connectMode}=${None}    ${timeout}=5    ${connection_type}=0    ${ip_addr}=${None}
+    ...    ${mask}=${None}
     [Documentation]    ${connectMode} 1:auto \ 2:time_requrie 3:manual
     Wait Until Keyword Succeeds    5    1    Element Should Be Visible    id=pppoe_username
     ${ruser}    process_special_charators    ${user}
@@ -424,6 +425,13 @@ WAN口IP是${ip}
     Run Keyword If    '${connectMode}'=='2'    Click Element    id=ppp_connect_mode_time
     Run Keyword If    '${connectMode}'=='3'    Click Element    id=ppp_connect_mode_hand
     Run Keyword If    '${connectMode}' == '2'    Input Text    id=ppp_time    ${timeout}
+    Run Keyword If    '${connection_type}'=='0'    Click Element    id=second_in_type_dy
+    Run Keyword If    '${connection_type}'=='1'    Click Element    id=second_in_type_st
+    Run Keyword If    '${connection_type}'=='1'    Sleep    5
+    ${rip_addr}    process_special_charators    ${ip_addr}
+    Run Keyword If    '${rip_addr}'!='${None}'    Input Text    xpath=(//input[@id="wan_ip"])[2]    ${ip_addr}
+    ${rmask}    process_special_charators    ${mask}
+    Run Keyword If    '${rmask}'!='${None}'    Input Text    xpath=(//input[@id="wan_mask"])[2]    ${mask}
     Click Button    id=save_wan_set
 
 转到Unifi-PPPoE设置页面
@@ -434,8 +442,9 @@ WAN口IP是${ip}
     Run Keyword And Ignore Error    Click Element    id=show_wan_advance
 
 设置Unifi-PPPoE参数
-    [Arguments]    ${user}=${Nione}    ${password}=${None}    ${mac}=${None}    ${mtu}=${None}    ${serverName}=${None}    ${acName}=${None}
-    ...    ${dns1}=${None}    ${dns2}=${None}    ${connectMode}=${None}    ${timeout}=${None}
+    [Arguments]    ${user}=${None}    ${password}=${None}    ${mac}=${None}    ${mtu}=${None}    ${serverName}=${None}    ${acName}=${None}
+    ...    ${dns1}=${None}    ${dns2}=${None}    ${connectMode}=${None}    ${timeout}=5    ${connection_type}=0    ${ip_addr}=${None}
+    ...    ${mask}=${None}
     [Documentation]    ${connectMode} 1:auto \ 2:time_requrie 3:manual
     Wait Until Keyword Succeeds    5    1    Element Should Be Visible    id=pppoe_username
     ${ruser}    process_special_charators    ${user}
@@ -458,6 +467,13 @@ WAN口IP是${ip}
     Run Keyword If    '${connectMode}'=='2'    Click Element    id=ppp_connect_mode_time
     Run Keyword If    '${connectMode}'=='3'    Click Element    id=ppp_connect_mode_hand
     Run Keyword If    '${connectMode}' == '2'    Input Text    id=ppp_time    ${timeout}
+    Run Keyword If    '${connection_type}'=='0'    Click Element    id=second_in_type_dy
+    Run Keyword If    '${connection_type}'=='1'    Click Element    id=second_in_type_st
+    Run Keyword If    '${connection_type}'=='1'    Sleep    5
+    ${rip_addr}    process_special_charators    ${ip_addr}
+    Run Keyword If    '${rip_addr}'!='${None}'    Input Text    xpath=(//input[@id="wan_ip"])[2]    ${ip_addr}
+    ${rmask}    process_special_charators    ${mask}
+    Run Keyword If    '${rmask}'!='${None}'    Input Text    xpath=(//input[@id="wan_mask"])[2]    ${mask}
     Click Button    id=save_wan_set
 
 转到AP模式的无线基本设置页面
