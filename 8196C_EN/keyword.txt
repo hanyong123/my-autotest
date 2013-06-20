@@ -3,6 +3,7 @@ Library           Selenium2Library
 Resource          config.txt
 Resource          lang_var.txt
 Library           common.py
+Library           String
 
 *** Keywords ***
 转到PPPoE接入设置页面
