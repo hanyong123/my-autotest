@@ -14,8 +14,10 @@ def process_special_charators(string):
             return string
     else:
         return None
-   
-        
+
+def string_lower(string):
+    return string.lower()
+
         
 if __name__ == '__main__':
     pass

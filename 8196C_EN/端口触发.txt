@@ -1,4 +1,4 @@
-*** Settings ***
+﻿*** Settings ***
 Suite Setup       Run Keywords    打开浏览器    AND    转到端口触发页面
 Suite Teardown    关闭浏览器
 Resource          keyword.txt
@@ -335,7 +335,7 @@ PortTri_DelItem_test_33
     Should Be Equal    ${v}    ${string}
 
 删除所有端口触发条目并显示成功消息
-    Click Element    del_app_port_all
+    Click Element    id=del_app_port_all
     Choose Ok On Next Confirmation
     ${common_del_tip}    Confirm Action
     显示消息    ${common_unlock_delete}
