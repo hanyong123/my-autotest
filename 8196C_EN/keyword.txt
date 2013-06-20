@@ -507,3 +507,83 @@ WAN口IP是${ip}
     ${rpasswd}    process_special_charators    ${passwd}
     Run Keyword If    '${rpasswd}'!='${None}'    Input Text    id=key_wpa    ${passwd}
     Click Element    id=save_wl_base
+
+转到L2TP设置页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="wan";$.load("wan")
+    Wait Until Page Contains Element    id=conntype
+    Select From List By Value    id=conntype    6
+    Run Keyword And Ignore Error    Click Element    id=show_wan_advance
+
+设置L2TP参数
+    [Arguments]    ${user}=${None}    ${passwd}=${None}    ${server}=${None}    ${connection_type}=0    ${mac}=${None}    ${mtu}=${None}
+    ...    ${connect_mode}=0    ${timeout}=${None}    ${ip}=${None}    ${mask}=${None}    ${gw}=${None}    ${dns1}=${None}
+    ...    ${dns2}=${None}
+    ${ruser}    process_special_charators    ${user}
+    Run Keyword If    '${ruser}'!='${None}'    Input Text    id=l2tp_username    ${user}
+    ${rpasswd}    process_special_charators    ${passwd}
+    Run Keyword If    '${rpasswd}'!='${None}'    Input Text    id=l2tp_pwd    ${passwd}
+    ${rserver}    process_special_charators    ${server}
+    Run Keyword If    '${rserver}'!='${None}'    Input Text    id=l2tp_server    ${server}
+    Run Keyword If    '${connection_type}'==0    Click Element    id=l2tp_type_dy
+    Run Keyword If    '${connection_type}'==1    Click Element    id=l2tp_type_st
+    ${rmac}    process_special_charators    ${mac}
+    Run Keyword If    '${rmac}'!='${None}'    Input Text    id=mac_addr    ${mac}
+    ${rmtu}    process_special_charators    ${mtu}
+    Run Keyword If    '${rmtu}'!='${None}'    Input Text    id=l2tp_mtu    ${mtu}
+    Run Keyword If    '${connect_mode}'==0    Click Element    id=l2tp_connect_mode_auto
+    Run Keyword If    '${connect_mode}'==1    Click Element    id=l2tp_connect_mode_time
+    Run Keyword If    '${connect_mode}'==2    Click Element    id=l2tp_connect_mode_hand
+    ${rtimeout}    process_special_charators    ${timeout}
+    Run Keyword If    '${rtimeout}'!='${None}'    Input Text    id=l2tp_time    ${timeout}
+    ${rip}    process_special_charators    ${ip}
+    Run Keyword If    '${ip}'!='${None}'    Input Text    id=l2tp_ip    ${ip}
+    ${rmask}    process_special_charators    ${mask}
+    Run Keyword If    '${rmask}'!='${None}'    Input Text    id=l2tp_mask    ${mask}
+    ${rgw}    process_special_charators    ${gw}
+    Run Keyword If    '${rgw}'!='${None}'    Input Text    id=l2tp_gw    ${gw}
+    ${rdns1}    process_special_charators    ${dns1}
+    Run Keyword If    '${rdns1}'!='${None}'    Input Text    id=dns_a    ${dns1}
+    ${rdns2}    process_special_charators    ${dns2}
+    Run Keyword If    '${rdns2}'!='${None}'    Input Text    id=dns_b    ${dns2}
+    Click Element    id=save_wan_set
+
+转到PPTP设置页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="wan";$.load("wan")
+    Wait Until Page Contains Element    id=conntype
+    Select From List By Value    id=conntype    7
+    Run Keyword And Ignore Error    Click Element    id=show_wan_advance
+
+设置PPTP参数
+    [Arguments]    ${user}=${None}    ${passwd}=${None}    ${server}=${None}    ${connection_type}=0    ${mac}=${None}    ${mtu}=${None}
+    ...    ${connect_mode}=0    ${timeout}=${None}    ${ip}=${None}    ${mask}=${None}    ${gw}=${None}    ${dns1}=${None}
+    ...    ${dns2}=${None}
+    ${ruser}    process_special_charators    ${user}
+    Run Keyword If    '${ruser}'!='${None}'    Input Text    id=pptp_username    ${user}
+    ${rpasswd}    process_special_charators    ${passwd}
+    Run Keyword If    '${rpasswd}'!='${None}'    Input Text    id=pptp_pwd    ${passwd}
+    ${rserver}    process_special_charators    ${server}
+    Run Keyword If    '${rserver}'!='${None}'    Input Text    id=pptp_server    ${server}
+    Run Keyword If    '${connection_type}'==0    Click Element    id=pptp_type_dy
+    Run Keyword If    '${connection_type}'==1    Click Element    id=pptp_type_st
+    ${rmac}    process_special_charators    ${mac}
+    Run Keyword If    '${rmac}'!='${None}'    Input Text    id=mac_addr    ${mac}
+    ${rmtu}    process_special_charators    ${mtu}
+    Run Keyword If    '${rmtu}'!='${None}'    Input Text    id=pptp_mtu    ${mtu}
+    Run Keyword If    '${connect_mode}'==0    Click Element    id=pptp_connect_mode_auto
+    Run Keyword If    '${connect_mode}'==1    Click Element    id=pptp_connect_mode_time
+    Run Keyword If    '${connect_mode}'==2    Click Element    id=pptp_connect_mode_hand
+    ${rtimeout}    process_special_charators    ${timeout}
+    Run Keyword If    '${rtimeout}'!='${None}'    Input Text    id=pptp_time    ${timeout}
+    ${rip}    process_special_charators    ${ip}
+    Run Keyword If    '${ip}'!='${None}'    Input Text    id=pptp_ip    ${ip}
+    ${rmask}    process_special_charators    ${mask}
+    Run Keyword If    '${rmask}'!='${None}'    Input Text    id=pptp_mask    ${mask}
+    ${rgw}    process_special_charators    ${gw}
+    Run Keyword If    '${rgw}'!='${None}'    Input Text    id=pptp_gw    ${gw}
+    ${rdns1}    process_special_charators    ${dns1}
+    Run Keyword If    '${rdns1}'!='${None}'    Input Text    id=dns_a    ${dns1}
+    ${rdns2}    process_special_charators    ${dns2}
+    Run Keyword If    '${rdns2}'!='${None}'    Input Text    id=dns_b    ${dns2}
+    Click Element    id=save_wan_set
