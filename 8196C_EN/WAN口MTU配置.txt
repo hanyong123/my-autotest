@@ -11,8 +11,8 @@ wan_mtuConfig_test_1
     Run Keyword And Continue On Failure    验证DHCP接入MTU    ${EMPTY}    ${common_dhcp_mtu_err}
     Run Keyword And Continue On Failure    验证静态接入MTU    ${EMPTY}    ${common_static_mtu_err}
     Run Keyword And Continue On Failure    验证PPPOE接入MTU    ${EMPTY}    ${common_pppoe_mtu_err}
-    Run Keyword And Continue On Failure    验证L2TP接入MTU    ${EMPTY}    ${common_unlock_error}
-    Run Keyword And Continue On Failure    验证PPTP接入MTU    ${EMPTY}    ${common_unlock_error}
+    Run Keyword And Continue On Failure    验证L2TP接入MTU    ${EMPTY}    ${common_l2tp_mtu_err}
+    Run Keyword And Continue On Failure    验证PPTP接入MTU    ${EMPTY}    ${common_pptp_mtu_err}
 
 wan_mtuConfig_test_2
     Run Keyword And Continue On Failure    验证DHCP接入MTU最大输入长度    12345    4
@@ -26,7 +26,7 @@ wan_mtuConfig_test_3
     575    ${common_static_mtu_err}
     1501    ${common_static_mtu_err}
     1000    ${common_unlock_save}
-    576     ${common_unlock_save}
+    576    ${common_unlock_save}
     1500    ${common_unlock_save}
 
 wan_mtuConfig_test_4
@@ -34,7 +34,7 @@ wan_mtuConfig_test_4
     575    ${common_dhcp_mtu_err}
     1501    ${common_dhcp_mtu_err}
     1000    ${common_unlock_save}
-    576     ${common_unlock_save}
+    576    ${common_unlock_save}
     1500    ${common_unlock_save}
 
 wan_mtuConfig_test_5
@@ -42,33 +42,33 @@ wan_mtuConfig_test_5
     575    ${common_pppoe_mtu_err}
     1493    ${common_pppoe_mtu_err}
     1000    ${common_unlock_save}
-    576     ${common_unlock_save}
+    576    ${common_unlock_save}
     1492    ${common_unlock_save}
 
 wan_mtuConfig_test_6
     [Template]    验证PPTP接入MTU
-    575    ${common_unlock_error}
-    1441    ${common_unlock_error}
+    575    ${common_pptp_mtu_err}
+    1421    ${common_pptp_mtu_err}
     1000    ${common_unlock_save}
     576    ${common_unlock_save}
-    1440    ${common_unlock_save}
+    1420    ${common_unlock_save}
 
 wan_mtuConfig_test_7
     [Template]    验证L2TP接入MTU
-    575    ${common_unlock_error}
-    1441    ${common_unlock_error}
+    575    ${common_l2tp_mtu_err}
+    1461    ${common_l2tp_mtu_err}
     1000    ${common_unlock_save}
-    576     ${common_unlock_save}
-    1440    ${common_unlock_save}
+    576    ${common_unlock_save}
+    1460    ${common_unlock_save}
 
 wan_mtuConfig_test_8
     [Template]
-    :FOR    ${mtu}    IN    @{error_mtu_string}
+    : FOR    ${mtu}    IN    @{error_mtu_string}
     \    Run Keyword And Continue On Failure    验证DHCP接入MTU    ${mtu}    ${common_dhcp_mtu_err}
     \    Run Keyword And Continue On Failure    验证PPPOE接入MTU    ${mtu}    ${common_pppoe_mtu_err}
     \    Run Keyword And Continue On Failure    验证静态接入MTU    ${mtu}    ${common_static_mtu_err}
-    \    Run Keyword And Continue On Failure    验证L2TP接入MTU    ${mtu}    ${common_unlock_error}
-    \    Run Keyword And Continue On Failure    验证PPTP接入MTU    ${mtu}    ${common_unlock_error}
+    \    Run Keyword And Continue On Failure    验证L2TP接入MTU    ${mtu}    ${common_l2tp_mtu_err}
+    \    Run Keyword And Continue On Failure    验证PPTP接入MTU    ${mtu}    ${common_pptp_mtu_err}
 
 *** Keywords ***
 验证DHCP接入MTU

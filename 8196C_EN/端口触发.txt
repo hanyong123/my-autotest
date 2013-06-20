@@ -294,7 +294,7 @@ PortTri_SameItem_test_29_6
     Should Be Equal    ${v}    ${string}
 
 删除所有端口触发条目并显示成功消息
-    Click Element    del_app_port_all
+    Click Element    id=del_app_port_all
     Choose Ok On Next Confirmation
     ${common_del_tip}    Confirm Action
     显示消息    ${common_unlock_delete}
@@ -321,11 +321,11 @@ PortTri_SameItem_test_29_6
 验证触发端口重复
     [Arguments]    ${tri_pro}    ${triport_start}    ${triport_end}    ${forward_port}    ${message}
     设置端口触发参数    ${None}    rulename    ${tri_pro}    ${triport_start}    ${triport_end}    TCP
-    ...    ${forward_port}     ${EMPTY}
+    ...    ${forward_port}    ${EMPTY}
     显示消息    ${message}
 
 验证转发端口重复
     [Arguments]    ${triport_start}    ${forward_pro}    ${forward_start}    ${forward_end}    ${message}
     设置端口触发参数    ${None}    rulename    TCP    ${triport_start}    ${EMPTY}    ${forward_pro}
-    ...    ${forward_start}     ${forward_end}
+    ...    ${forward_start}    ${forward_end}
     显示消息    ${message}
