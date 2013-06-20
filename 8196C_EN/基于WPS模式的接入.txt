@@ -26,6 +26,7 @@ WPS_PinMaxLen_test_13
     验证pin码输入框长度    safdsafdsafdsafdsafdsa    8
 
 WPS_Pin_test_15
+    [Documentation]    *PIN码输入框只能输入8个字符，内容不满8个字符时，有错误提示*
     [Template]    验证pin码
     123456    ${common_pin_number_err}
     1234567    ${common_pin_number_err}
