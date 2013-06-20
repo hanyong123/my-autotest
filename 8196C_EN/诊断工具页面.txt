@@ -1,0 +1,35 @@
+*** Settings ***
+Suite Setup       Run Keywords    打开浏览器    AND    转到诊断工具页面
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
+*** Test Cases ***
+DiagnosticTools_ping_test_21
+    [Documentation]    *主机IP地址/域名为空，提示“主机IP或域名不能为空”*
+    [Template]    验证单引号双引号反斜杠
+    Ping    ${EMPTY}    ${common_domain_err}
+
+DiagnosticTools_Tracert_test_26
+    [Documentation]    *主机IP地址/域名为空，提示“主机IP或域名不能为空”*
+    [Template]    验证单引号双引号反斜杠
+    Tracert    ${EMPTY}    ${common_domain_err}
+
+DiagnosticTools_ping_test_22
+    [Documentation]    *Ping工具：输入包含'"\等字符，提示域名错误*
+    [Template]    验证单引号双引号反斜杠
+    Ping    \\    ${common_domain_err}
+    Ping    "    ${common_domain_err}
+    Ping    '    ${common_domain_err}
+
+DiagnosticTools_Tracert_test_27
+    [Documentation]    *Tracert工具：输入包含'"\等字符，提示域名错误*
+    [Template]    验证单引号双引号反斜杠
+    Tracert    \\    ${common_domain_err}
+    Tracert    "    ${common_domain_err}
+    Tracert    '    ${common_domain_err}
+
+*** Keywords ***
+验证单引号双引号反斜杠
+    [Arguments]    ${func}    ${char}    ${message}
+    设置诊断工具页面    ${func}     ${char}
+    显示消息    ${message}

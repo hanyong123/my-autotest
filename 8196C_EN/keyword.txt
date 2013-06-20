@@ -516,3 +516,14 @@ WAN口IP是${ip}
     [Arguments]    ${wakeup_mac}={None}
     Run Keyword If    '${wakeup_mac}'!='{None}'    Input Text    id=wakeup_mac    ${wakeup_mac}
     Click Element    id=save_wakeup
+
+转到诊断工具页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="diagnostic";$.load("diagnostic")
+
+设置诊断工具页面
+    [Arguments]    ${func}    ${content}
+    Run Keyword If    '${func}'=='Ping'    Click Element    tools_type_ping
+    Run Keyword If    '${func}'=='Tracert'    Click Element    tools_type_trac
+    Input text    xpath=(//input[@id='tools_ip_url'])[1]    ${content}
+    click Button    xpath=(//input[@id='tools_ip_url'])[2]

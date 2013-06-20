@@ -373,7 +373,7 @@ PortTri_DelItem_test_33
 
 点击端口触发表里第${row}行修改按钮
     [Arguments]    ${row}
-    Click Element    xpath=(//div[@class="tab_mod_btn"][${row}])
+    Click Element    xpath=(//div[@id='${${row}-1}'])[1]
 
 验证${row}所有列包含的string
     [Arguments]    ${row}    ${rule_name}    ${tri_pro}    ${tri_prort}    ${forward_pro}    ${forward_port}
