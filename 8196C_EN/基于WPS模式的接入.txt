@@ -1,0 +1,43 @@
+*** Settings ***
+Suite Setup       Run Keywords    打开浏览器    AND    转到WPS模式的无线配置页面
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
+*** Test Cases ***
+WPS_Pin_test_12
+    [Documentation]    *PIN码输入框不能为空，输入为空时，有错误提示*
+    [Template]    验证pin码
+    ${EMPTY}    ${common_pin_number_err}
+
+WPS_Pin_test_14
+    [Documentation]    *PIN码只能为数字，当输入非数字字符时，有错误提示*
+    [Template]    验证pin码
+    gfdsgfsd    ${common_pin_number_err}
+    1234567\    ${common_pin_number_err}
+    1234567'    ${common_pin_number_err}
+    1234567"    ${common_pin_number_err}
+    123 567"    ${common_pin_number_err}
+    ${SPACE}*8    ${common_pin_number_err}
+    -=+%&*()    ${common_pin_number_err}
+    fdsafdsafgdsafdafds    ${common_pin_number_err}
+
+WPS_PinMaxLen_test_13
+    [Documentation]    *PIN码输入框只能输入8个字符，超过8个字符就无法输入*
+    验证pin码输入框长度    safdsafdsafdsafdsafdsa    8
+
+WPS_Pin_test_15
+    [Template]    验证pin码
+    123456    ${common_pin_number_err}
+    1234567    ${common_pin_number_err}
+    gfdsgf    ${common_pin_number_err}
+
+*** Keywords ***
+验证pin码
+    [Arguments]    ${pin}    ${message}
+    设置WPS页面基本参数    ${pin}
+    显示消息    ${message}
+
+验证pin码输入框长度
+    [Arguments]    ${new_pin}    ${len}
+    clickElement    id=hand_add_show
+    验证输入框最大输入长度    id=new_pin    ${new_pin}    ${len}

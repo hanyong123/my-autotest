@@ -31,5 +31,5 @@ DiagnosticTools_Tracert_test_27
 *** Keywords ***
 验证单引号双引号反斜杠
     [Arguments]    ${func}    ${char}    ${message}
-    设置诊断工具页面    ${func}     ${char}
+    设置诊断工具页面    ${func}    ${char}
     显示消息    ${message}

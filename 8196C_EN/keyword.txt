@@ -588,3 +588,29 @@ WAN口IP是${ip}
     ${rdns2}    process_special_charators    ${dns2}
     Run Keyword If    '${rdns2}'!='${None}'    Input Text    id=dns_b    ${dns2}
     Click Element    id=save_wan_set
+
+转到WPS模式的无线配置页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="wps";$.load("wps")
+
+设置WPS页面基本参数
+    [Arguments]    ${new_pin}
+    ${value_button}=    get value    id=wps_enable
+    runkeywordif    '${value_button}'=='Enable WPS'    Click Element    id=wps_enable
+    sleep    5s
+    Wait Until Page Contains Element    id=hand_add_show
+    clickElement    id=hand_add_show
+    inputtext    id=new_pin    ${new_pin}
+    clickElement    add_link_pin
+    [Teardown]
+
+转到诊断工具页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="diagnostic";$.load("diagnostic")
+
+设置诊断工具页面
+    [Arguments]    ${func}    ${char}
+    runkeywordif    '${func}'=='Ping'    Click Element    id=tools_type_ping
+    runkeywordif    '${func}'=='Tracert'    Click Element    id=tools_type_trac
+    inputtext    xpath=(//input[@id='tools_ip_url'])[1]    ${char}
+    click element    xpath=(//input[@id='tools_ip_url'])[2]
