@@ -1,0 +1,6 @@
+*** Settings ***
+Suite Setup       Run Keywords    打开浏览器    AND    ${EMPTY}
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
+*** Test Cases ***

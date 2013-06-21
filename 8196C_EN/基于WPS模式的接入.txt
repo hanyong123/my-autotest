@@ -49,19 +49,11 @@ WPS_GetPin_test_5
 
 WPS_Status_test_1
     [Documentation]    *按钮状态显示为“启用”WPS时，WPS状态显示为“禁用”*
-    开启或关闭WPS功能    0
-    ${val}    Get value    wps_enable
-    Should Be Equal    ${val}    Enable WPS    #WPS开启按钮值为’开启‘
-    ${val1}    get text    css=span.df_con
-    Should Be Equal    ${val1}    Disable    #状态显示的值’禁用‘
+    验证WPS状态和按键值    0    Enable WPS    Disable
 
 WPS_Status_test_2
     [Documentation]    *按钮状态显示为“禁用”WPS时，WPS状态显示为“启用”*
-    开启或关闭WPS功能    1
-    ${val}    Get value    wps_enable
-    Should Be Equal    ${val}    Disable WPS    #WPS开启按钮值为
-    ${val1}    get text    css=span.df_con
-    Should Be Equal    ${val1}    Enable    #状态显示的值
+    验证WPS状态和按键值    1    Disable WPS    Enable
 
 *** Keywords ***
 验证pin码
