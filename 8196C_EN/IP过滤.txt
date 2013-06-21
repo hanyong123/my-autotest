@@ -1,12 +1,1212 @@
 *** Settings ***
-Suite Setup       打开浏览器
+Suite Setup       Run Keywords    打开浏览器    AND    转到IP过滤页面
 Suite Teardown    关闭浏览器
 Resource          keyword.txt
 
 *** Test Cases ***
-try
-    转到IP过滤页面
-    验证IP过滤规则名    aa'aa    sdsdsds
+IPandProtocal_NAME_test_1
+    [Documentation]    规则名称允许为空，为空时能够保存成功；规则列表中展示出的该条规则的规则名为空
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤规则名    ${EMPTY}    ${common_unlock_add}
+    IP过滤列表第row行第col列是string    1    2    ${EMPTY}
+
+IPandProtocal_NAME_test_2
+    [Documentation]    规则名称输入数据带有 '"\或空格 ，提示“ 不能含有特殊字符 \ '"\和空格 ”
+    [Template]    验证IP过滤规则名
+    aa'aa    ${common_string_err}
+    aa"aa    ${common_string_err}
+    aa\\aa    ${common_string_err}
+    aa aa    ${common_string_err}
+
+IPandProtocal_NAME_test_3
+    [Documentation]    规则名长度最大31个字符，超过31字符无法输入
+    [Template]    验证IP过滤规则名最大输入长度
+    1111111111222222222233333333334我    31
+
+IPandProtocal_NAME_test_4
+    [Documentation]    规则名输入30个字符，再输入一个中文，导致超过31个字符，提示“规则名过长，已经自动截断”。
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤规则名第31个字符输入中文自动截断    111111111122222222223333333333我    ${common_unlock_add}
+    IP过滤列表第row行第col列是string    1    2    111111111122222222223333333333
+
+IPandProtocal_DIP_hosts_test_8_1
+    [Documentation]    目的IP地址输入框超过15个字符后，无法输入
+    [Template]    验证IP过滤目的主机hostsIP地址最大输入长度
+    1234567890123456    15
+
+IPandProtocal_DIP_hosts_test_9_1
+    [Documentation]    目的IP地址输入框：小数点>3，提示IP长度不正确
+    [Template]    验证IP过滤目的主机hostsIP地址
+    10.0.0.1.    ${common_ip_addr_err}
+
+IPandProtocal_DIP_hosts_test_10_1
+    [Documentation]    目的IP地址输入框：小数点<3，提示IP长度不正确
+    [Template]    验证IP过滤目的主机hostsIP地址
+    10.0.01    ${common_ip_addr_err}
+
+IPandProtocal_DIP_hosts_test_11_1
+    [Documentation]    目的IP地址不能为空
+    [Template]    验证IP过滤目的主机hostsIP地址
+    ${EMPTY}    ${common_ip_addr_err}
+
+IPandProtocal_DIP_hosts_test_12_1
+    [Documentation]    目的IP地址输入框第一段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤目的主机hostsIP地址
+    -1.0.0.2    ${common_ip_addr_err}
+    256.0.0.1    ${common_ip_addr_err}
+
+IPandProtocal_DIP_hosts_test_13_1
+    [Documentation]    目的IP地址输入框第二段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤目的主机hostsIP地址
+    10.-1.0.10    ${common_ip_addr_err}
+    10.256.0.10    ${common_ip_addr_err}
+
+IPandProtocal_DIP_hosts_test_14_1
+    [Documentation]    目的IP地址输入框第三段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤目的主机hostsIP地址
+    10.0.-1.10    ${common_ip_addr_err}
+    10.0.256.10    ${common_ip_addr_err}
+
+IPandProtocal_DIP_hosts_test_15_1
+    [Documentation]    目的IP地址输入框第四段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤目的主机hostsIP地址
+    10.0.0.-1    ${common_ip_addr_err}
+    10.0.0.256    ${common_ip_addr_err}
+
+IPandProtocal_DIP_hosts_test_16_1
+    [Documentation]    目的IP地址输入框存在非法字符，提示发现n个非法字符
+    [Template]    验证IP过滤目的主机hostsIP地址
+    192,168;1:s    ${common_ip_addr_err}
+
+IPandProtocal_DIP_hosts_test_17_1
+    [Documentation]    目的IP地址第一段、第二段、第三段、第四段均不能为空
+    [Template]    验证IP过滤目的主机hostsIP地址
+    .168.1.10    ${common_ip_addr_err}
+    192..1.10    ${common_ip_addr_err}
+    192.168..10    ${common_ip_addr_err}
+    192.168.1.    ${common_ip_addr_err}
+
+IPandProtocal_DIP_hosts_test_18_1
+    [Documentation]    目的IP地址输入0.0.0.0，提示IP不能为全0
+    [Template]    验证IP过滤目的主机hostsIP地址
+    0.0.0.0    ${common_ip_addr_err}
+
+IPandProtocal_DIP_hosts_test_19_1
+    [Documentation]    目的IP地址不为组播地址：223 < n1 < 255
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤目的主机hostsIP地址    224.0.0.1    ${common_ip_addr_err}
+    验证IP过滤目的主机hostsIP地址    255.0.0.1    ${common_ip_addr_err}
+    验证IP过滤目的主机hostsIP地址    254.0.0.1    ${common_ip_addr_err}
+    验证IP过滤目的主机hostsIP地址    223.0.0.1    ${common_unlock_add}
+    IP过滤列表里含有${string}    223.0.0.1\n/223.0.0.1
+
+IPandProtocal_DIP_hosts_test_20_1
+    [Documentation]    目的IP地址不为回环地址：n1 = 127
+    [Template]    验证IP过滤目的主机hostsIP地址
+    127.0.0.1    ${common_ip_addr_err}
+
+IPandProtocal_DIP_hosts_test_21_1
+    [Documentation]    目的IP地址不为保留地址：n1=0
+    [Template]    验证IP过滤目的主机hostsIP地址
+    0.168.1.10    ${common_ip_addr_err}
+
+IPandProtocal_DMASK_test_22
+    [Documentation]    目的网段：子网掩码输入框超过15个字符后，无法输入
+    [Template]    验证IP过滤目的MASK地址最大输入长度
+    1234567890123456    15
+
+IPandProtocal_DMASK_test_23
+    [Documentation]    目的网段：子网掩码输入框：小数点>3，提示IP长度不正确
+    [Template]    验证IP过滤目的子网地址
+    192.168.1.10    255.0.0.0.    ${common_mask_addr_err}
+
+IPandProtocal_DMASK_test_24
+    [Documentation]    目的网段：子网掩码输入框：小数点<3，提示IP长度不正确
+    [Template]    验证IP过滤目的子网地址
+    192.168.1.10    255.0.00    ${common_mask_addr_err}
+
+IPandProtocal_DMASK_test_25
+    [Documentation]    目的网段：子网掩码不能为空
+    [Template]    验证IP过滤目的子网地址
+    192.168.1.10    ${EMPTY}    ${common_mask_addr_err}
+
+IPandProtocal_DMASK_test_26
+    [Documentation]    目的网段：子网掩码输入框第一段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤目的子网地址    192.168.1.10    251.0.0.0    ${common_mask_addr_err}
+    验证IP过滤目的子网地址    192.168.1.10    191.0.0.0    ${common_mask_addr_err}
+    验证IP过滤目的子网地址    192.168.1.10    129.0.0.0    ${common_mask_addr_err}
+    验证IP过滤目的子网地址    192.168.1.10    255.0.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.0.0.0
+    验证IP过滤目的子网地址    192.168.1.10    254.0.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/254.0.0.0
+    验证IP过滤目的子网地址    192.168.1.10    252.0.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/252.0.0.0
+    验证IP过滤目的子网地址    192.168.1.10    248.0.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/248.0.0.0
+    验证IP过滤目的子网地址    192.168.1.10    240.0.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/240.0.0.0
+    验证IP过滤目的子网地址    192.168.1.10    224.0.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/224.0.0.0
+    验证IP过滤目的子网地址    196.168.1.10    192.0.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/192.0.0.0
+    验证IP过滤目的子网地址    192.168.1.10    128.0.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    128.0.0.0\n/128.0.0.0
+
+IPandProtocal_DMASK_test_27
+    [Documentation]    目的网段：子网掩码输入框第二段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤目的子网地址    192.0.1.10    255.251.0.0    ${common_mask_addr_err}
+    验证IP过滤目的子网地址    192.0.1.10    255.248.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.248.0.0
+    验证IP过滤目的子网地址    192.0.1.10    255.255.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.255.0.0
+    验证IP过滤目的子网地址    192.0.1.10    255.252.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.252.0.0
+    验证IP过滤目的子网地址    192.0.1.10    255.240.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.240.0.0
+    验证IP过滤目的子网地址    192.0.1.10    255.224.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.224.0.0
+    验证IP过滤目的子网地址    192.0.1.10    255.192.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.192.0.0
+    验证IP过滤目的子网地址    192.0.1.10    255.128.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.128.0.0
+    验证IP过滤目的子网地址    192.0.1.10    255.0.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.0.0.0
+
+IPandProtocal_DMASK_test_28
+    [Documentation]    目的网段：子网掩码输入框第三段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤目的子网地址    192.0.0.10    255.255.251.0    ${common_mask_addr_err}
+    验证IP过滤目的子网地址    192.0.0.10    255.255.248.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.255.248.0
+    验证IP过滤目的子网地址    192.0.0.10    255.255.255.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.255.255.0
+    验证IP过滤目的子网地址    192.0.0.10    255.255.254.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.255.254.0
+    验证IP过滤目的子网地址    192.0.0.10    255.255.252.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.255.252.0
+    验证IP过滤目的子网地址    192.0.0.10    255.255.240.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.255.240.0
+    验证IP过滤目的子网地址    192.0.0.10    255.255.224.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.255.224.0
+    验证IP过滤目的子网地址    192.0.0.10    255.255.192.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.255.192.0
+    验证IP过滤目的子网地址    192.0.0.10    255.255.128.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.255.128.0
+
+IPandProtocal_DMASK_test_29
+    [Documentation]    目的网段：子网掩码输入框第四段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤目的子网地址    192.168.1.10    255.255.255.251    ${common_mask_addr_err}
+    验证IP过滤目的子网地址    192.168.1.10    255.255.255.248    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.168.1.8\n/255.255.255.248
+
+IPandProtocal_DMASK_test_30
+    [Documentation]    目的网段：子网掩码输入框存在非法字符，提示发现n个非法字符
+    [Template]    验证IP过滤目的子网地址
+    192.168.1.10    255,m.k;**    ${common_mask_addr_err}
+
+IPandProtocal_DMASK_test_31
+    [Documentation]    目的网段：子网掩码第一段、第二段、第三段、第四段均不能为空
+    [Template]    验证IP过滤目的子网地址
+    192.168.1.10    .0.0.0    ${common_mask_addr_err}
+    192.168.1.10    255..0.0    ${common_mask_addr_err}
+    192.168.1.10    255.0..0    ${common_mask_addr_err}
+    192.168.1.10    255.0.0.    ${common_mask_addr_err}
+
+IPandProtocal_DMASK_test_32
+    [Documentation]    目的网段：子网掩码输入0.0.0.0，255.255.255.255，提示子网掩码不合法
+    [Template]    验证IP过滤目的子网地址
+    192.168.1.10    0.0.0.0    ${common_mask_addr_err}
+    192.168.1.10    255.255.255.255    ${common_mask_addr_err}
+
+IPandProtocal_DMASK_test_33
+    [Documentation]    目的网段：子网掩码地址第四段不等于0或255时，第一段、第二段、第三段均等于255
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤目的子网地址    192.168.1.10    255.255.0.128    ${common_mask_addr_err}
+    验证IP过滤目的子网地址    192.168.1.10    255.255.255.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.168.1.0\n/255.255.255.0
+
+IPandProtocal_DMASK_test_34
+    [Documentation]    目的网段：子网掩码地址第三段不等于0或255时，第一段、第二段均等于255，第四段等于0
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤目的子网地址    192.168.1.10    255.0.128.128    ${common_mask_addr_err}
+    验证IP过滤目的子网地址    192.168.1.10    255.255.128.128    ${common_mask_addr_err}
+    验证IP过滤目的子网地址    192.168.1.10    255.255.128.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.168.0.0\n/255.255.128.0
+
+IPandProtocal_DMASK_test_35
+    [Documentation]    目的网段：子网掩码地址第二段不等于0或255时，第一段等于255，第三段等于第四段等于0
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤目的子网地址    192.168.1.10    255.128.128.128    ${common_mask_addr_err}
+    验证IP过滤目的子网地址    192.168.1.10    128.128.0.0    ${common_mask_addr_err}
+    验证IP过滤目的子网地址    192.168.1.10    255.128.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.128.0.0\n/255.128.0.0
+
+IPandProtocal_DMASK_test_36
+    [Documentation]    目的网段：子网掩码第一段不等于0或255时，第一段、第二段、第三段均等于0
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤目的子网地址    192.168.1.10    254.254.254.254    ${common_mask_addr_err}
+    验证IP过滤目的子网地址    192.168.1.10    254.0.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/254.0.0.0
+
+IPandProtocal_DIP_test_39
+    [Documentation]    目的IP地址段的起始IP地址大于结束IP地址，提示“起始IP地址不能大于结束IP地址”
+    [Template]    验证IP过滤目的主机segment结束IP地址
+    192.168.1.102    192.168.1.25    ${common_cmp_ip_err}
+
+IPandProtocal_SIP_hosts_test_40_1
+    [Documentation]    源IP地址输入框超过15个字符后，无法输入
+    [Template]    验证IP过滤源主机hostsIP地址最大输入长度
+    1234567890123456    15
+
+IPandProtocal_SIP_hosts_test_41_1
+    [Documentation]    源IP地址输入框：小数点>3，提示IP长度不正确
+    [Template]    验证IP过滤源主机hostsIP地址
+    10.0.0.1.    ${common_ip_addr_err}
+
+IPandProtocal_SIP_hosts_test_42_1
+    [Documentation]    源IP地址输入框：小数点<3，提示IP长度不正确
+    [Template]    验证IP过滤源主机hostsIP地址
+    10.0.01    ${common_ip_addr_err}
+
+IPandProtocal_SIP_hosts_test_43_1
+    [Documentation]    源IP地址不能为空
+    [Template]    验证IP过滤源主机hostsIP地址
+    ${EMPTY}    ${common_ip_addr_err}
+
+IPandProtocal_SIP_hosts_test_44_1
+    [Documentation]    源IP地址输入框第一段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤源主机hostsIP地址
+    -1.0.0.2    ${common_ip_addr_err}
+    256.0.0.1    ${common_ip_addr_err}
+
+IPandProtocal_SIP_hosts_test_45_1
+    [Documentation]    源IP地址输入框第二段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤源主机hostsIP地址
+    10.-1.0.10    ${common_ip_addr_err}
+    10.256.0.10    ${common_ip_addr_err}
+
+IPandProtocal_SIP_hosts_test_46_1
+    [Documentation]    源IP地址输入框第三段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤源主机hostsIP地址
+    10.0.-1.10    ${common_ip_addr_err}
+    10.0.256.10    ${common_ip_addr_err}
+
+IPandProtocal_SIP_hosts_test_47_1
+    [Documentation]    源IP地址输入框第四段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤源主机hostsIP地址
+    10.0.0.-1    ${common_ip_addr_err}
+    10.0.0.256    ${common_ip_addr_err}
+
+IPandProtocal_SIP_hosts_test_48_1
+    [Documentation]    源IP地址输入框存在非法字符，提示发现n个非法字符
+    [Template]    验证IP过滤源主机hostsIP地址
+    192,168;1:s    ${common_ip_addr_err}
+
+IPandProtocal_SIP_hosts_test_49_1
+    [Documentation]    源IP地址第一段、第二段、第三段、第四段均不能为空
+    [Template]    验证IP过滤源主机hostsIP地址
+    .168.1.10    ${common_ip_addr_err}
+    192..1.10    ${common_ip_addr_err}
+    192.168..10    ${common_ip_addr_err}
+    192.168.1.    ${common_ip_addr_err}
+
+IPandProtocal_SIP_hosts_test_50_1
+    [Documentation]    源IP地址输入0.0.0.0，提示IP不能为全0
+    [Template]    验证IP过滤源主机hostsIP地址
+    0.0.0.0    ${common_ip_addr_err}
+
+IPandProtocal_SIP_hosts_test_51_1
+    [Documentation]    源IP地址不为组播地址或保留地址：223 < n1 < 255
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤源主机hostsIP地址    224.0.0.1    ${common_ip_addr_err}
+    验证IP过滤源主机hostsIP地址    240.0.0.1    ${common_ip_addr_err}
+    验证IP过滤源主机hostsIP地址    223.0.0.1    ${common_unlock_add}
+    IP过滤列表里含有${string}    223.0.0.1\n/223.0.0.1
+
+IPandProtocal_SIP_hosts_test_52_1
+    [Documentation]    源IP地址不为回环地址：n1 = 127
+    [Template]    验证IP过滤源主机hostsIP地址
+    127.0.0.1    ${common_ip_addr_err}
+
+IPandProtocal_SIP_hosts_test_53_1
+    [Documentation]    源IP地址不为保留地址：n1=0
+    [Template]    验证IP过滤源主机hostsIP地址
+    0.168.1.10    ${common_ip_addr_err}
+
+IPandProtocal_SMASK_test_54
+    [Documentation]    本地网段：子网掩码输入框超过15个字符后，无法输入
+    [Template]    验证IP过滤源MASK地址最大输入长度
+    1234567890123456    15
+
+IPandProtocal_SMASK_test_55
+    [Documentation]    本地网段：子网掩码输入框：小数点>3，提示IP长度不正确
+    [Template]    验证IP过滤源子网地址
+    192.168.1.10    255.0.0.0.    ${common_mask_addr_err}
+
+IPandProtocal_SMASK_test_56
+    [Documentation]    本地网段：子网掩码输入框：小数点<3，提示IP长度不正确
+    [Template]    验证IP过滤源子网地址
+    192.168.1.10    255.0.00    ${common_mask_addr_err}
+
+IPandProtocal_SMASK_test_57
+    [Documentation]    本地网段：子网掩码不能为空
+    [Template]    验证IP过滤源子网地址
+    192.168.1.10    ${EMPTY}    ${common_mask_addr_err}
+
+IPandProtocal_SMASK_test_58
+    [Documentation]    本地网段：子网掩码输入框第一段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤源子网地址    192.168.1.10    251.0.0.0    ${common_mask_addr_err}
+    验证IP过滤源子网地址    192.168.1.10    191.0.0.0    ${common_mask_addr_err}
+    验证IP过滤源子网地址    192.168.1.10    129.0.0.0    ${common_mask_addr_err}
+    验证IP过滤源子网地址    192.168.1.10    255.0.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.0.0.0
+    验证IP过滤源子网地址    192.168.1.10    254.0.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/254.0.0.0
+    验证IP过滤源子网地址    192.168.1.10    252.0.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/252.0.0.0
+    验证IP过滤源子网地址    192.168.1.10    248.0.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/248.0.0.0
+    验证IP过滤源子网地址    192.168.1.10    240.0.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/240.0.0.0
+    验证IP过滤源子网地址    192.168.1.10    224.0.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/224.0.0.0
+    验证IP过滤源子网地址    196.168.1.10    192.0.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/192.0.0.0
+    验证IP过滤源子网地址    192.168.1.10    128.0.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    128.0.0.0\n/128.0.0.0
+
+IPandProtocal_SMASK_test_59
+    [Documentation]    本地网段：子网掩码输入框第二段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤源子网地址    192.0.1.10    255.251.0.0    ${common_mask_addr_err}
+    验证IP过滤源子网地址    192.0.1.10    255.248.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.248.0.0
+    验证IP过滤源子网地址    192.0.1.10    255.255.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.255.0.0
+    验证IP过滤源子网地址    192.0.1.10    255.252.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.252.0.0
+    验证IP过滤源子网地址    192.0.1.10    255.240.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.240.0.0
+    验证IP过滤源子网地址    192.0.1.10    255.224.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.224.0.0
+    验证IP过滤源子网地址    192.0.1.10    255.192.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.192.0.0
+    验证IP过滤源子网地址    192.0.1.10    255.128.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.128.0.0
+    验证IP过滤源子网地址    192.0.1.10    255.0.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.0.0.0
+
+IPandProtocal_SMASK_test_60
+    [Documentation]    本地网段：子网掩码输入框第三段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤源子网地址    192.0.0.10    255.255.251.0    ${common_mask_addr_err}
+    验证IP过滤源子网地址    192.0.0.10    255.255.248.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.255.248.0
+    验证IP过滤源子网地址    192.0.0.10    255.255.255.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.255.255.0
+    验证IP过滤源子网地址    192.0.0.10    255.255.254.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.255.254.0
+    验证IP过滤源子网地址    192.0.0.10    255.255.252.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.255.252.0
+    验证IP过滤源子网地址    192.0.0.10    255.255.240.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.255.240.0
+    验证IP过滤源子网地址    192.0.0.10    255.255.224.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.255.224.0
+    验证IP过滤源子网地址    192.0.0.10    255.255.192.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.255.192.0
+    验证IP过滤源子网地址    192.0.0.10    255.255.128.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/255.255.128.0
+
+IPandProtocal_SMASK_test_61
+    [Documentation]    本地网段：子网掩码输入框第四段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤源子网地址    192.168.1.10    255.255.255.251    ${common_mask_addr_err}
+    验证IP过滤源子网地址    192.168.1.10    255.255.255.248    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.168.1.8\n/255.255.255.248
+
+IPandProtocal_SMASK_test_62
+    [Documentation]    本地网段：子网掩码输入框存在非法字符，提示发现n个非法字符
+    [Template]    验证IP过滤源子网地址
+    192.168.1.10    255,m.k;**    ${common_mask_addr_err}
+
+IPandProtocal_SMASK_test_63
+    [Documentation]    本地网段：子网掩码第一段、第二段、第三段、第四段均不能为空
+    [Template]    验证IP过滤源子网地址
+    192.168.1.10    .0.0.0    ${common_mask_addr_err}
+    192.168.1.10    255..0.0    ${common_mask_addr_err}
+    192.168.1.10    255.0..0    ${common_mask_addr_err}
+    192.168.1.10    255.0.0.    ${common_mask_addr_err}
+
+IPandProtocal_SMASK_test_64
+    [Documentation]    本地网段：子网掩码输入0.0.0.0，255.255.255.255，提示子网掩码不合法
+    [Template]    验证IP过滤源子网地址
+    192.168.1.10    0.0.0.0    ${common_mask_addr_err}
+    192.168.1.10    255.255.255.255    ${common_mask_addr_err}
+
+IPandProtocal_SMASK_test_65
+    [Documentation]    本地网段：子网掩码地址第四段不等于0或255时，第一段、第二段、第三段均等于255
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤源子网地址    192.168.1.10    255.255.0.128    ${common_mask_addr_err}
+    验证IP过滤源子网地址    192.168.1.10    255.255.255.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.168.1.0\n/255.255.255.0
+
+IPandProtocal_SMASK_test_66
+    [Documentation]    本地网段：子网掩码地址第三段不等于0或255时，第一段、第二段均等于255，第四段等于0
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤源子网地址    192.168.1.10    255.0.128.128    ${common_mask_addr_err}
+    验证IP过滤源子网地址    192.168.1.10    255.255.128.128    ${common_mask_addr_err}
+    验证IP过滤源子网地址    192.168.1.10    255.255.128.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.168.0.0\n/255.255.128.0
+
+IPandProtocal_SMASK_test_67
+    [Documentation]    本地网段：子网掩码地址第二段不等于0或255时，第一段等于255，第三段等于第四段等于0
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤源子网地址    192.168.1.10    255.128.128.128    ${common_mask_addr_err}
+    验证IP过滤源子网地址    192.168.1.10    128.128.0.0    ${common_mask_addr_err}
+    验证IP过滤源子网地址    192.168.1.10    255.128.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.128.0.0\n/255.128.0.0
+
+IPandProtocal_SMASK_test_68
+    [Documentation]    本地网段：子网掩码第一段不等于0或255时，第一段、第二段、第三段均等于0
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤源子网地址    192.168.1.10    254.254.254.254    ${common_mask_addr_err}
+    验证IP过滤源子网地址    192.168.1.10    254.0.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    192.0.0.0\n/254.0.0.0
+
+IPandProtocal_SIP_test_71
+    [Documentation]    源IP地址段的起始IP地址大于结束IP地址，提示“起始IP地址不能大于结束IP地址”
+    [Template]    验证IP过滤源主机segment结束IP地址
+    192.168.1.102    192.168.1.25    ${common_cmp_ip_err}
+
+IPandProtocal_SPORT_test_72
+    [Documentation]    目的端口的起始端口不能为空
+    [Template]    验证IP过滤协议端口
+    ${EMPTY}    12345    ${common_port_err}
+
+IPandProtocal_EPORT_test_73
+    [Documentation]    目的端口的结束端口不能为空；当起始端口不为空，而结束端口为空时，表示协议端口为起始端口的值。
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤协议端口    12345    ${EMPTY}    ${common_unlock_add}
+    IP过滤列表里含有${string}    12345-12345
+
+IPandProtocal_SPORT_test_74
+    [Documentation]    目的端口的起始端口超过5个字符后，无法输入
+    [Template]    验证起始端口最大输入长度
+    123456    5
+
+IPandProtocal_EPORT_test_75
+    [Documentation]    目的端口的结束端口超过5个字符后，无法输入
+    [Template]    验证结束端口最大输入长度
+    123456    5
+
+IPandProtocal_SPORT_test_76
+    [Documentation]    目的端口的起始端口，数字不在1~65535的范围内，提示端口范围为1~65535
+    [Template]    验证IP过滤协议端口
+    0    ${EMPTY}    ${common_port_err}
+    65536    ${EMPTY}    ${common_port_err}
+
+IPandProtocal_EPORT_test_77
+    [Documentation]    目的端口的结束端口，数字不在1~65535的范围内，提示端口范围为1~65535
+    [Template]    验证IP过滤协议端口
+    59999    0    ${common_port_err}
+    59999    65536    ${common_port_err}
+
+IPandProtocal_SPORT_test_78
+    [Documentation]    目的端口的起始端口，端口不为正整数，提示不能含有非数字字符
+    [Template]    验证IP过滤协议端口
+    abcd    ${EMPTY}    ${common_port_err}
+    0.123    ${EMPTY}    ${common_port_err}
+
+IPandProtocal_EPORT_test_79
+    [Documentation]    目的端口的结束端口，端口不为正整数，提示不能含有非数字字符
+    [Template]    验证IP过滤协议端口
+    59999    abcd    ${common_port_err}
+    59999    0.123    ${common_port_err}
+
+IPandProtocal_PORT_test_80
+    [Documentation]    目的端口的的起始端口大于结束端口，提示“起始端口必须小于等于结束端口”
+    [Template]    验证IP过滤协议端口
+    59999    49999    ${common_cmp_port_err}
+
+IPandProtocal_PORT_test_81
+    [Documentation]    协议选择all,icmp时，端口不能输入
+    协议选择all,icmp时端口不能输入
+
+IPandProtocal_ADD_test_96
+    [Documentation]    成功添加一条IP地址过滤条目，自动刷新后存在
+    删除IP过滤列表里所有条目显示成功消息message
+    @{LIST}    Create List    xpath=(//input[@id='ip_day'])[2]    xpath=(//input[@id='ip_day'])[4]    xpath=(//input[@id='ip_day'])[6]
+    添加IP过滤条目    ${common_unlock_add}    wdes=abcd    wshost=host    wsip=192.168.1.85    wdhost=host    wdip=192.168.1.100
+    ...    wprotcol=TCP    wstart_port=100    wend_port=1000    wday_locator=@{LIST}    wstart_time=09:00    wend_time=17:00
+    验证IP过滤列表中某一行中每一列的值    1    abcd    Permit    192.168.1.85\n/192.168.1.85    192.168.1.100\n/192.168.1.100    TCP
+    ...    100-1000    Mon Wed Fri    09:00-17:00
+    #第二条条目
+    Sleep    3
+    @{LIST}    Create List    xpath=(//input[@id='ip_day'])[1]
+    添加IP过滤条目    ${common_unlock_add}    wdes=0000    wshost=host    wsip=192.168.1.0    wdhost=host    wdip=192.168.2.255
+    ...    wprotcol=TCP    wstart_port=2    wend_port=20    wday_locator=@{LIST}    wstart_time=09:00    wend_time=17:00
+    验证IP过滤列表中某一行中每一列的值    1    0000    Permit    192.168.1.0\n/192.168.1.0    192.168.2.255\n/192.168.2.255    TCP
+    ...    2-20    Sun    09:00-17:00
+
+IPandProtocal_ADD_test_97
+    [Documentation]    IP地址过滤条目总数超过256条，不能再添加新的条目，提示IP地址过滤条目已满
+    删除IP过滤列表里所有条目显示成功消息message
+    : FOR    ${i}    IN RANGE    31    48
+    \    ${SIP}    Catenate    SEPARATOR=    192.168.1.    ${i}
+    \    Run Keyword If    '${i}'!='47'    验证IP过滤源主机hostsIP地址    ${SIP}    ${common_unlock_add}
+    \    Run Keyword If    '${i}'=='47'    验证IP过滤源主机hostsIP地址    ${SIP}    ${common_item_err}
+    IP过滤列表第row行第col列是string    1    4    192.168.1.46\n/192.168.1.46
+
+IPandProtocal_ADD_test_98
+    [Documentation]    添加一条条目，内容和已添加条目中的一条条目存在以下内容的全部重复：｛生效内网主机、
+    ...    生效外网主机、生效协议、生效端口、生效时间｝，提示条目已存在，添加失败。
+    删除IP过滤列表里所有条目显示成功消息message
+    @{LISTADD1}    Create List    xpath=(//input[@id='ip_day'])[2]    xpath=(//input[@id='ip_day'])[4]    xpath=(//input[@id='ip_day'])[6]
+    添加IP过滤条目    ${common_unlock_add}    wdes=abcd    wshost=host    wsip=192.168.1.85    wdhost=host    wdip=192.168.1.100
+    ...    wprotcol=TCP    wstart_port=100    wend_port=1000    wday_locator=@{LISTADD1}    wstart_time=09:00    wend_time=17:00
+    验证IP过滤列表中某一行中每一列的值    1    abcd    Permit    192.168.1.85\n/192.168.1.85    192.168.1.100\n/192.168.1.100    TCP
+    ...    100-1000    Mon Wed Fri    09:00-17:00
+    Sleep    3
+    @{LISTADD2}    Create List    xpath=(//input[@id='ip_day'])[2]    xpath=(//input[@id='ip_day'])[4]    xpath=(//input[@id='ip_day'])[6]
+    添加IP过滤条目    ${common_port_occupy_err}    wdes=abcd    wshost=host    wsip=192.168.1.85    wdhost=host    wdip=192.168.1.100
+    ...    wprotcol=TCP    wstart_port=100    wend_port=1000    wday_locator=@{LISTADD2}    wstart_time=09:00    wend_time=17:00
+    关闭浏览器重新进入ip协议过滤页面
+    Sleep    3
+    添加IP过滤条目    ${common_unlock_add}
+    验证IP过滤列表中某一行中每一列的值    1    ${EMPTY}    Permit    ALL    ALL    ALL
+    ...    1-65535    ALL    ALL
+    Sleep    3
+    添加IP过滤条目    ${common_add_item_err}
+
+IPandProtocal_MODIFY_test_100
+    [Documentation]    成功修改一条条目，自动刷新后改变
+    删除IP过滤列表里所有条目显示成功消息message
+    #添加第一条条目
+    @{LISTADD1}    Create List    xpath=(//input[@id='ip_day'])[2]    xpath=(//input[@id='ip_day'])[4]    xpath=(//input[@id='ip_day'])[6]
+    添加IP过滤条目    ${common_unlock_add}    wdes=abcd    wshost=host    wsip=192.168.1.85    wdhost=host    wdip=192.168.1.100
+    ...    wprotcol=TCP    wstart_port=100    wend_port=1000    wday_locator=@{LISTADD1}    wstart_time=09:00    wend_time=17:00
+    Sleep    2
+    #修改第一条条目
+    @{LISTMODIFY1}    Create List    xpath=(//input[@id='ip_day'])[1]    xpath=(//input[@id='ip_day'])[3]
+    修改第{row}行IP过滤条目    1    ${common_unlock_add}    pwday_locator=@{LISTADD1}    wdes=1234    wrule=0    wshost=host
+    ...    wsip=192.168.2.2    wdhost=ip_host    wstart_dip=192.168.3.2    wend_dip=192.168.3.30    wprotcol=UDP    wstart_port=2
+    ...    wend_port=10    wday_locator=@{LISTMODIFY1}    wstart_time=00:00    wend_time=02:00
+    验证IP过滤列表中某一行中每一列的值    1    1234    Deny    192.168.2.2\n/192.168.2.2    192.168.3.2\n/192.168.3.30    UDP
+    ...    2-10    Sun Tue    00:00-02:00
+    Sleep    2
+    #
+    #
+    #添加第二条条目
+    @{LISTADD1}    Create List
+    添加IP过滤条目    ${common_unlock_add}    wdes=abcd    wshost=host    wsip=192.168.1.85    wdhost=host    wdip=192.168.1.100
+    ...    wprotcol=TCP    wstart_port=100    wend_port=1000    wday_locator=@{LISTADD1}    wallday_locator=ip_time
+    Sleep    2
+    #修改第二条条目    #原条目day和time取默认值时
+    @{LISTMODIFY1}    Create List    xpath=(//input[@id='ip_day'])[5]
+    修改第{row}行IP过滤条目    1    ${common_unlock_add}    pwday_locator=@{LISTADD1}    pwallday_locator=ip_time    wdes=5678    wrule=1
+    ...    wshost=host    wsip=192.168.5.5    wdhost=ip_host    wstart_dip=192.168.6.6    wend_dip=192.168.6.60    wprotcol=UDP
+    ...    wstart_port=200    wend_port=300    wday_locator=@{LISTMODIFY1}    wstart_time=06:00    wend_time=07:00
+    验证IP过滤列表中某一行中每一列的值    1    5678    Permit    192.168.5.5\n/192.168.5.5    192.168.6.6\n/192.168.6.60    UDP
+    ...    200-300    Thu    06:00-07:00
+    Sleep    2
+    #
+    #
+    Comment    #需要填写的数据模板
+    Comment    @{LIST}    Create List    xpath=(//input[@id='ip_day'])[1]
+    Comment    修改第{row}行IP过滤条目    1    ${common_unlock_add}    wdes=    wrule=    wshost=
+    ...    wsip=    wsmask=    wstart_sip=    wend_sip=    wdhost=    wdip=
+    ...    wdmask=    wstart_dip=    wend_dip=    wprotcol=    wstart_port=    wend_port=
+    ...    wday_locator=    wstart_time=    wend_time=    wallday_locator=
+    Comment    修改第{row}行IP过滤条目    1    ${common_unlock_add}    pwday_locator=@{LISTADD1}    pwallday_locator=ip_time    wdes=
+    ...    wrule=    wshost=    wsip=    wsmask=    wstart_sip=    wend_sip=
+    ...    wdhost=    wdip=    wdmask=    wstart_dip=    wend_dip=    wprotcol=
+    ...    wstart_port=    wend_port=    wday_locator=    wstart_time=    wend_time=    wallday_locator=
+
+IPandProtocal_MODIFY_test_102
+    [Documentation]    修改一条条目，内容和已添加条目中的一条条目存在以下内容的全部重复：｛生效内网主机、
+    ...    生效外网主机、生效协议、生效端口、生效时间｝，提示条目已存在，添加失败。
+    删除IP过滤列表里所有条目显示成功消息message
+    @{LISTADD1}    Create List    xpath=(//input[@id='ip_day'])[2]    xpath=(//input[@id='ip_day'])[4]    xpath=(//input[@id='ip_day'])[6]
+    添加IP过滤条目    ${common_unlock_add}    wdes=abcd    wshost=host    wsip=192.168.1.85    wdhost=host    wdip=192.168.1.100
+    ...    wprotcol=TCP    wstart_port=100    wend_port=1000    wday_locator=@{LISTADD1}    wstart_time=09:00    wend_time=17:00
+    Sleep    3
+    @{LISTADD2}    Create List
+    添加IP过滤条目    ${common_unlock_add}
+    Sleep    3
+    @{LIST}    Create List    xpath=(//input[@id='ip_day'])[2]    xpath=(//input[@id='ip_day'])[4]    xpath=(//input[@id='ip_day'])[6]
+    修改第{row}行IP过滤条目    1    ${common_port_occupy_err}    pwday_locator=@{LISTADD2}    pwallday_locator=ip_time    wdes=abcd    wshost=host
+    ...    wsip=192.168.1.85    wdhost=host    wdip=192.168.1.100    wprotcol=TCP    wstart_port=100    wend_port=1000
+    ...    wday_locator=@{LISTADD1}    wstart_time=09:00    wend_time=17:00
+    验证IP过滤列表中某一行中每一列的值    2    abcd    Permit    192.168.1.85\n/192.168.1.85    192.168.1.100\n/192.168.1.100    TCP
+    ...    100-1000    Mon Wed Fri    09:00-17:00
+    验证IP过滤列表中某一行中每一列的值    1    ${EMPTY}    Permit    ALL    ALL    ALL
+    ...    1-65535    ALL    ALL
+    Comment    #需要填写的数据模板
+    Comment    @{LIST}    Create List    xpath=(//input[@id='ip_day'])[1]
+    Comment    修改第{row}行IP过滤条目    1    ${common_unlock_add}    wdes=    wrule=    wshost=
+    ...    wsip=    wsmask=    wstart_sip=    wend_sip=    wdhost=    wdip=
+    ...    wdmask=    wstart_dip=    wend_dip=    wprotcol=    wstart_port=    wend_port=
+    ...    wday_locator=    wstart_time=    wend_time=    wallday_locator=
+    Comment    修改第{row}行IP过滤条目    1    ${common_unlock_add}    pwday_locator=@{LISTADD1}    pwallday_locator=ip_time    wdes=
+    ...    wrule=    wshost=    wsip=    wsmask=    wstart_sip=    wend_sip=
+    ...    wdhost=    wdip=    wdmask=    wstart_dip=    wend_dip=    wprotcol=
+    ...    wstart_port=    wend_port=    wday_locator=    wstart_time=    wend_time=    wallday_locator=
+
+IPandProtocal_DELETE_test_104
+    [Documentation]    成功删除一条条目，自动刷新后不存在
+    删除IP过滤列表里所有条目显示成功消息message
+    @{LISTADD1}    Create List    xpath=(//input[@id='ip_day'])[2]    xpath=(//input[@id='ip_day'])[4]    xpath=(//input[@id='ip_day'])[6]
+    添加IP过滤条目    ${common_unlock_add}    wdes=abcd    wshost=host    wsip=192.168.1.85    wdhost=host    wdip=192.168.1.100
+    ...    wprotcol=TCP    wstart_port=100    wend_port=1000    wday_locator=@{LISTADD1}    wstart_time=09:00    wend_time=17:00
+    Sleep    3
+    @{LISTADD2}    Create List
+    添加IP过滤条目    ${common_unlock_add}
+    Sleep    3
+    @{LIST}    Create List    xpath=(//input[@id='ip_day'])[2]    xpath=(//input[@id='ip_day'])[4]    xpath=(//input[@id='ip_day'])[6]
+    删除IP过滤列表里第${row}行显示成功消息${message}    2    ${common_unlock_delete}
+    验证IP过滤列表中某一行中每一列的值    1    ${EMPTY}    Permit    ALL    ALL    ALL
+    ...    1-65535    ALL    ALL
+
+IPandProtocal_DELETE_test_105
+    [Documentation]    成功删除所有条目，自动刷新后不存在
+    删除IP过滤列表里所有条目显示成功消息message
+    @{LISTADD1}    Create List    xpath=(//input[@id='ip_day'])[2]    xpath=(//input[@id='ip_day'])[4]    xpath=(//input[@id='ip_day'])[6]
+    添加IP过滤条目    ${common_unlock_add}    wdes=abcd    wshost=host    wsip=192.168.1.85    wdhost=host    wdip=192.168.1.100
+    ...    wprotcol=TCP    wstart_port=100    wend_port=1000    wday_locator=@{LISTADD1}    wstart_time=09:00    wend_time=17:00
+    Sleep    3
+    @{LISTADD2}    Create List
+    添加IP过滤条目    ${common_unlock_add}
+    Sleep    3
+    @{LIST}    Create List    xpath=(//input[@id='ip_day'])[2]    xpath=(//input[@id='ip_day'])[4]    xpath=(//input[@id='ip_day'])[6]
+    删除IP过滤列表里所有条目显示成功消息message
+
+IPandProtocal_DIP_subnet_test_8_2
+    [Documentation]    目的IP地址输入框超过15个字符后，无法输入
+    [Template]    验证IP过滤源主机subnetIP地址最大输入长度
+    1234567890123456    15
+
+IPandProtocal_DIP_segmentstart_test_8_3
+    [Documentation]    目的IP地址输入框超过15个字符后，无法输入
+    [Template]    验证IP过滤源主机segmentstartIP地址最大输入长度
+    1234567890123456    15
+
+IPandProtocal_DIP_segmentend_test_8_4
+    [Documentation]    目的IP地址输入框超过15个字符后，无法输入
+    [Template]    验证IP过滤源主机segmentendIP地址最大输入长度
+    1234567890123456    15
+
+IPandProtocal_DIP_subnet_test_9_2
+    [Documentation]    目的IP地址输入框：小数点>3，提示IP长度不正确
+    [Template]    验证IP过滤目的主机subnetIP地址
+    10.0.0.1.    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentstart_test_9_3
+    [Documentation]    目的IP地址输入框：小数点>3，提示IP长度不正确
+    [Template]    验证IP过滤目的主机segment起始IP地址
+    10.0.0.1.    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentend_test_9_4
+    [Documentation]    目的IP地址输入框：小数点>3，提示IP长度不正确
+    [Template]    验证IP过滤目的主机segment结束IP地址
+    192.168.1.95    10.0.0.1.    ${common_ip_addr_err}
+
+IPandProtocal_DIP_subnet_test_10_2
+    [Documentation]    目的IP地址输入框：小数点<3，提示IP长度不正确
+    [Template]    验证IP过滤目的主机subnetIP地址
+    10.0.01    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentstart_test_10_3
+    [Documentation]    目的IP地址输入框：小数点<3，提示IP长度不正确
+    [Template]    验证IP过滤目的主机segment起始IP地址
+    10.0.01    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentend_test_10_4
+    [Documentation]    目的IP地址输入框：小数点<3，提示IP长度不正确
+    [Template]    验证IP过滤目的主机segment结束IP地址
+    192.168.1.95    10.0.01    ${common_ip_addr_err}
+
+IPandProtocal_DIP_subnet_test_11_2
+    [Documentation]    目的IP地址不能为空
+    [Template]    验证IP过滤目的主机subnetIP地址
+    ${EMPTY}    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentstart_test_11_3
+    [Documentation]    目的IP地址不能为空
+    [Template]    验证IP过滤目的主机segment起始IP地址
+    ${EMPTY}    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentend_test_11_4
+    [Documentation]    目的IP地址不能为空
+    [Template]    验证IP过滤目的主机segment结束IP地址
+    192.168.1.95    ${EMPTY}    ${common_ip_addr_err}
+
+IPandProtocal_DIP_subnet_test_12_2
+    [Documentation]    目的IP地址输入框第一段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤目的主机subnetIP地址
+    -1.0.0.2    ${common_ip_addr_err}
+    256.0.0.1    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentstart_test_12_3
+    [Documentation]    目的IP地址输入框第一段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤目的主机segment起始IP地址
+    -1.0.0.2    ${common_ip_addr_err}
+    256.0.0.1    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentend_test_12_4
+    [Documentation]    目的IP地址输入框第一段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤目的主机segment结束IP地址
+    192.168.1.95    -1.0.0.2    ${common_ip_addr_err}
+    192.168.1.95    256.0.0.1    ${common_ip_addr_err}
+
+IPandProtocal_DIP_subnet_test_13_2
+    [Documentation]    目的IP地址输入框第二段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤目的主机subnetIP地址
+    10.-1.0.10    ${common_ip_addr_err}
+    10.256.0.10    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentstart_test_13_3
+    [Documentation]    目的IP地址输入框第二段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤目的主机segment起始IP地址
+    10.-1.0.10    ${common_ip_addr_err}
+    10.256.0.10    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentend_test_13_4
+    [Documentation]    目的IP地址输入框第二段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤目的主机segment结束IP地址
+    192.168.1.95    10.-1.0.10    ${common_ip_addr_err}
+    192.168.1.95    10.256.0.10    ${common_ip_addr_err}
+
+IPandProtocal_DIP_subnet_test_14_2
+    [Documentation]    目的IP地址输入框第三段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤目的主机subnetIP地址
+    10.0.-1.10    ${common_ip_addr_err}
+    10.0.256.10    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentstart_test_14_3
+    [Documentation]    目的IP地址输入框第三段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤目的主机segment起始IP地址
+    10.0.-1.10    ${common_ip_addr_err}
+    10.0.256.10    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentend_test_14_4
+    [Documentation]    目的IP地址输入框第三段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤目的主机segment结束IP地址
+    192.168.1.95    10.0.-1.10    ${common_ip_addr_err}
+    192.168.1.95    10.0.256.10    ${common_ip_addr_err}
+
+IPandProtocal_DIP_subnet_test_15_2
+    [Documentation]    目的IP地址输入框第四段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤目的主机subnetIP地址
+    10.0.0.-1    ${common_ip_addr_err}
+    10.0.0.256    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentstart_test_15_3
+    [Documentation]    目的IP地址输入框第四段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤目的主机segment起始IP地址
+    10.0.0.-1    ${common_ip_addr_err}
+    10.0.0.256    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentend_test_15_4
+    [Documentation]    目的IP地址输入框第四段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤目的主机segment结束IP地址
+    192.168.1.95    10.0.0.-1    ${common_ip_addr_err}
+    192.168.1.95    10.0.0.256    ${common_ip_addr_err}
+
+IPandProtocal_DIP_subnet_test_16_2
+    [Documentation]    目的IP地址输入框存在非法字符，提示发现n个非法字符
+    [Template]    验证IP过滤目的主机subnetIP地址
+    192,168;1:s    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentstart_test_16_3
+    [Documentation]    目的IP地址输入框存在非法字符，提示发现n个非法字符
+    [Template]    验证IP过滤目的主机segment起始IP地址
+    192,168;1:s    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentend_test_16_4
+    [Documentation]    目的IP地址输入框存在非法字符，提示发现n个非法字符
+    [Template]    验证IP过滤目的主机segment结束IP地址
+    192.168.1.95    192,168;1:s    ${common_ip_addr_err}
+
+IPandProtocal_DIP_subnet_test_17_2
+    [Documentation]    目的IP地址第一段、第二段、第三段、第四段均不能为空
+    [Template]    验证IP过滤目的主机subnetIP地址
+    .168.1.10    ${common_ip_addr_err}
+    192..1.10    ${common_ip_addr_err}
+    192.168..10    ${common_ip_addr_err}
+    192.168.1.    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentstart_test_17_3
+    [Documentation]    目的IP地址第一段、第二段、第三段、第四段均不能为空
+    [Template]    验证IP过滤目的主机segment起始IP地址
+    .168.1.10    ${common_ip_addr_err}
+    192..1.10    ${common_ip_addr_err}
+    192.168..10    ${common_ip_addr_err}
+    192.168.1.    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentend_test_17_4
+    [Documentation]    目的IP地址第一段、第二段、第三段、第四段均不能为空
+    [Template]    验证IP过滤目的主机segment结束IP地址
+    192.168.1.95    .168.1.10    ${common_ip_addr_err}
+    192.168.1.95    192..1.10    ${common_ip_addr_err}
+    192.168.1.95    192.168..10    ${common_ip_addr_err}
+    192.168.1.95    192.168.1.    ${common_ip_addr_err}
+
+IPandProtocal_DIP_subnet_test_18_2
+    [Documentation]    目的IP地址输入0.0.0.0，提示IP不能为全0
+    [Template]    验证IP过滤目的主机subnetIP地址
+    0.0.0.0    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentstart_test_18_3
+    [Documentation]    目的IP地址输入0.0.0.0，提示IP不能为全0
+    [Template]    验证IP过滤目的主机segment起始IP地址
+    0.0.0.0    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentend_test_18_4
+    [Documentation]    目的IP地址输入0.0.0.0，提示IP不能为全0
+    [Template]    验证IP过滤目的主机segment结束IP地址
+    192.168.1.95    0.0.0.0    ${common_ip_addr_err}
+
+IPandProtocal_DIP_subnet_test_19_2
+    [Documentation]    目的IP地址不为组播地址：223 < n1 < 255
+    [Template]
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤目的主机subnetIP地址    224.0.0.1    ${common_ip_addr_err}
+    验证IP过滤目的主机subnetIP地址    255.0.0.1    ${common_ip_addr_err}
+    验证IP过滤目的主机subnetIP地址    254.0.0.1    ${common_ip_addr_err}
+    验证IP过滤目的子网地址    223.0.0.1    255.0.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    223.0.0.0\n/255.0.0.0
+
+IPandProtocal_DIP_segmentstart_test_19_3
+    [Documentation]    目的IP地址不为组播地址：223 < n1 < 255
+    [Template]
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤目的主机segment起始IP地址    224.0.0.1    ${common_ip_addr_err}
+    验证IP过滤目的主机segment起始IP地址    255.0.0.1    ${common_ip_addr_err}
+    验证IP过滤目的主机segment起始IP地址    254.0.0.1    ${common_ip_addr_err}
+    验证IP过滤目的主机segment结束IP地址    223.0.0.1    223.0.0.100    ${common_unlock_add}
+    IP过滤列表里含有${string}    223.0.0.1\n/223.0.0.100
+
+IPandProtocal_DIP_segmentend_test_19_4
+    [Documentation]    目的IP地址不为组播地址：223 < n1 < 255
+    [Template]
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤目的主机segment结束IP地址    192.168.1.95    224.0.0.1    ${common_ip_addr_err}
+    验证IP过滤目的主机segment结束IP地址    192.168.1.95    255.0.0.1    ${common_ip_addr_err}
+    验证IP过滤目的主机segment结束IP地址    192.168.1.95    254.0.0.1    ${common_ip_addr_err}
+    验证IP过滤目的主机segment结束IP地址    223.0.0.1    223.0.0.100    ${common_unlock_add}
+    IP过滤列表里含有${string}    223.0.0.1\n/223.0.0.100
+
+IPandProtocal_DIP_subnet_test_20_2
+    [Documentation]    目的IP地址不为回环地址：n1 = 127
+    [Template]    验证IP过滤目的主机subnetIP地址
+    127.0.0.1    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentstart_test_20_3
+    [Documentation]    目的IP地址不为回环地址：n1 = 127
+    [Template]    验证IP过滤目的主机segment起始IP地址
+    127.0.0.1    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentend_test_20_4
+    [Documentation]    目的IP地址不为回环地址：n1 = 127
+    [Template]    验证IP过滤目的主机segment结束IP地址
+    192.168.1.95    127.0.0.1    ${common_ip_addr_err}
+
+IPandProtocal_DIP_subnet_test_21_2
+    [Documentation]    目的IP地址不为保留地址：n1=0
+    [Template]    验证IP过滤目的主机subnetIP地址
+    0.168.1.10    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentstart_test_21_3
+    [Documentation]    目的IP地址不为保留地址：n1=0
+    [Template]    验证IP过滤目的主机segment起始IP地址
+    0.168.1.10    ${common_ip_addr_err}
+
+IPandProtocal_DIP_segmentend_test_21_4
+    [Documentation]    目的IP地址不为保留地址：n1=0
+    [Template]    验证IP过滤目的主机segment结束IP地址
+    192.168.1.95    0.168.1.10    ${common_ip_addr_err}
+
+IPandProtocal_SIP_subnet_test_40_2
+    [Documentation]    源IP地址输入框超过15个字符后，无法输入
+    [Template]    验证IP过滤目的主机subnetIP地址最大输入长度
+    1234567890123456    15
+
+IPandProtocal_SIP_segmentstart_test_40_3
+    [Documentation]    源IP地址输入框超过15个字符后，无法输入
+    [Template]    验证IP过滤目的主机segmentstart地址最大输入长度
+    1234567890123456    15
+
+IPandProtocal_SIP_segmentend_test_40_4
+    [Documentation]    源IP地址输入框超过15个字符后，无法输入
+    [Template]    验证IP过滤目的主机segmentend地址最大输入长度
+    1234567890123456    15
+
+IPandProtocal_SIP_subnet_test_41_2
+    [Documentation]    源IP地址输入框：小数点>3，提示IP长度不正确
+    [Template]    验证IP过滤源主机subnetIP地址
+    10.0.0.1.    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentstart_test_41_3
+    [Documentation]    源IP地址输入框：小数点>3，提示IP长度不正确
+    [Template]    验证IP过滤源主机segment起始IP地址
+    10.0.0.1.    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentend_test_41_4
+    [Documentation]    源IP地址输入框：小数点>3，提示IP长度不正确
+    [Template]    验证IP过滤源主机segment结束IP地址
+    10.0.0.102    10.0.0.1.    ${common_ip_addr_err}
+
+IPandProtocal_SIP_subnet_test_42_2
+    [Documentation]    源IP地址输入框：小数点<3，提示IP长度不正确
+    [Template]    验证IP过滤源主机subnetIP地址
+    10.0.01    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentstart_test_42_3
+    [Documentation]    源IP地址输入框：小数点<3，提示IP长度不正确
+    [Template]    验证IP过滤源主机segment起始IP地址
+    10.0.01    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentend_test_42_4
+    [Documentation]    源IP地址输入框：小数点<3，提示IP长度不正确
+    [Template]    验证IP过滤源主机segment结束IP地址
+    10.0.0.102    10.0.01    ${common_ip_addr_err}
+
+IPandProtocal_SIP_subnet_test_43_2
+    [Documentation]    源IP地址不能为空
+    [Template]    验证IP过滤源主机subnetIP地址
+    ${EMPTY}    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentstart_test_43_3
+    [Documentation]    源IP地址不能为空
+    [Template]    验证IP过滤源主机segment起始IP地址
+    ${EMPTY}    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentend_test_43_4
+    [Documentation]    源IP地址不能为空
+    [Template]    验证IP过滤源主机segment结束IP地址
+    10.0.0.102    ${EMPTY}    ${common_ip_addr_err}
+
+IPandProtocal_SIP_subnet_test_44_2
+    [Documentation]    源IP地址输入框第一段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤源主机subnetIP地址
+    -1.0.0.2    ${common_ip_addr_err}
+    256.0.0.1    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentstart_test_44_3
+    [Documentation]    源IP地址输入框第一段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤源主机segment起始IP地址
+    -1.0.0.2    ${common_ip_addr_err}
+    256.0.0.1    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentend_test_44_4
+    [Documentation]    源IP地址输入框第一段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤源主机segment结束IP地址
+    10.0.0.102    -1.0.0.2    ${common_ip_addr_err}
+    10.0.0.102    256.0.0.1    ${common_ip_addr_err}
+
+IPandProtocal_SIP_subnet_test_45_2
+    [Template]    验证IP过滤源主机subnetIP地址
+    10.-1.0.10    ${common_ip_addr_err}
+    10.256.0.10    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentstart_test_45_3
+    [Documentation]    源IP地址输入框第二段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤源主机segment起始IP地址
+    10.-1.0.10    ${common_ip_addr_err}
+    10.256.0.10    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentend_test_45_4
+    [Documentation]    源IP地址输入框第二段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤源主机segment结束IP地址
+    10.0.0.102    10.-1.0.10    ${common_ip_addr_err}
+    10.0.0.102    10.256.0.10    ${common_ip_addr_err}
+
+IPandProtocal_SIP_subnet_test_46_2
+    [Documentation]    源IP地址输入框第三段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤源主机subnetIP地址
+    10.0.-1.10    ${common_ip_addr_err}
+    10.0.256.10    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentstart_test_46_3
+    [Documentation]    源IP地址输入框第三段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤源主机segment起始IP地址
+    10.0.-1.10    ${common_ip_addr_err}
+    10.0.256.10    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentend_test_46_4
+    [Documentation]    源IP地址输入框第三段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤源主机segment结束IP地址
+    10.0.0.102    10.0.-1.10    ${common_ip_addr_err}
+    10.0.0.102    10.0.256.10    ${common_ip_addr_err}
+
+IPandProtocal_SIP_subnet_test_47_2
+    [Documentation]    源IP地址输入框第四段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤源主机subnetIP地址
+    10.0.0.-1    ${common_ip_addr_err}
+    10.0.0.256    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentstart_test_47_3
+    [Documentation]    源IP地址输入框第四段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤源主机segment起始IP地址
+    10.0.0.-1    ${common_ip_addr_err}
+    10.0.0.256    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentend_test_47_4
+    [Documentation]    源IP地址输入框第四段IP值超出范围，提示只能在0~255之间
+    [Template]    验证IP过滤源主机segment结束IP地址
+    10.0.0.102    10.0.0.-1    ${common_ip_addr_err}
+    10.0.0.102    10.0.0.256    ${common_ip_addr_err}
+
+IPandProtocal_SIP_subnet_test_48_2
+    [Documentation]    源IP地址输入框存在非法字符，提示发现n个非法字符
+    [Template]    验证IP过滤源主机subnetIP地址
+    192,168;1:s    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentstart_test_48_3
+    [Documentation]    源IP地址输入框存在非法字符，提示发现n个非法字符
+    [Template]    验证IP过滤源主机segment起始IP地址
+    192,168;1:s    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentend_test_48_4
+    [Documentation]    源IP地址输入框存在非法字符，提示发现n个非法字符
+    [Template]    验证IP过滤源主机segment结束IP地址
+    192.168.1.95    192,168;1:s    ${common_ip_addr_err}
+
+IPandProtocal_SIP_subnet_test_49_2
+    [Documentation]    源IP地址第一段、第二段、第三段、第四段均不能为空
+    [Template]    验证IP过滤源主机subnetIP地址
+    .168.1.10    ${common_ip_addr_err}
+    192..1.10    ${common_ip_addr_err}
+    192.168..10    ${common_ip_addr_err}
+    192.168.1.    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentstart_test_49_3
+    [Documentation]    源IP地址第一段、第二段、第三段、第四段均不能为空
+    [Template]    验证IP过滤源主机segment起始IP地址
+    .168.1.10    ${common_ip_addr_err}
+    192..1.10    ${common_ip_addr_err}
+    192.168..10    ${common_ip_addr_err}
+    192.168.1.    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentend_test_49_4
+    [Documentation]    源IP地址第一段、第二段、第三段、第四段均不能为空
+    [Template]    验证IP过滤源主机segment结束IP地址
+    192.168.1.95    .168.1.10    ${common_ip_addr_err}
+    192.168.1.95    192..1.10    ${common_ip_addr_err}
+    192.168.1.95    192.168..10    ${common_ip_addr_err}
+    192.168.1.95    192.168.1.    ${common_ip_addr_err}
+
+IPandProtocal_SIP_subnet_test_50_2
+    [Documentation]    源IP地址输入0.0.0.0，提示IP不能为全0
+    [Template]    验证IP过滤源主机subnetIP地址
+    0.0.0.0    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentstart_test_50_3
+    [Documentation]    源IP地址输入0.0.0.0，提示IP不能为全0
+    [Template]    验证IP过滤源主机segment起始IP地址
+    0.0.0.0    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentend_test_50_4
+    [Documentation]    源IP地址输入0.0.0.0，提示IP不能为全0
+    [Template]    验证IP过滤源主机segment结束IP地址
+    192.168.1.95    0.0.0.0    ${common_ip_addr_err}
+
+IPandProtocal_SIP_subnet_test_51_2
+    [Documentation]    源IP地址不为组播地址或保留地址：223 < n1 < 255
+    [Template]
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤源主机subnetIP地址    224.0.0.1    ${common_ip_addr_err}
+    验证IP过滤源主机subnetIP地址    255.0.0.1    ${common_ip_addr_err}
+    验证IP过滤源主机subnetIP地址    254.0.0.1    ${common_ip_addr_err}
+    验证IP过滤源子网地址    223.0.0.1    255.0.0.0    ${common_unlock_add}
+    IP过滤列表里含有${string}    223.0.0.0\n/255.0.0.0
+
+IPandProtocal_SIP_segmentstart_test_51_3
+    [Documentation]    源IP地址不为组播地址或保留地址：223 < n1 < 255
+    [Template]
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤源主机segment起始IP地址    224.0.0.1    ${common_ip_addr_err}
+    验证IP过滤源主机segment起始IP地址    255.0.0.1    ${common_ip_addr_err}
+    验证IP过滤源主机segment起始IP地址    254.0.0.1    ${common_ip_addr_err}
+    验证IP过滤源主机segment结束IP地址    223.0.0.1    223.0.0.100    ${common_unlock_add}
+    IP过滤列表里含有${string}    223.0.0.1\n/223.0.0.100
+
+IPandProtocal_SIP_segmentend_test_51_4
+    [Documentation]    源IP地址不为组播地址或保留地址：223 < n1 < 255
+    [Template]
+    删除IP过滤列表里所有条目显示成功消息message
+    验证IP过滤源主机segment结束IP地址    192.168.1.95    224.0.0.1    ${common_ip_addr_err}
+    验证IP过滤源主机segment结束IP地址    192.168.1.95    255.0.0.1    ${common_ip_addr_err}
+    验证IP过滤源主机segment结束IP地址    192.168.1.95    254.0.0.1    ${common_ip_addr_err}
+    验证IP过滤源主机segment结束IP地址    223.0.0.1    223.0.0.100    ${common_unlock_add}
+    IP过滤列表里含有${string}    223.0.0.1\n/223.0.0.100
+
+IPandProtocal_SIP_subnet_test_52_2
+    [Documentation]    源IP地址不为回环地址：n1 = 127
+    [Template]    验证IP过滤源主机subnetIP地址
+    127.0.0.1    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentstart_test_52_3
+    [Documentation]    源IP地址不为回环地址：n1 = 127
+    [Template]    验证IP过滤源主机segment起始IP地址
+    127.0.0.1    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentend_test_52_4
+    [Documentation]    源IP地址不为回环地址：n1 = 127
+    [Template]    验证IP过滤源主机segment结束IP地址
+    126.0.0.100    127.0.0.1    ${common_ip_addr_err}
+
+IPandProtocal_SIP_subnet_test_53_2
+    [Documentation]    源IP地址不为保留地址：n1=0
+    [Template]    验证IP过滤源主机subnetIP地址
+    0.168.1.10    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentstart_test_53_3
+    [Documentation]    源IP地址不为保留地址：n1=0
+    [Template]    验证IP过滤源主机segment起始IP地址
+    0.168.1.10    ${common_ip_addr_err}
+
+IPandProtocal_SIP_segmentend_test_53_4
+    [Documentation]    源IP地址不为保留地址：n1=0
+    [Template]    验证IP过滤源主机segment结束IP地址
+    192.168.1.95    0.168.1.10    ${common_ip_addr_err}
+
+IPandProtocal_dayandtime_test_130
+    [Template]    验证day和time的单个checkbox
+    xpath=(//input[@id='ip_day'])[1]    ${common_unlock_add}    Sun
+    xpath=(//input[@id='ip_day'])[2]    ${common_unlock_add}    Mon
+    xpath=(//input[@id='ip_day'])[3]    ${common_unlock_add}    Tue
+    xpath=(//input[@id='ip_day'])[4]    ${common_unlock_add}    Wed
+    xpath=(//input[@id='ip_day'])[5]    ${common_unlock_add}    Thu
+    xpath=(//input[@id='ip_day'])[6]    ${common_unlock_add}    Fri
+    xpath=(//input[@id='ip_day'])[7]    ${common_unlock_add}    Sat
+    xpath=(//input[@id='ip_day'])[8]    ${common_unlock_add}    ALL
+    xpath=(//input[@id='ip_time'])    ${common_unlock_add}    ALL
+
+IPandProtocal_dayandtime_test_131
+    删除IP过滤列表里所有条目显示成功消息message
+    验证dayandtime的默认值    ${common_unlock_add}
+    IP过滤列表第row行第col列是string    1    8    ALL
+    IP过滤列表第row行第col列是string    1    9    ALL
+
+IPandProtocal_day_test_132
+    删除IP过滤列表里所有条目显示成功消息message
+    @{LISTADD1}    Create List    xpath=(//input[@id='ip_day'])[1]    xpath=(//input[@id='ip_day'])[2]
+    验证day的多个checkbox    ${common_unlock_add}    day_locator=@{LISTADD1}
+    IP过滤列表第row行第col列是string    1    8    Sun Mon
+
+IPandProtocal_time_test_133
+    删除IP过滤列表里所有条目显示成功消息message
+    验证time的下拉框    00:30    06:00    ${common_unlock_add}
+    IP过滤列表第row行第col列是string    1    9    00:30-06:00
+
+IPandProtocal_endtime_test_134
+    删除IP过滤列表里所有条目显示成功消息message
+    验证选择time的起始时间不选择结束时间的情况    06:00    ${common_end_time_err}
 
 *** Keywords ***
 验证IP过滤规则名
@@ -18,9 +1218,19 @@ try
     [Arguments]    ${name}    ${max_len}
     验证输入框最大输入长度    id=ip_describe    ${name}    ${max_len}
 
-验证IP过滤源IP地址
+验证IP过滤规则名第31个字符输入中文自动截断
+    [Arguments]    ${name}    ${message}
+    设置IP过滤    des=${name}
+    显示消息    ${message}
+
+验证IP过滤源主机hostsIP地址
     [Arguments]    ${ip}    ${message}
     设置IP过滤    shost=host    sip=${ip}
+    显示消息    ${message}
+
+验证IP过滤源主机subnetIP地址
+    [Arguments]    ${ip}    ${message}
+    设置IP过滤    shost=sub_host    sip=${ip}
     显示消息    ${message}
 
 验证IP过滤源子网地址
@@ -28,12 +1238,17 @@ try
     设置IP过滤    shost=sub_host    sip=${ip}    smask=${mask}
     显示消息    ${message}
 
-验证IP过滤源网段地址
+验证IP过滤源主机segment起始IP地址
+    [Arguments]    ${ip}    ${message}
+    设置IP过滤    shost=ip_host    start_sip=${ip}
+    显示消息    ${message}
+
+验证IP过滤源主机segment结束IP地址
     [Arguments]    ${start_ip}    ${end_ip}    ${message}
     设置IP过滤    shost=ip_host    start_sip=${start_ip}    end_sip=${end_ip}
     显示消息    ${message}
 
-验证IP过滤源IP地址最大输入长度
+验证IP过滤源主机hostsIP地址最大输入长度
     [Arguments]    ${ip}    ${max_len}
     Select From List By Value    id=ip_src_sele    host
     验证输入框最大输入长度    id=ip_src_ip    ${ip}    ${max_len}
@@ -43,9 +1258,14 @@ try
     Select From List By Value    id=ip_src_sele    sub_host
     验证输入框最大输入长度    id=ip_src_mask    ${mask}    ${max_len}
 
-验证IP过滤目的IP地址
+验证IP过滤目的主机hostsIP地址
     [Arguments]    ${ip}    ${message}
     设置IP过滤    dhost=host    dip=${ip}
+    显示消息    ${message}
+
+验证IP过滤目的主机subnetIP地址
+    [Arguments]    ${ip}    ${message}
+    设置IP过滤    dhost=sub_host    dip=${ip}
     显示消息    ${message}
 
 验证IP过滤目的子网地址
@@ -53,12 +1273,17 @@ try
     设置IP过滤    dhost=sub_host    dip=${ip}    dmask=${mask}
     显示消息    ${message}
 
-验证IP过滤目的网段地址
+验证IP过滤目的主机segment起始IP地址
+    [Arguments]    ${start_ip}    ${message}
+    设置IP过滤    dhost=ip_host    start_dip=${start_ip}
+    显示消息    ${message}
+
+验证IP过滤目的主机segment结束IP地址
     [Arguments]    ${start_ip}    ${end_ip}    ${message}
     设置IP过滤    dhost=ip_host    start_dip=${start_ip}    end_dip=${end_ip}
     显示消息    ${message}
 
-验证IP过滤目的IP地址最大输入长度
+验证IP过滤目的主机hostsIP地址最大输入长度
     [Arguments]    ${ip}    ${max_len}
     Select From List By Value    id=ip_des_sele    host
     验证输入框最大输入长度    id=ip_des_ip    ${ip}    ${max_len}
@@ -75,42 +1300,252 @@ try
 
 验证起始端口最大输入长度
     [Arguments]    ${port}    ${max_len}
-    Select From List By Value    id=ip_proto    TCP
+    Select From List By Label    id=ip_proto    TCP
     验证输入框最大输入长度    id=ip_port_start    ${port}    ${max_len}
 
 验证结束端口最大输入长度
     [Arguments]    ${port}    ${max_len}
-    Select From List By Value    id=ip_proto    TCP
+    Select From List By Label    id=ip_proto    TCP
     验证输入框最大输入长度    id=ip_port_end    ${port}    ${max_len}
 
 协议选择all,icmp时端口不能输入
-    Select From List By Value    id=ip_proto    ALL
+    Select From List By Label    id=ip_proto    ALL
     Element Should Be Disabled    id=ip_port_start
     Element Should Be Disabled    id=ip_port_end
-    Select From List By Value    id=ip_proto    ICMP
+    Select From List By Label    id=ip_proto    ICMP
     Element Should Be Disabled    id=ip_port_start
     Element Should Be Disabled    id=ip_port_end
 
 IP过滤列表里含有${string}
+    [Arguments]    ${string}
     Table Should Contain    xpath=//table[@class="df_tab"]    ${string}
 
 IP过滤列表里没有${string}
     Run Keyword And Expect Error    *    Table Should Contain    xpath=//table[@class="df_tab"]    ${string}
 
-IP过滤列表第${row}行第${col}列是${string}
+IP过滤列表第row行第col列是string
+    [Arguments]    ${row}    ${col}    ${string}
     ${row}    Evaluate    int(${row})+1
     ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    ${col}
     Should Be Equal    ${v}    ${string}
 
+验证IP过滤列表中某一行中每一列的值
+    [Arguments]    ${row}    ${desc2}    ${rule3}    ${sip4}    ${dip5}    ${protool6}
+    ...    ${port7}    ${day8}    ${time9}
+    ${row}    Evaluate    int(${row})+1
+    ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    2
+    Should Be Equal    ${v}    ${desc2}
+    ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    3
+    Should Be Equal    ${v}    ${rule3}
+    ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    4
+    Should Be Equal    ${v}    ${sip4}
+    ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    5
+    Should Be Equal    ${v}    ${dip5}
+    ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    6
+    Should Be Equal    ${v}    ${protool6}
+    ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    7
+    Should Be Equal    ${v}    ${port7}
+    ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    8
+    Should Be Equal    ${v}    ${day8}
+    ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    9
+    Should Be Equal    ${v}    ${time9}
+
+添加IP过滤条目
+    [Arguments]    ${wmessage}    ${wdes}=${None}    ${wrule}=1    ${wshost}=all    ${wsip}=${None}    ${wsmask}=${None}
+    ...    ${wstart_sip}=${None}    ${wend_sip}=${None}    ${wdhost}=all    ${wdip}=${None}    ${wdmask}=${None}    ${wstart_dip}=${None}
+    ...    ${wend_dip}=${None}    ${wprotcol}=ALL    ${wstart_port}=${None}    ${wend_port}=${None}    ${wday_locator}=${None}    ${wstart_time}=00:00
+    ...    ${wend_time}=00:00    ${wallday_locator}=${None}
+    设置IP过滤    des=${wdes}    rule=${wrule}    shost=${wshost}    sip=${wsip}    smask=${wsmask}    start_sip=${wstart_sip}
+    ...    end_sip=${wend_sip}    dhost=${wdhost}    dip=${wdip}    dmask=${wdmask}    start_dip=${wstart_dip}    end_dip=${wend_dip}
+    ...    protcol=${wprotcol}    start_port=${wstart_port}    end_port=${wend_port}    day_locator=${wday_locator}    start_time=${wstart_time}    end_time=${wend_time}
+    ...    allday_locator=${wallday_locator}
+    显示消息    ${wmessage}
+    Sleep    5
+
+修改第{row}行IP过滤条目
+    [Arguments]    ${row}    ${wmessage}    ${pwday_locator}=${None}    ${pwallday_locator}=${None}    ${wdes}=${None}    ${wrule}=1
+    ...    ${wshost}=all    ${wsip}=${None}    ${wsmask}=${None}    ${wstart_sip}=${None}    ${wend_sip}=${None}    ${wdhost}=all
+    ...    ${wdip}=${None}    ${wdmask}=${None}    ${wstart_dip}=${None}    ${wend_dip}=${None}    ${wprotcol}=ALL    ${wstart_port}=${None}
+    ...    ${wend_port}=${None}    ${wday_locator}=${None}    ${wstart_time}=00:00    ${wend_time}=00:00    ${wallday_locator}=${None}
+    Click Element    xpath=//div[@class='tab_mod_btn'][${row}]
+    取消添加时选择的时(修改)间    ${pwday_locator}    ${pwallday_locator}
+    设置IP过滤    des=${wdes}    rule=${wrule}    shost=${wshost}    sip=${wsip}    smask=${wsmask}    start_sip=${wstart_sip}
+    ...    end_sip=${wend_sip}    dhost=${wdhost}    dip=${wdip}    dmask=${wdmask}    start_dip=${wstart_dip}    end_dip=${wend_dip}
+    ...    protcol=${wprotcol}    start_port=${wstart_port}    end_port=${wend_port}    day_locator=${wday_locator}    start_time=${wstart_time}    end_time=${wend_time}
+    ...    allday_locator=${wallday_locator}
+    显示消息    ${wmessage}
+    Sleep    5
+
+取消添加时选择的时(修改)间
+    [Arguments]    ${pwday_locator}=${None}    ${pwallday_locator}=${None}
+    @{pday_locator}    Get Variable Value    ${pwday_locator}
+    ${p_locator}    Set Variable    @{pday_locator}
+    ${k}    Get Length    ${pday_locator}
+    day为all时取消选择everyday（修改条目）    locator=@{pday_locator}
+    @{pday_locator}    Set Variable If    '${k}'!='0'    ${p_locator}
+    : FOR    ${i}    IN    @{pday_locator}
+    \    ${ri}    process_special_charators    ${i}
+    \    Run Keyword If    '${ri}'!='${None}'    Click Element    ${i}
+    ${rpwallday_locator}    process_special_charators    ${pwallday_locator}
+    Run Keyword If    '${rpwallday_locator}'!='${None}'    Click Element    ${pwallday_locator}
+
+day为all时取消选择everyday（修改条目）
+    [Arguments]    ${locator}=${None}
+    @{list}    Get Variable Value    ${locator}
+    ${x}    Get Length    ${list}
+    ${stringday}    Set Variable If    '${x}'=='0'    xpath=(//input[@id='ip_day'])[8]
+    ${rstringday}    process_special_charators    ${stringday}
+    Run Keyword If    '${rstringday}'!='${None}'    Click Element    ${stringday}
+
 点击IP过滤列表里第${row}行修改按钮
     Click Element    xpath=(//div[@class="tab_mod_btn"])[${row}]
 
-删除IP过滤列表里所有条目显示成功消息${message}
+删除IP过滤列表里所有条目显示成功消息message
     Click Element    id=del_ip_filter_all
     Choose Ok On Next Confirmation
     ${message}    Confirm Action
-    显示消息    ${message}
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
 
 删除IP过滤列表里第${row}行显示成功消息${message}
-    Click Element    xpath=//div[@class="tab_del_btn"][${row}]
+    [Arguments]    ${row}    ${message}
+    Comment    Click Element    xpath=//div[@class="tab_del_btn"][${row}]
+    Click Element    xpath=(//div[@id='${${row}-1}'])[2]
+    ${message2}    Confirm Action
+    Should Be Equal    ${message2}    ${common_del_one_tip}
+    显示消息    ${message}
+
+关闭浏览器重新进入ip协议过滤页面
+    关闭浏览器
+    打开浏览器
+    转到IP过滤页面
+
+设置ip过滤的day和time
+    [Arguments]    ${stime}    ${etime}    ${LIST1}=default    ${LIST2}=${None}    ${LIST3}=default    ${LIST4}=default
+    ...    ${LIST5}=default    ${LIST6}=default    ${LIST7}=default    ${LIST8}=default
+    @{LIST}    Create List    ${LIST1}    ${LIST2}    ${LIST3}    ${LIST4}    ${LIST5}
+    ...    ${LIST6}    ${LIST7}    ${LIST8}
+    ${start_time}    Set Variable    ${stime}
+    ${end_time}    Set Variable    ${etime}
+    [Return]    @{LIST}    ${start_time}    ${end_time}
+
+验证ip过滤列表中的值
+    [Arguments]    ${row}    ${edesc}=${Empty}    ${erule}=Permit    ${esip}=ALL    ${edip}=ALL    ${eprotocol}=ALL
+    ...    ${start_port}=${None}    ${end_port}=${None}    ${eport}=1-65535    ${ceport}=${Empty}    ${eday}=ALL    ${day_locator}=${None}
+    ...    ${cvalue}=${Empty}    ${etime}=ALL    ${start_time}=00:00    ${end_time}=00:00
+    ${row}    Evaluate    int(${row})+1
+    ${description}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    2
+    Should Be Equal    ${description}    ${edesc}
+    ${rule}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    3
+    Should Be Equal    ${rule}    ${erule}
+    ${sourceiP}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    4
+    Should Be Equal    ${sourceiP}    ${esip}
+    ${destinationiP}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    5
+    Should Be Equal    ${destinationiP}    ${edip}
+    ${protocol}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    6
+    Should Be Equal    ${protocol}    ${eprotocol}
+    ${Port}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    7
+    Run Keyword If    '${start_port}'=='${None}'    Should Be Equal    ${Port}    ${eport}
+    Run Keyword If    '${start_port}'!='${None}'    Run Keyword    当端口存在时对列表中值的验证    Port=${Port}    start_port=${start_port}    end_port=${end_port}
+    ${day}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    8
+    @{LIST}    Get Variable Value    ${day_locator}
+    ${i}    Get Length    ${LIST}
+    Run Keyword If    '${i}'=='0'    Should Be Equal    ${day}    ${eday}
+    : FOR    ${j}    IN RANGE    ${i}
+    \    ${value}    Get Value    @{LIST}[${j}]
+    \    ${cvalue}    Catenate    ${cvalue}    ${value}
+    ${cvalue}    remove_leading_space    ${cvalue}
+    Run Keyword If    '${i}'!='0'    Should Be Equal    ${day}    ${cvalue}
+    ${time}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    9
+    Run Keyword If    '${start_time}'=='00:00' and '${end_time}'=='00:00'    Should Be Equal    ${time}    ${etime}
+    Run Keyword If    '${start_time}'!='00:00' or '${end_time}'!='00:00'    time在列表中的验证    time=${time}    start_time=${start_time}    end_time=${end_time}
+
+当端口存在时对列表中值的验证
+    [Arguments]    ${Port}=${None}    ${start_port}=${None}    ${end_port}=${None}    ${ceport}=${Empty}
+    ${end_port}    Set Variable If    '${start_port}'!='${None}' and '${end_port}'=='${None}'    ${start_port}    ${end_port}
+    ${ceport}    Catenate    SEPARATOR=-    ${start_port}    ${end_port}
+    Should Be Equal    ${Port}    ${ceport}
+
+time在列表中的验证
+    [Arguments]    ${time}=${None}    ${start_time}=${None}    ${end_time}=${None}
+    ${etime}    Catenate    SEPARATOR=-    ${start_time}    ${end_time}
+    Should Be Equal    ${time}    ${etime}
+
+验证IP过滤目的主机subnetIP地址最大输入长度
+    [Arguments]    ${ip}    ${max_len}
+    Select From List By Value    id=ip_des_sele    sub_host
+    验证输入框最大输入长度    id=ip_des_ip    ${ip}    ${max_len}
+
+验证IP过滤目的主机segmentstart地址最大输入长度
+    [Arguments]    ${ip}    ${max_len}
+    Select From List By Value    id=ip_des_sele    ip_host
+    验证输入框最大输入长度    id=ip_des_start    ${ip}    ${max_len}
+
+验证IP过滤目的主机segmentend地址最大输入长度
+    [Arguments]    ${ip}    ${max_len}
+    Select From List By Value    id=ip_des_sele    ip_host
+    验证输入框最大输入长度    id=ip_des_end    ${ip}    ${max_len}
+
+验证IP过滤源主机subnetIP地址最大输入长度
+    [Arguments]    ${ip}    ${max_len}
+    Select From List By Value    id=ip_src_sele    sub_host
+    验证输入框最大输入长度    id=ip_src_ip    ${ip}    ${max_len}
+
+验证IP过滤源主机segmentstartIP地址最大输入长度
+    [Arguments]    ${ip}    ${max_len}
+    Select From List By Value    id=ip_src_sele    ip_host
+    验证输入框最大输入长度    id=ip_src_start    ${ip}    ${max_len}
+
+验证IP过滤源主机segmentendIP地址最大输入长度
+    [Arguments]    ${ip}    ${max_len}
+    Select From List By Value    id=ip_src_sele    ip_host
+    验证输入框最大输入长度    id=ip_src_end    ${ip}    ${max_len}
+
+验证day和time的单个checkbox
+    [Arguments]    ${day}    ${message}    ${eday}
+    删除IP过滤列表里所有条目显示成功消息message
+    ${rday}    process_special_charators    ${day}
+    Run Keyword If    '${rday}'!='${None}'    Click Element    ${day}
+    Click Element    id=add_ip_filter
+    显示消息    ${message}
+    ${ip_time}    Set Variable    xpath=(//input[@id='ip_time'])
+    ${rip_time}    process_special_charators    ${ip_time}
+    Sleep    3
+    Run Keyword if    '${rday}'!='${rip_time}'    IP过滤列表第row行第col列是string    1    8    ${eday}
+    Run Keyword if    '${rday}'=='${rip_time}'    IP过滤列表第row行第col列是string    1    8    ALL
+
+验证day的多个checkbox
+    [Arguments]    ${message}    ${day_locator}=${None}
+    @{day_locator}    Get Variable Value    ${day_locator}
+    : FOR    ${i}    IN    @{day_locator}
+    \    ${ri}    process_special_charators    ${i}
+    \    Run Keyword If    '${ri}'!='${None}'    Click Element    ${i}
+    Click Element    id=add_ip_filter
+    显示消息    ${message}
+
+验证选择time的起始时间不选择结束时间的情况
+    [Arguments]    ${start_time}    ${message}
+    Select From List By Label    id=start    ${start_time}
+    Click Element    id=add_ip_filter
+    显示消息    ${message}
+
+验证time的下拉框
+    [Arguments]    ${start_time}    ${end_time}    ${message}
+    Select From List By Label    id=start    ${start_time}
+    Select From List By Label    id=end    ${end_time}
+    Click Element    id=add_ip_filter
+    显示消息    ${message}
+
+验证dayandtime的默认值
+    [Arguments]    ${message}    ${day_locator}=${None}    ${start_time}=00:00    ${end_time}=00:00    ${allday_locator}=${None}
+    @{day_locator}    Get Variable Value    ${day_locator}
+    : FOR    ${i}    IN    @{day_locator}
+    \    ${ri}    process_special_charators    ${i}
+    \    Run Keyword If    '${ri}'!='${None}'    Click Element    ${i}
+    Select From List By Label    id=start    ${start_time}
+    Select From List By Label    id=end    ${end_time}
+    ${rallday_locator}    process_special_charators    ${allday_locator}
+    Run Keyword If    '${rallday_locator}'!='${None}'    Click Element    ${allday_locator}
+    Click Element    id=add_ip_filter
     显示消息    ${message}

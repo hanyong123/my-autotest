@@ -14,9 +14,12 @@ def process_special_charators(string):
             return string
     else:
         return None
+   
 
 def string_lower(string):
     return string.lower()
+def remove_leading_space(string):
+    return string.strip()
         
 if __name__ == '__main__':
     pass
