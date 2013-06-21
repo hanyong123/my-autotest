@@ -594,14 +594,15 @@ WAN口IP是${ip}
     Execute JavaScript    $.CurrentApp="wps";$.load("wps")
 
 设置WPS页面基本参数
-    [Arguments]    ${new_pin}
+    [Arguments]    ${enable}=1    ${new_pin}={None}
     ${value_button}=    get value    id=wps_enable
-    runkeywordif    '${value_button}'=='Enable WPS'    Click Element    id=wps_enable
+    runKeyWordIF    ${enable} == '1' &'${value_button}'=='Enable WPS'    Click Element    id=wps_enable
+    runKeyWordIF    ${enable} == '0'    runkeywordif    '${value_button}'=='Disable WPS'    Click Element    id=wps_enable
     sleep    5s
     Wait Until Page Contains Element    id=hand_add_show
-    clickElement    id=hand_add_show
-    inputtext    id=new_pin    ${new_pin}
-    clickElement    add_link_pin
+    runKeyWordIF    ${enable} == '1'    clickElement    id=hand_add_show
+    runKeyWordIF    ${enable} == '1'    inputtext    id=new_pin    ${new_pin}
+    runKeyWordIF    ${enable} == '1'    clickElement    add_link_pin
     [Teardown]
 
 转到诊断工具页面

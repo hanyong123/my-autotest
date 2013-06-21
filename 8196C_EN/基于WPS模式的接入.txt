@@ -35,7 +35,7 @@ WPS_Pin_test_15
 *** Keywords ***
 验证pin码
     [Arguments]    ${pin}    ${message}
-    设置WPS页面基本参数    ${pin}
+    设置WPS页面基本参数    1    ${pin}
     显示消息    ${message}
 
 验证pin码输入框长度

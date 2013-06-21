@@ -1,4 +1,4 @@
-﻿*** Settings ***
+*** Settings ***
 Suite Setup       Run Keywords    打开浏览器    AND    转到端口触发页面
 Suite Teardown    关闭浏览器
 Resource          keyword.txt
@@ -6,8 +6,7 @@ Resource          keyword.txt
 *** Variables ***
 @{port}           1    2    3    4    5    6    7
 ...               8    9    10    11    12    13    14
-...               15    16    17    18    19    20    21
-...               22    23    24    25    26    27    28
+...               15    16    17
 
 *** Test Cases ***
 PortTri_RuleName_test_1
@@ -33,7 +32,8 @@ PortTri_RuleName_test_4
     [Documentation]    *规则名输入30个字符，再输入一个中文，导致超过31个字符，提示“规则名过长，已经自动截断”。*
     [Template]
     删除所有端口触发条目并显示成功消息
-    验证规则名    abcdefghijklmnopqrstuvwxyz1234你    ${common_unlock_error}
+    验证规则名    abcdefghijklmnopqrstuvwxyz1234你    ${common_unlock_save}
+    端口触发列表第${row}行第${col}列是${string}    1    2    abcdefghijklmnopqrstuvwxyz1234
 
 PortTri_TriPort_test_5
     [Documentation]    *触发端口起始端口不能为空*
@@ -201,7 +201,7 @@ PortTri_ForwardPortCmp_test_26
 
 PortTri_TotalItem_test_28
     [Documentation]    *端口触发条目总数超过10条，不能再添加新的条目，提示端口触发条目已满*
-    验证条目总数
+    验证条目总数    16
 
 PortTri_SameItem_test_29_1
     [Documentation]    *验证触发协议为TCP的触发端口重复*
@@ -351,12 +351,14 @@ PortTri_DelItem_test_33
     验证输入框最大输入长度    ${id}    ${port}    ${maxlen}
 
 验证条目总数
+    [Arguments]    ${item_num}
     删除所有端口触发条目并显示成功消息
     : FOR    ${i}    IN    @{port}
     \    设置端口触发参数    ${None}    ${i}    TCP    ${i}    ${EMPTY}
     \    ...    TCP    ${i}    ${EMPTY}
-    \    run keyword if    ${i}=="19"    显示消息    ${common_unlock_save}
-    \    run keyword if    ${i}!="19"    显示消息    ${common_unlock_save}
+    \    run keyword if    '${i}'=='${${item_num}+1}'    显示消息    ${common_item_err}
+    \    run keyword if    '${i}'=='${${item_num}+2}'    Exit For Loop	\	\
+    \    run keyword if    '${i}'!='${${item_num}+1}'    显示消息    ${common_unlock_save}
     \    sleep    2s
 
 验证触发端口重复
