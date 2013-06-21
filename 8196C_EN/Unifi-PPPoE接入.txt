@@ -5,12 +5,15 @@ Resource          keyword.txt
 
 *** Test Cases ***
 UnifiPPPOE_name_test_1
+    [Documentation]    PPPOE帐号为空时，提示“帐号不能为空”
     验证Unifi-PPPOE帐号    ${EMPTY}    ${common_string_null}
 
 UnifiPPPOE_name_test_2
+    [Documentation]    PPPOE帐号：长度最大127个字符，超过127字符无法输入
     验证Unifi-PPPOE帐号最大输入长度    12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678    127
 
 UnifiPPPOE_name_test_3
+    [Documentation]    PPPOE帐号：输入数据带有 '"\或空格，提示“ 不能含有特殊字符 \ '"\和空格 ”
     [Template]    验证Unifi-PPPOE帐号
     9 9    ${common_string_err}
     \\    ${common_string_err}
@@ -18,17 +21,21 @@ UnifiPPPOE_name_test_3
     '    ${common_string_err}
 
 UnifiPPPOE_name_test_4
+    [Documentation]    PPPOE帐号：账号中含有不在ascii码0~255范围中的字符时（例如中文、韩文），提示“不能含有无法识别的字符集”
     [Template]    验证Unifi-PPPOE帐号
     NIHAO你好    ${common_string_null}
     繁體    ${common_string_null}
 
 UnifiPPPOE_passwd_test_5
+    [Documentation]    PPPOE密码不能为空
     验证Unifi-PPPOE密码    ${EMPTY}    ${common_string_null}
 
 UnifiPPPOE_passwd_test_6
+    [Documentation]    PPPOE密码：输入超过127个字符后，无法输入
     验证Unifi-PPPOE密码最大输入长度    12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678    127
 
 UnifiPPPOE_passwd_test_7
+    [Documentation]    PPPOE密码：输入数据带有 '"\或空格，提示“ 不能含有特殊字符 \ '"\和空格 ”
     [Template]    验证Unifi-PPPOE密码
     9 9    ${common_string_err}
     \\    ${common_string_err}
@@ -36,24 +43,29 @@ UnifiPPPOE_passwd_test_7
     '    ${common_string_err}
 
 UnifiPPPOE_passwd_test_8
+    [Documentation]    PPPOE密码：内容隐藏显示
     [Template]
     ${type}    Get Element Attribute    pppoe_pwd@type
     Should Be Equal    ${type}    password
 
 UnifiPPPOE_passwd_test_10
+    [Documentation]    PPPOE密码：密码中含有不在ascii码0~255范围中的字符时（例如中文、韩文），提示“不能含有无法识别的字符集”
     [Template]    验证Unifi-PPPOE密码
     NIHAO你好    ${common_string_null}
     繁體    ${common_string_null}
 
 UnifiPPPOE_demandTime_test_11
+    [Documentation]    按需连接老化时间不能为空
     [Template]
     验证Unifi-PPPOE老化时间    ${EMPTY}    ${common_int_number_err}
 
 UnifiPPPOE_demandTime_test_12
+    [Documentation]    按需连接老化时间：超过2个字符后，无法输入
     [Template]
     验证Unifi-PPPOE老化时间最大输入长度    999    2
 
 UnifiPPPOE_demandTime_test_13
+    [Documentation]    按需老化时间：超出1~30的范围
     [Template]    验证Unifi-PPPOE老化时间
     0    ${common_auto_disconnect_time_err}
     31    ${common_auto_disconnect_time_err}
@@ -61,6 +73,7 @@ UnifiPPPOE_demandTime_test_13
     30    ${common_unlock_save}
 
 UnifiPPPOE_demandTime_test_14
+    [Documentation]    按需老化时间：输入非正整数的字符，提示只能为正整数
     [Template]    验证Unifi-PPPOE老化时间
     \ 9    ${common_int_number_err}
     \\    ${common_int_number_err}
@@ -71,45 +84,55 @@ UnifiPPPOE_demandTime_test_14
     好    ${common_int_number_err}
 
 UnifiPPPOE_staticIP_test_15
+    [Documentation]    IP地址输入框超过15个字符后，无法输入
     验证Unifi-PPPOE静态接入IP最大输入长度    1234567890123456    15
 
 UnifiPPPOE_staticIP_test_16
+    [Documentation]    IP地址输入框：小数点>3，提示IP长度不正确
     [Template]    验证Unifi-PPPOE静态接入
     10.0.0.1.    255.255.255.0    ${common_ip_addr_err}
 
 UnifiPPPOE_staticIP_test_17
+    [Documentation]    IP地址输入框：小数点<3，提示IP长度不正确
     [Template]    验证Unifi-PPPOE静态接入
     10.0.01    255.255.255.0    ${common_ip_addr_err}
 
 UnifiPPPOE_staticIP_test_18
+    [Documentation]    IP地址不能为空
     [Template]    验证Unifi-PPPOE静态接入
     ${EMPTY}    255.255.255.0    ${common_ip_addr_err}
 
 UnifiPPPOE_staticIP_test_19
+    [Documentation]    IP地址输入框第一段IP值超出范围，提示只能在0~255之间
     [Template]    验证Unifi-PPPOE静态接入
     -1.0.0.2    255.255.255.0    ${common_ip_addr_err}
     256.0.0.1    255.255.255.0    ${common_ip_addr_err}
 
 UnifiPPPOE_staticIP_test_20
+    [Documentation]    IP地址输入框第二段IP值超出范围，提示只能在0~255之间
     [Template]    验证Unifi-PPPOE静态接入
     10.-1.0.10    255.255.255.0    ${common_ip_addr_err}
     10.256.0.10    255.255.255.0    ${common_ip_addr_err}
 
 UnifiPPPOE_staticIP_test_21
+    [Documentation]    IP地址输入框第三段IP值超出范围，提示只能在0~255之间
     [Template]    验证Unifi-PPPOE静态接入
     10.0.-1.10    255.255.255.0    ${common_ip_addr_err}
     10.0.256.10    255.255.255.0    ${common_ip_addr_err}
 
 UnifiPPPOE_staticIP_test_22
+    [Documentation]    IP地址输入框第四段IP值超出范围，提示只能在0~255之间
     [Template]    验证Unifi-PPPOE静态接入
     10.0.0.-1    255.255.255.0    ${common_ip_addr_err}
     10.0.0.256    255.255.255.0    ${common_ip_addr_err}
 
 UnifiPPPOE_staticIP_test_23
+    [Documentation]    IP地址输入框存在非法字符，提示发现n个非法字符
     [Template]    验证Unifi-PPPOE静态接入
     192,168;1:s    255.255.255.0    ${common_ip_addr_err}
 
 UnifiPPPOE_staticIP_test_24
+    [Documentation]    IP地址第一段、第二段、第三段、第四段均不能为空
     [Template]    验证Unifi-PPPOE静态接入
     .168.1.10    255.255.255.0    ${common_ip_addr_err}
     192..1.10    255.255.255.0    ${common_ip_addr_err}
@@ -117,52 +140,63 @@ UnifiPPPOE_staticIP_test_24
     192.168.1.    255.255.255.0    ${common_ip_addr_err}
 
 UnifiPPPOE_staticIP_test_25
+    [Documentation]    IP地址输入0.0.0.0，提示IP不能为全0
     [Template]    验证Unifi-PPPOE静态接入
     0.0.0.0    255.255.255.0    ${common_ip_addr_err}
 
 UnifiPPPOE_staticIP_test_26
+    [Documentation]    IP地址不为组播地址或保留地址：223 < n1 < 255
     [Template]    验证Unifi-PPPOE静态接入
     224.0.0.1    255.255.255.0    ${common_ip_addr_err}
     255.0.0.1    255.255.255.0    ${common_ip_addr_err}
     254.0.0.1    255.255.255.0    ${common_ip_addr_err}
 
 UnifiPPPOE_staticIP_test_27
+    [Documentation]    IP地址不为回环地址：n1 = 127
     [Template]    验证Unifi-PPPOE静态接入
     127.0.0.1    255.255.255.0    ${common_ip_addr_err}
 
 UnifiPPPOE_staticIP_test_28
+    [Documentation]    IP地址不为保留地址：n1=0
     [Template]    验证Unifi-PPPOE静态接入
     0.168.1.10    255.255.255.0    ${common_ip_addr_err}
 
 UnifiPPPOE_staticIP_test_29
+    [Documentation]    IP地址不能等于网段地址；IP地址和子网掩码做与运算，得出网段地址
     [Template]    验证Unifi-PPPOE静态接入
     192.168.1.0    255.255.255.0    ${common_segment_err}
     172.16.0.0    255.255.0.0    ${common_segment_err}
     10.0.0.0    255.0.0.0    ${common_segment_err}
 
 UnifiPPPOE_staticIP_test_30
+    [Documentation]    IP地址不能等于广播地址；IP地址和子网掩码做与运算，得出网段地址，由下一个网段地址减1得出本网段地址
     [Template]    验证Unifi-PPPOE静态接入
     192.168.1.255    255.255.255.0    ${common_Bcast_err}
     172.16.255.255    255.255.0.0    ${common_Bcast_err}
     10.255.255.255    255.0.0.0    ${common_Bcast_err}
 
 UnifiPPPOE_staticIP_test_31
+    [Documentation]    子网掩码输入框超过15个字符后，无法输入
     [Template]
     验证Unifi-PPPOE静态接入mask最大输入长度    1234567890123456    15
 
 UnifiPPPOE_staticIP_test_32
+    [Documentation]    子网掩码输入框：小数点>3，提示IP长度不正确
     [Template]    验证Unifi-PPPOE静态接入
     10.0.0.100    255.0.0.0.    ${common_mask_addr_err}
 
 UnifiPPPOE_staticIP_test_33
+    [Documentation]    子网掩码输入框：小数点<3，提示IP长度不正确
     [Template]    验证Unifi-PPPOE静态接入
     10.0.0.100    255.0.0    ${common_mask_addr_err}
 
 UnifiPPPOE_staticIP_test_34
+    [Documentation]    子网掩码不能为空
     [Template]    验证Unifi-PPPOE静态接入
     10.0.0.100    ${EMPTY}    ${common_mask_addr_err}
 
 UnifiPPPOE_staticIP_test_35
+    [Documentation]    子网掩码输入框第一段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
     [Template]    验证Unifi-PPPOE静态接入
     10.0.0.100    255.0.0.0    ${common_unlock_save}
     10.0.0.100    254.0.0.0    ${common_unlock_save}
@@ -176,6 +210,7 @@ UnifiPPPOE_staticIP_test_35
     10.0.0.100    253.0.0.0    ${common_mask_addr_err}
 
 UnifiPPPOE_staticIP_test_36
+    [Documentation]    子网掩码输入框第二段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
     [Template]    验证Unifi-PPPOE静态接入
     10.0.0.100    255.255.0.0    ${common_unlock_save}
     10.0.0.100    255.254.0.0    ${common_unlock_save}
@@ -189,6 +224,7 @@ UnifiPPPOE_staticIP_test_36
     10.0.0.100    255.253.0.0    ${common_mask_addr_err}
 
 UnifiPPPOE_staticIP_test_37
+    [Documentation]    子网掩码输入框第三段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
     [Template]    验证Unifi-PPPOE静态接入
     10.0.0.100    255.255.255.0    ${common_unlock_save}
     10.0.0.100    255.255.254.0    ${common_unlock_save}
@@ -202,6 +238,7 @@ UnifiPPPOE_staticIP_test_37
     10.0.0.100    255.255.253.0    ${common_mask_addr_err}
 
 UnifiPPPOE_staticIP_test_38
+    [Documentation]    子网掩码输入框第四段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
     [Template]    验证Unifi-PPPOE静态接入
     10.0.0.100    255.255.255.255    ${common_unlock_save}
     10.0.0.100    255.255.255.254    ${common_unlock_save}
@@ -214,10 +251,12 @@ UnifiPPPOE_staticIP_test_38
     10.0.0.100    255.255.255.253    ${common_mask_addr_err}
 
 UnifiPPPOE_staticIP_test_39
+    [Documentation]    子网掩码输入框存在非法字符，提示发现n个非法字符
     [Template]    验证Unifi-PPPOE静态接入
     10.0.0.100    255,255;0:s    ${common_mask_addr_err}
 
 UnifiPPPOE_staticIP_test_40
+    [Documentation]    子网掩码第一段、第二段、第三段、第四段均不能为空
     [Template]    验证Unifi-PPPOE静态接入
     10.0.0.100    .255.0.0    ${common_mask_addr_err}
     10.0.0.100    255..0.0    ${common_mask_addr_err}
@@ -225,6 +264,7 @@ UnifiPPPOE_staticIP_test_40
     10.0.0.100    255.255.0.    ${common_mask_addr_err}
 
 UnifiPPPOE_staticIP_test_42
+    [Documentation]    子网掩码地址第四段不等于0或255时，第一段、第二段、第三段均等于255
     [Template]    验证Unifi-PPPOE静态接入
     10.0.0.100    254.255.255.128    ${common_mask_addr_err}
     10.0.0.100    255.254.255.128    ${common_mask_addr_err}
@@ -232,6 +272,7 @@ UnifiPPPOE_staticIP_test_42
     10.0.0.100    255.255.255.128    ${common_unlock_save}
 
 UnifiPPPOE_staticIP_test_43
+    [Documentation]    子网掩码地址第三段不等于0或255时，第一段、第二段均等于255，第四段等于0
     [Template]    验证Unifi-PPPOE静态接入
     10.0.0.100    254.255.128.0    ${common_mask_addr_err}
     10.0.0.100    255.254.128.0    ${common_mask_addr_err}
@@ -239,6 +280,7 @@ UnifiPPPOE_staticIP_test_43
     10.0.0.100    255.255.128.0    ${common_unlock_save}
 
 UnifiPPPOE_staticIP_test_44
+    [Documentation]    子网掩码地址第二段不等于0或255时，第一段等于255，第三段等于第四段等于0
     [Template]    验证Unifi-PPPOE静态接入
     10.0.0.100    254.128.0.0    ${common_mask_addr_err}
     10.0.0.100    255.128.254.0    ${common_mask_addr_err}
@@ -246,6 +288,7 @@ UnifiPPPOE_staticIP_test_44
     10.0.0.100    255.128.0.0    ${common_unlock_save}
 
 UnifiPPPOE_staticIP_test_45
+    [Documentation]    子网掩码第一段不等于0或255时，第一段、第二段、第三段均等于0
     [Template]    验证Unifi-PPPOE静态接入
     10.0.0.100    128.254.0.0    ${common_mask_addr_err}
     10.0.0.100    128.0.254.0    ${common_mask_addr_err}
@@ -253,12 +296,15 @@ UnifiPPPOE_staticIP_test_45
     10.0.0.100    128.0.0.0    ${common_unlock_save}
 
 UnifiPPPOE_serviceName_test_46
+    [Documentation]    服务器名可以为空，表示不设置服务器名
     验证Unifi-PPPOE服务名    ${EMPTY}    ${common_unlock_save}
 
 UnifiPPPOE_serviceName_test_47
+    [Documentation]    服务器名：长度最大40个字符，超过40字符无法输入
     验证Unifi-PPPOE服务名最大输入长度    12345678901234567890123456789012345678901    40
 
 UnifiPPPOE_serviceName_test_48
+    [Documentation]    服务器名：输入数据带有 '"\或空格，提示“ 不能含有特殊字符 \ '"\和空格 ”
     [Template]    验证Unifi-PPPOE服务名
     9 9    ${common_string_err}
     \\    ${common_string_err}
@@ -266,18 +312,22 @@ UnifiPPPOE_serviceName_test_48
     '    ${common_string_err}
 
 UnifiPPPOE_serviceName_test_49
+    [Documentation]    服务器名：服务器名中含有不在ascii码0~255范围中的字符时（例如中文、韩文），提示“不能含有无法识别的字符集”
     [Template]    验证Unifi-PPPOE服务名
     NIHAO你好    ${common_string_null}
     繁體    ${common_string_null}
     netcore&netis&baidu.com    ${common_unlock_save}
 
 UnifiPPPOE_acName_test_50
+    [Documentation]    AC名可以为空，表示不设置AC名
     验证Unifi-PPPOE AC名    ${EMPTY}    ${common_unlock_save}
 
 UnifiPPPOE_acName_test_51
+    [Documentation]    AC名：长度最大40个字符，超过40字符无法输入
     验证Unifi-PPPOE AC名最大输入长度    12345678901234567890123456789012345678901    40
 
 UnifiPPPOE_acName_test_52
+    [Documentation]    AC名：输入数据带有 '"\或空格，提示“ 不能含有特殊字符 \ '"\和空格 ”
     [Template]    验证Unifi-PPPOE AC名
     9 9    ${common_string_err}
     \\    ${common_string_err}
@@ -285,47 +335,57 @@ UnifiPPPOE_acName_test_52
     '    ${common_string_err}
 
 UnifiPPPOE_acName_test_53
+    [Documentation]    AC名：AC名中含有不在ascii码0~255范围中的字符时（例如中文、韩文），提示“不能含有无法识别的字符集”
     [Template]    验证Unifi-PPPOE AC名
     NIHAO你好    ${common_string_null}
     繁體    ${common_string_null}
     netcore&netis&baidu.com    ${common_unlock_save}
 
 UnifiPPPOE_dns_test_54
+    [Documentation]    首选DNS服务器输入框超过15个字符后，无法输入
     验证Unifi-PPPOE首选DNS最大输入长度    1234567890123456    15
 
 UnifiPPPOE_dns_test_55
+    [Documentation]    首选DNS服务器输入框：小数点>3，提示IP长度不正确
     [Template]    验证Unifi-PPPOE首选DNS
     10.0.0.1.    ${common_ip_addr_err}
 
 UnifiPPPOE_dns_test_56
+    [Documentation]    首选DNS服务器输入框：小数点<3，提示IP长度不正确
     [Template]    验证Unifi-PPPOE首选DNS
     10.0.01    ${common_ip_addr_err}
 
 UnifiPPPOE_dns_test_57
+    [Documentation]    首选DNS服务器输入框第一段IP值超出范围，提示只能在0~255之间
     [Template]    验证Unifi-PPPOE首选DNS
     -1.0.0.2    ${common_ip_addr_err}
     256.0.0.1    ${common_ip_addr_err}
 
 UnifiPPPOE_dns_test_58
+    [Documentation]    首选DNS服务器输入框第二段IP值超出范围，提示只能在0~255之间
     [Template]    验证Unifi-PPPOE首选DNS
     10.-1.0.10    ${common_ip_addr_err}
     10.256.0.10    ${common_ip_addr_err}
 
 UnifiPPPOE_dns_test_59
+    [Documentation]    首选DNS服务器输入框第三段IP值超出范围，提示只能在0~255之间
     [Template]    验证Unifi-PPPOE首选DNS
     10.0.-1.10    ${common_ip_addr_err}
     10.0.256.10    ${common_ip_addr_err}
 
 UnifiPPPOE_dns_test_60
+    [Documentation]    首选DNS服务器输入框第四段IP值超出范围，提示只能在0~255之间
     [Template]    验证Unifi-PPPOE首选DNS
     10.0.0.-1    ${common_ip_addr_err}
     10.0.0.256    ${common_ip_addr_err}
 
 UnifiPPPOE_dns_test_61
+    [Documentation]    首选DNS服务器输入框存在非法字符，提示发现n个非法字符
     [Template]    验证Unifi-PPPOE首选DNS
     192,168;1:s    ${common_ip_addr_err}
 
 UnifiPPPOE_dns_test_62
+    [Documentation]    首选DNS服务器第一段、第二段、第三段、第四段均不能为空
     [Template]    验证Unifi-PPPOE首选DNS
     .168.1.10    ${common_ip_addr_err}
     192..1.10    ${common_ip_addr_err}
@@ -333,10 +393,12 @@ UnifiPPPOE_dns_test_62
     192.168.1.    ${common_ip_addr_err}
 
 UnifiPPPOE_dns_test_64
+    [Documentation]    首选DNS服务器输入0.0.0.0，提示IP不能为全0
     [Template]    验证Unifi-PPPOE首选DNS
     0.0.0.0    ${common_ip_addr_err}
 
 UnifiPPPOE_dns_test_65
+    [Documentation]    首选DNS服务器不为组播地址或保留地址：223 < n1 < 255
     [Template]    验证Unifi-PPPOE首选DNS
     224.0.0.1    ${common_ip_addr_err}
     255.0.0.1    ${common_ip_addr_err}
@@ -344,50 +406,61 @@ UnifiPPPOE_dns_test_65
     223.255.255.254    ${common_unlock_save}
 
 UnifiPPPOE_dns_test_66
+    [Documentation]    首选DNS服务器不为回环地址：n1 = 127
     [Template]    验证Unifi-PPPOE首选DNS
     127.0.0.1    ${common_ip_addr_err}
 
 UnifiPPPOE_dns_test_67
+    [Documentation]    首选DNS服务器不为保留地址：n1=0
     [Template]    验证Unifi-PPPOE首选DNS
     0.168.1.10    ${common_ip_addr_err}
 
 UnifiPPPOE_dns_test_68
+    [Documentation]    备用DNS服务器输入框超过15个字符后，无法输入
     [Template]
     验证Unifi-PPPOE备选DNS最大输入长度    1234567890123456    15
 
 UnifiPPPOE_dns_test_69
+    [Documentation]    备用DNS服务器输入框：小数点>3，提示IP长度不正确
     [Template]    验证Unifi-PPPOE备选DNS
     10.0.0.1.    ${common_ip_addr_err}
 
 UnifiPPPOE_dns_test_70
+    [Documentation]    备用DNS服务器输入框：小数点<3，提示IP长度不正确
     [Template]    验证Unifi-PPPOE备选DNS
     10.0.01    ${common_ip_addr_err}
 
 UnifiPPPOE_dns_test_71
+    [Documentation]    备用DNS服务器输入框第一段IP值超出范围，提示只能在0~255之间
     [Template]    验证Unifi-PPPOE备选DNS
     -1.0.0.2    ${common_ip_addr_err}
     256.0.0.1    ${common_ip_addr_err}
 
 UnifiPPPOE_dns_test_72
+    [Documentation]    备用DNS服务器输入框第二段IP值超出范围，提示只能在0~255之间
     [Template]    验证Unifi-PPPOE备选DNS
     10.-1.0.10    ${common_ip_addr_err}
     10.256.0.10    ${common_ip_addr_err}
 
 UnifiPPPOE_dns_test_73
+    [Documentation]    备用DNS服务器输入框第三段IP值超出范围，提示只能在0~255之间
     [Template]    验证Unifi-PPPOE备选DNS
     10.0.-1.10    ${common_ip_addr_err}
     10.0.256.10    ${common_ip_addr_err}
 
 UnifiPPPOE_dns_test_74
+    [Documentation]    备用DNS服务器输入框第四段IP值超出范围，提示只能在0~255之间
     [Template]    验证Unifi-PPPOE备选DNS
     10.0.0.-1    ${common_ip_addr_err}
     10.0.0.256    ${common_ip_addr_err}
 
 UnifiPPPOE_dns_test_75
+    [Documentation]    备用DNS服务器输入框存在非法字符，提示发现n个非法字符
     [Template]    验证Unifi-PPPOE备选DNS
     192,168;1:s    ${common_ip_addr_err}
 
 UnifiPPPOE_dns_test_76
+    [Documentation]    备用DNS服务器第一段、第二段、第三段、第四段均不能为空
     [Template]    验证Unifi-PPPOE备选DNS
     .168.1.10    ${common_ip_addr_err}
     192..1.10    ${common_ip_addr_err}
@@ -395,6 +468,7 @@ UnifiPPPOE_dns_test_76
     192.168.1.    ${common_ip_addr_err}
 
 UnifiPPPOE_dns_test_77
+    [Documentation]    备用DNS服务器第一段、第二段、第三段、第四段均不能大于3个字符
     [Template]    验证Unifi-PPPOE备选DNS
     1921.168.1.10    ${common_ip_addr_err}
     192.1681.1.10    ${common_ip_addr_err}
@@ -402,10 +476,12 @@ UnifiPPPOE_dns_test_77
     192.168.1.1011    ${common_ip_addr_err}
 
 UnifiPPPOE_dns_test_78
+    [Documentation]    备用DNS服务器输入0.0.0.0，提示IP不能为全0
     [Template]    验证Unifi-PPPOE备选DNS
     0.0.0.0    ${common_ip_addr_err}
 
 UnifiPPPOE_dns_test_79
+    [Documentation]    备用DNS服务器不为组播地址或保留地址：223 < n1 < 255
     [Template]    验证Unifi-PPPOE备选DNS
     224.0.0.1    ${common_ip_addr_err}
     255.0.0.1    ${common_ip_addr_err}
@@ -413,10 +489,12 @@ UnifiPPPOE_dns_test_79
     223.255.255.254    ${common_unlock_save}
 
 UnifiPPPOE_dns_test_80
+    [Documentation]    备用DNS服务器不为回环地址：n1 = 127
     [Template]    验证Unifi-PPPOE备选DNS
     127.0.0.1    ${common_ip_addr_err}
 
 UnifiPPPOE_dns_test_81
+    [Documentation]    备用DNS服务器不为保留地址：n1=0
     [Template]    验证Unifi-PPPOE备选DNS
     0.168.1.10    ${common_ip_addr_err}
 

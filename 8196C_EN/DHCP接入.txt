@@ -5,45 +5,55 @@ Resource          keyword.txt
 
 *** Test Cases ***
 dhcp_dns_test_1
+    [Documentation]    首选DNS服务器输入框超过15个字符后，无法输入
     验证DHCP首选DNS最大输入长度    1234567890123456    15
 
 dhcp_dns_test_2
+    [Documentation]    首选DNS服务器输入框：小数点>3，提示IP长度不正确
     [Template]    验证DHCP首选DNS
     10.0.0.1.    ${common_ip_addr_err}
 
 dhcp_dns_test_3
+    [Documentation]    首选DNS服务器输入框：小数点<3，提示IP长度不正确
     [Template]    验证DHCP首选DNS
     10.0.01    ${common_ip_addr_err}
 
 dhcp_dns_test_4
+    [Documentation]    在DHCP模式下，首选DNS服务器可以为空。
     [Template]    验证DHCP首选DNS
     ${EMPTY}    ${common_unlock_save}
 
 dhcp_dns_test_5
+    [Documentation]    首选DNS服务器输入框第一段IP值超出范围，提示只能在0~255之间
     [Template]    验证DHCP首选DNS
     -1.0.0.2    ${common_ip_addr_err}
     256.0.0.1    ${common_ip_addr_err}
 
 dhcp_dns_test_6
+    [Documentation]    首选DNS服务器输入框第二段IP值超出范围，提示只能在0~255之间
     [Template]    验证DHCP首选DNS
     10.-1.0.10    ${common_ip_addr_err}
     10.256.0.10    ${common_ip_addr_err}
 
 dhcp_dns_test_7
+    [Documentation]    首选DNS服务器输入框第三段IP值超出范围，提示只能在0~255之间
     [Template]    验证DHCP首选DNS
     10.0.-1.10    ${common_ip_addr_err}
     10.0.256.10    ${common_ip_addr_err}
 
 dhcp_dns_test_8
+    [Documentation]    首选DNS服务器输入框第四段IP值超出范围，提示只能在0~255之间
     [Template]    验证DHCP首选DNS
     10.0.0.-1    ${common_ip_addr_err}
     10.0.0.256    ${common_ip_addr_err}
 
 dhcp_dns_test_9
+    [Documentation]    首选DNS服务器输入框存在非法字符，提示发现n个非法字符
     [Template]    验证DHCP首选DNS
     192,168;1:s    ${common_ip_addr_err}
 
 dhcp_dns_test_10
+    [Documentation]    首选DNS服务器第一段、第二段、第三段、第四段均不能为空
     [Template]    验证DHCP首选DNS
     .168.1.10    ${common_ip_addr_err}
     192..1.10    ${common_ip_addr_err}
@@ -51,10 +61,12 @@ dhcp_dns_test_10
     192.168.1.    ${common_ip_addr_err}
 
 dhcp_dns_test_11
+    [Documentation]    首选DNS服务器输入0.0.0.0，提示IP不能为全0
     [Template]    验证DHCP首选DNS
     0.0.0.0    ${common_ip_addr_err}
 
 dhcp_dns_test_12
+    [Documentation]    首选DNS服务器不为组播地址或保留地址：223 < n1 < 255
     [Template]    验证DHCP首选DNS
     224.0.0.1    ${common_ip_addr_err}
     255.0.0.1    ${common_ip_addr_err}
@@ -62,53 +74,65 @@ dhcp_dns_test_12
     223.255.255.254    ${common_unlock_save}
 
 dhcp_dns_test_13
+    [Documentation]    首选DNS服务器不为回环地址：n1 = 127
     [Template]    验证DHCP首选DNS
     127.0.0.1    ${common_ip_addr_err}
 
 dhcp_dns_test_14
+    [Documentation]    首选DNS服务器不为保留地址：n1=0
     [Template]    验证DHCP首选DNS
     0.168.1.10    ${common_ip_addr_err}
 
 dhcp_dns_test_15
+    [Documentation]    备用DNS服务器输入框超过15个字符后，无法输入
     验证DHCP备选DNS最大输入长度    1234567890123456    15
 
 dhcp_dns_test_16
+    [Documentation]    备用DNS服务器输入框：小数点>3，提示IP长度不正确
     [Template]    验证DHCP备选DNS
     10.0.0.1.    ${common_ip_addr_err}
 
 dhcp_dns_test_17
+    [Documentation]    备用DNS服务器输入框：小数点<3，提示IP长度不正确
     [Template]    验证DHCP备选DNS
     10.0.01    ${common_ip_addr_err}
 
 dhcp_dns_test_18
+    [Documentation]    在DHCP模式下，备选DNS服务器可以为空
     [Template]    验证DHCP备选DNS
     ${EMPTY}    ${common_unlock_save}
 
 dhcp_dns_test_19
+    [Documentation]    备用DNS服务器输入框第一段IP值超出范围，提示只能在0~255之间
     [Template]    验证DHCP备选DNS
     -1.0.0.2    ${common_ip_addr_err}
     256.0.0.1    ${common_ip_addr_err}
 
 dhcp_dns_test_20
+    [Documentation]    备用DNS服务器输入框第二段IP值超出范围，提示只能在0~255之间
     [Template]    验证DHCP备选DNS
     10.-1.0.10    ${common_ip_addr_err}
     10.256.0.10    ${common_ip_addr_err}
 
 dhcp_dns_test_21
+    [Documentation]    备用DNS服务器输入框第三段IP值超出范围，提示只能在0~255之间
     [Template]    验证DHCP备选DNS
     10.0.-1.10    ${common_ip_addr_err}
     10.0.256.10    ${common_ip_addr_err}
 
 dhcp_dns_test_22
+    [Documentation]    备用DNS服务器输入框第四段IP值超出范围，提示只能在0~255之间
     [Template]    验证DHCP备选DNS
     10.0.0.-1    ${common_ip_addr_err}
     10.0.0.256    ${common_ip_addr_err}
 
 dhcp_dns_test_23
+    [Documentation]    备用DNS服务器输入框存在非法字符，提示发现n个非法字符
     [Template]    验证DHCP备选DNS
     192,168;1:s    ${common_ip_addr_err}
 
 dhcp_dns_test_24
+    [Documentation]    备用DNS服务器第一段、第二段、第三段、第四段均不能为空
     [Template]    验证DHCP备选DNS
     .168.1.10    ${common_ip_addr_err}
     192..1.10    ${common_ip_addr_err}
@@ -116,10 +140,12 @@ dhcp_dns_test_24
     192.168.1.    ${common_ip_addr_err}
 
 dhcp_dns_test_25
+    [Documentation]    备用DNS服务器输入0.0.0.0，提示IP不能为全0
     [Template]    验证DHCP备选DNS
     0.0.0.0    ${common_ip_addr_err}
 
 dhcp_dns_test_26
+    [Documentation]    备用DNS服务器不为组播地址或保留地址：223 < n1 < 255
     [Template]    验证DHCP备选DNS
     224.0.0.1    ${common_ip_addr_err}
     255.0.0.1    ${common_ip_addr_err}
@@ -127,14 +153,17 @@ dhcp_dns_test_26
     223.255.255.254    ${common_unlock_save}
 
 dhcp_dns_test_27
+    [Documentation]    备用DNS服务器不为回环地址：n1 = 127
     [Template]    验证DHCP备选DNS
     127.0.0.1    ${common_ip_addr_err}
 
 dhcp_dns_test_28
+    [Documentation]    备用DNS服务器不为保留地址：n1=0
     [Template]    验证DHCP备选DNS
     0.168.1.10    ${common_ip_addr_err}
 
 dhcp_dns_test_29
+    [Documentation]    成功配置DHCP信息并保存生效，提示“操作成功！”
     [Template]
     设置DHCP接入参数    dns2=7.7.7.7
     显示消息    ${common_unlock_save}
