@@ -17,12 +17,6 @@ def process_special_charators(string):
 
 def string_lower(string):
     return string.lower()
-
-def WPS_ON_OFF(string,string):
-    if string & string :
-        return True
-    else:
-        return False
         
 if __name__ == '__main__':
     pass
