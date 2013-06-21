@@ -8,6 +8,7 @@ Resource          keyword.txt
 
 *** Test Cases ***
 wan_mtuConfig_test_1
+    [Documentation]    向MTU输入框中输入空值，提示MTU不能为空
     Run Keyword And Continue On Failure    验证DHCP接入MTU    ${EMPTY}    ${common_dhcp_mtu_err}
     Run Keyword And Continue On Failure    验证静态接入MTU    ${EMPTY}    ${common_static_mtu_err}
     Run Keyword And Continue On Failure    验证PPPOE接入MTU    ${EMPTY}    ${common_pppoe_mtu_err}
@@ -15,6 +16,7 @@ wan_mtuConfig_test_1
     Run Keyword And Continue On Failure    验证PPTP接入MTU    ${EMPTY}    ${common_pptp_mtu_err}
 
 wan_mtuConfig_test_2
+    [Documentation]    向MTU输入框中输入字符长度超过4个之后，将不能输入
     Run Keyword And Continue On Failure    验证DHCP接入MTU最大输入长度    12345    4
     Run Keyword And Continue On Failure    验证PPPOE接入MTU最大输入长度    12345    4
     Run Keyword And Continue On Failure    验证静态接入MTU最大输入长度    12345    4
@@ -22,6 +24,7 @@ wan_mtuConfig_test_2
     Run Keyword And Continue On Failure    验证PPTP接入MTU最大输入长度    12345    4
 
 wan_mtuConfig_test_3
+    [Documentation]    当接入方式为静态接入时，向MTU输入框中输入超出576~1500范围的值，提示MTU值在576~1500之间。
     [Template]    验证静态接入MTU
     575    ${common_static_mtu_err}
     1501    ${common_static_mtu_err}
@@ -30,6 +33,7 @@ wan_mtuConfig_test_3
     1500    ${common_unlock_save}
 
 wan_mtuConfig_test_4
+    [Documentation]    当接入方式为DHCP接入时，向MTU输入框中输入超出576~1500范围的值，提示MTU值在576~1500之间。
     [Template]    验证DHCP接入MTU
     575    ${common_dhcp_mtu_err}
     1501    ${common_dhcp_mtu_err}
@@ -38,6 +42,7 @@ wan_mtuConfig_test_4
     1500    ${common_unlock_save}
 
 wan_mtuConfig_test_5
+    [Documentation]    当接入方式为PPPOE接入时，向MTU输入框中输入超出576~1500范围的值，提示MTU值在576~1492之间。
     [Template]    验证PPPOE接入MTU
     575    ${common_pppoe_mtu_err}
     1493    ${common_pppoe_mtu_err}
@@ -46,6 +51,7 @@ wan_mtuConfig_test_5
     1492    ${common_unlock_save}
 
 wan_mtuConfig_test_6
+    [Documentation]    当接入方式为PPTP接入时，向MTU输入框中输入超出576~1500范围的值，提示MTU值在576~1440之间。
     [Template]    验证PPTP接入MTU
     575    ${common_pptp_mtu_err}
     1421    ${common_pptp_mtu_err}
@@ -54,6 +60,7 @@ wan_mtuConfig_test_6
     1420    ${common_unlock_save}
 
 wan_mtuConfig_test_7
+    [Documentation]    当接入方式为L2TP接入时，向MTU输入框中输入超出576~1500范围的值，提示MTU值在576~1440之间。
     [Template]    验证L2TP接入MTU
     575    ${common_l2tp_mtu_err}
     1461    ${common_l2tp_mtu_err}
@@ -62,6 +69,7 @@ wan_mtuConfig_test_7
     1460    ${common_unlock_save}
 
 wan_mtuConfig_test_8
+    [Documentation]    向MTU输入框中输入不为[0-9]的字符，提示MTU只能为正整数
     [Template]
     : FOR    ${mtu}    IN    @{error_mtu_string}
     \    Run Keyword And Continue On Failure    验证DHCP接入MTU    ${mtu}    ${common_dhcp_mtu_err}

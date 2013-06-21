@@ -5,12 +5,15 @@ Resource          keyword.txt
 
 *** Test Cases ***
 pppoe_name_test_1
+    [Documentation]    PPPOE帐号为空时，提示“帐号不能为空”
     验证PPPOE账号    ${EMPTY}    ${common_string_null}
 
 pppoe_name_test_2
+    [Documentation]    PPPOE帐号：长度最大127个字符，超过127字符无法输入
     验证PPPOE账号最大输入长度    12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678    127
 
 pppoe_name_test_3
+    [Documentation]    PPPOE帐号：输入数据带有 '"\或空格，提示“ 不能含有特殊字符 \ '"\和空格 ”
     [Template]    验证PPPOE账号
     9 9    ${common_string_err}
     \\    ${common_string_err}
@@ -18,17 +21,21 @@ pppoe_name_test_3
     '    ${common_string_err}
 
 pppoe_name_test_4
+    [Documentation]    PPPOE帐号：账号中含有不在ascii码0~255范围中的字符时（例如中文、韩文），提示“不能含有无法识别的字符集”
     [Template]    验证PPPOE账号
     NIHAO你好    ${common_string_null}
     繁體    ${common_string_null}
 
 pppoe_passwd_test_5
+    [Documentation]    PPPOE密码不能为空
     验证PPPOE密码    ${EMPTY}    ${common_string_null}
 
 pppoe_passwd_test_6
+    [Documentation]    PPPOE密码：输入超过127个字符后，无法输入
     验证PPPOE密码最大输入长度    12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678    127
 
 pppoe_passwd_test_7
+    [Documentation]    PPPOE密码：输入数据带有 '"\或空格，提示“ 不能含有特殊字符 \ '"\和空格 ”
     [Template]    验证PPPOE密码
     9 9    ${common_string_err}
     \\    ${common_string_err}
@@ -36,20 +43,25 @@ pppoe_passwd_test_7
     '    ${common_string_err}
 
 pppoe_passwd_test_8
+    [Documentation]    PPPOE密码：内容隐藏显示
     PPPOE密码输入框是密文显示
 
 pppoe_passwd_test_10
+    [Documentation]    PPPOE密码：密码中含有不在ascii码0~255范围中的字符时（例如中文、韩文），提示“不能含有无法识别的字符集”
     [Template]    验证PPPOE密码
     NIHAO你好    ${common_string_null}
     繁體    ${common_string_null}
 
 pppoe_demandTime_test_11
+    [Documentation]    按需连接老化时间不能为空
     验证PPPOE按需连接老化时间    ${EMPTY}    ${common_int_number_err}
 
 pppoe_demandTime_test_12
+    [Documentation]    按需连接老化时间：超过2个字符后，无法输入
     验证PPPOE按需连接老化时间最大输入长度    999    2
 
 pppoe_demandTime_test_13
+    [Documentation]    按需老化时间：超出1~30的范围
     [Template]    验证PPPOE按需连接老化时间
     0    ${common_auto_disconnect_time_err}
     31    ${common_auto_disconnect_time_err}
@@ -57,6 +69,7 @@ pppoe_demandTime_test_13
     30    ${common_unlock_save}
 
 pppoe_demandTime_test_14
+    [Documentation]    按需老化时间：输入非正整数的字符，提示只能为正整数
     [Template]    验证PPPOE按需连接老化时间
     \ 9    ${common_int_number_err}
     \\    ${common_int_number_err}
@@ -67,12 +80,15 @@ pppoe_demandTime_test_14
     好    ${common_int_number_err}
 
 pppoe_serviceName_test_15
+    [Documentation]    服务器名可以为空，表示不设置服务器名
     验证PPPOE服务名    ${EMPTY}    ${common_unlock_save}
 
 pppoe_serviceName_test_16
+    [Documentation]    服务器名：长度最大40个字符，超过40字符无法输入
     验证PPPOE服务名最大输入长度    12345678901234567890123456789012345678901    40
 
 pppoe_serviceName_test_17
+    [Documentation]    服务器名：输入数据带有 '"\或空格，提示“ 不能含有特殊字符 \ '"\和空格 ”
     [Template]    验证PPPOE服务名
     9 9    ${common_string_err}
     \\    ${common_string_err}
@@ -80,18 +96,22 @@ pppoe_serviceName_test_17
     '    ${common_string_err}
 
 pppoe_serviceName_test_18
+    [Documentation]    服务器名：服务器名中含有不在ascii码0~255范围中的字符时（例如中文、韩文），提示“不能含有无法识别的字符集”
     [Template]    验证PPPOE服务名
     NIHAO你好    ${common_string_null}
     繁體    ${common_string_null}
     netcore&netis&baidu.com    ${common_unlock_save}
 
 pppoe_acName_test_19
+    [Documentation]    AC名可以为空，表示不设置AC名
     验证PPPOE AC名    ${EMPTY}    ${common_unlock_save}
 
 pppoe_acName_test_20
+    [Documentation]    AC名：长度最大40个字符，超过40字符无法输入
     验证PPPOE AC名最大输入长度    12345678901234567890123456789012345678901    40
 
 pppoe_acName_test_21
+    [Documentation]    AC名：输入数据带有 '"\或空格，提示“ 不能含有特殊字符 \ '"\和空格 ”
     [Template]    验证PPPOE AC名
     9 9    ${common_string_err}
     \\    ${common_string_err}
@@ -99,48 +119,59 @@ pppoe_acName_test_21
     '    ${common_string_err}
 
 pppoe_acName_test_22
+    [Documentation]    AC名：AC名中含有不在ascii码0~255范围中的字符时（例如中文、韩文），提示“不能含有无法识别的字符集”
     [Template]    验证PPPOE AC名
     NIHAO你好    ${common_string_null}
     繁體    ${common_string_null}
     netcore&netis&baidu.com    ${common_unlock_save}
 
 pppoe_dns_test_23
+    [Documentation]    首选DNS服务器输入框超过15个字符后，无法输入
     验证PPPOE首选DNS最大输入长度    1234567890123456    15
 
 pppoe_dns_test_24
+    [Documentation]    首选DNS服务器输入框：小数点>3，提示IP长度不正确
     验证PPPOE首选DNS    10.0.0.1.    ${common_ip_addr_err}
 
 pppoe_dns_test_25
+    [Documentation]    首选DNS服务器输入框：小数点<3，提示IP长度不正确
     验证PPPOE首选DNS    10.0.01    ${common_ip_addr_err}
 
 pppoe_dns_test_26
+    [Documentation]    在PPPOE模式下，首选DNS服务器可以为空。
     验证PPPOE首选DNS    ${EMPTY}    ${common_unlock_save}
 
 pppoe_dns_test_27
+    [Documentation]    首选DNS服务器输入框第一段IP值超出范围，提示只能在0~255之间
     [Template]    验证PPPOE首选DNS
     -1.0.0.2    ${common_ip_addr_err}
     256.0.0.1    ${common_ip_addr_err}
 
 pppoe_dns_test_28
+    [Documentation]    首选DNS服务器输入框第二段IP值超出范围，提示只能在0~255之间
     [Template]    验证PPPOE首选DNS
     10.-1.0.10    ${common_ip_addr_err}
     10.256.0.10    ${common_ip_addr_err}
 
 pppoe_dns_test_29
+    [Documentation]    首选DNS服务器输入框第三段IP值超出范围，提示只能在0~255之间
     [Template]    验证PPPOE首选DNS
     10.0.-1.10    ${common_ip_addr_err}
     10.0.256.10    ${common_ip_addr_err}
 
 pppoe_dns_test_30
+    [Documentation]    首选DNS服务器输入框第四段IP值超出范围，提示只能在0~255之间
     [Template]    验证PPPOE首选DNS
     10.0.0.-1    ${common_ip_addr_err}
     10.0.0.256    ${common_ip_addr_err}
 
 pppoe_dns_test_31
+    [Documentation]    首选DNS服务器输入框存在非法字符，提示发现n个非法字符
     [Template]    验证PPPOE首选DNS
     192,168;1:s    ${common_ip_addr_err}
 
 pppoe_dns_test_32
+    [Documentation]    首选DNS服务器第一段、第二段、第三段、第四段均不能为空
     [Template]    验证PPPOE首选DNS
     .168.1.10    ${common_ip_addr_err}
     192..1.10    ${common_ip_addr_err}
@@ -148,10 +179,12 @@ pppoe_dns_test_32
     192.168.1.    ${common_ip_addr_err}
 
 pppoe_dns_test_33
+    [Documentation]    首选DNS服务器输入0.0.0.0，提示IP不能为全0
     [Template]    验证PPPOE首选DNS
     0.0.0.0    ${common_ip_addr_err}
 
 pppoe_dns_test_34
+    [Documentation]    首选DNS服务器不为组播地址或保留地址：223 < n1 < 255
     [Template]    验证PPPOE首选DNS
     224.0.0.1    ${common_ip_addr_err}
     255.0.0.1    ${common_ip_addr_err}
@@ -159,54 +192,66 @@ pppoe_dns_test_34
     223.255.255.254    ${common_unlock_save}
 
 pppoe_dns_test_35
+    [Documentation]    首选DNS服务器不为回环地址：n1 = 127
     [Template]    验证PPPOE首选DNS
     127.0.0.1    ${common_ip_addr_err}
 
 pppoe_dns_test_36
+    [Documentation]    首选DNS服务器不为保留地址：n1=0
     [Template]    验证PPPOE首选DNS
     0.168.1.10    ${common_ip_addr_err}
 
 pppoe_dns_test_37
+    [Documentation]    备用DNS服务器输入框超过15个字符后，无法输入
     [Template]
     验证PPPOE备选DNS最大输入长度    1234567890123456    15
 
 pppoe_dns_test_38
+    [Documentation]    备用DNS服务器输入框：小数点>3，提示IP长度不正确
     [Template]    验证PPPOE备选DNS
     10.0.0.1.    ${common_ip_addr_err}
 
 pppoe_dns_test_39
+    [Documentation]    备用DNS服务器输入框：小数点<3，提示IP长度不正确
     [Template]    验证PPPOE备选DNS
     10.0.01    ${common_ip_addr_err}
 
 pppoe_dns_test_40
+    [Documentation]    在PPPOE模式下，备选DNS服务器可以为空。
     [Template]    验证PPPOE备选DNS
     ${EMPTY}    ${common_unlock_save}
 
 pppoe_dns_test_41
+    [Documentation]    备用DNS服务器输入框第一段IP值超出范围，提示只能在0~255之间
     [Template]    验证PPPOE备选DNS
     -1.0.0.2    ${common_ip_addr_err}
     256.0.0.1    ${common_ip_addr_err}
 
 pppoe_dns_test_42
+    [Documentation]    备用DNS服务器输入框第二段IP值超出范围，提示只能在0~255之间
     [Template]    验证PPPOE备选DNS
     10.-1.0.10    ${common_ip_addr_err}
     10.256.0.10    ${common_ip_addr_err}
 
 pppoe_dns_test_43
+    [Documentation]    备用DNS服务器输入框第三段IP值超出范围，提示只能在0~255之间
     [Template]    验证PPPOE备选DNS
     10.0.-1.10    ${common_ip_addr_err}
     10.0.256.10    ${common_ip_addr_err}
 
 pppoe_dns_test_44
+    [Documentation]    备用DNS服务器输入框第四段IP值超出范围，提示只能在0~255之间
     [Template]    验证PPPOE备选DNS
     10.0.0.-1    ${common_ip_addr_err}
     10.0.0.256    ${common_ip_addr_err}
 
 pppoe_dns_test_45
+    [Documentation]    备用DNS服务器输入框存在非法字符，提示发现n个非法字符
     [Template]    验证PPPOE备选DNS
     192,168;1:s    ${common_ip_addr_err}
 
 pppoe_dns_test_46
+    [Documentation]    备用DNS服务器第一段、第二段、第三段、第四段均不能为空
     [Template]    验证PPPOE备选DNS
     .168.1.10    ${common_ip_addr_err}
     192..1.10    ${common_ip_addr_err}
@@ -214,10 +259,12 @@ pppoe_dns_test_46
     192.168.1.    ${common_ip_addr_err}
 
 pppoe_dns_test_47
+    [Documentation]    备用DNS服务器输入0.0.0.0，提示IP不能为全0
     [Template]    验证PPPOE备选DNS
     0.0.0.0    ${common_ip_addr_err}
 
 pppoe_dns_test_48
+    [Documentation]    备用DNS服务器不为组播地址或保留地址：223 < n1 < 255
     [Template]    验证PPPOE备选DNS
     224.0.0.1    ${common_ip_addr_err}
     255.0.0.1    ${common_ip_addr_err}
@@ -225,14 +272,17 @@ pppoe_dns_test_48
     223.255.255.254    ${common_unlock_save}
 
 pppoe_dns_test_49
+    [Documentation]    备用DNS服务器不为回环地址：n1 = 127
     [Template]    验证PPPOE备选DNS
     127.0.0.1    ${common_ip_addr_err}
 
 pppoe_dns_test_50
+    [Documentation]    备用DNS服务器不为保留地址：n1=0
     [Template]    验证PPPOE备选DNS
     0.168.1.10    ${common_ip_addr_err}
 
 pppoe_dns_test_51
+    [Documentation]    成功配置PPPOE信息并保存生效，提示“操作成功！”
     [Template]
     设置PPPoE接入参数    1    1    mtu=1492    dns1=8.8.8.8    dns2=7.7.7.7
     显示消息    ${common_unlock_save}
