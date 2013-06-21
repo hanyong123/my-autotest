@@ -1,5 +1,5 @@
 *** Settings ***
-Library           Selenium2Library
+Library           Selenium2Library    implicit_wait=15
 Resource          config.txt
 Resource          lang_var.txt
 Library           common.py
