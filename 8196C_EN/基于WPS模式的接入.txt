@@ -47,6 +47,22 @@ WPS_GetPin_test_5
     ${val1}    GEt text    xpath=//div[@id='content_layer']/div/div[2]/div[2]/span/span
     Should Not Be Equal    ${val}    ${val1}
 
+WPS_Status_test_1
+    [Documentation]    *按钮状态显示为“启用”WPS时，WPS状态显示为“禁用”*
+    开启或关闭WPS功能    0
+    ${val}    Get value    wps_enable
+    Should Be Equal    ${val}    Enable WPS    #WPS开启按钮值为’开启‘
+    ${val1}    get text    css=span.df_con
+    Should Be Equal    ${val1}    Disable    #状态显示的值’禁用‘
+
+WPS_Status_test_2
+    [Documentation]    *按钮状态显示为“禁用”WPS时，WPS状态显示为“启用”*
+    开启或关闭WPS功能    1
+    ${val}    Get value    wps_enable
+    Should Be Equal    ${val}    Disable WPS    #WPS开启按钮值为
+    ${val1}    get text    css=span.df_con
+    Should Be Equal    ${val1}    Enable    #状态显示的值
+
 *** Keywords ***
 验证pin码
     [Arguments]    ${pin}    ${message}
@@ -59,3 +75,11 @@ WPS_GetPin_test_5
     验证输入框最大输入长度    id=new_pin    ${new_pin}    ${len}
 
 验证获取新pin码
+
+验证WPS状态和按键值
+    [Arguments]    ${enble}    ${button_val}    ${status_val}
+    开启或关闭WPS功能    ${enble}
+    ${val}    Get value    wps_enable
+    Should Be Equal    ${val}    ${button_val}
+    ${val1}    get text    css=span.df_con
+    Should Be Equal    ${val1}    ${status_val}
