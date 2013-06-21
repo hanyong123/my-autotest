@@ -86,7 +86,7 @@ Library           common.py
 
 打开浏览器
     Open Browser    ${base_url}    ${browser}
-    Wait Until Page Contains Element    id=content_layer    20
+    Wait Until Page Contains Element    id=p_menu_status    10
 
 关闭浏览器
     Close Browser
@@ -182,7 +182,7 @@ Library           common.py
 设置IP过滤
     [Arguments]    ${des}=${None}    ${rule}=1    ${shost}=all    ${sip}=${None}    ${smask}=${None}    ${start_sip}=${None}
     ...    ${end_sip}=${None}    ${dhost}=all    ${dip}=${None}    ${dmask}=${None}    ${start_dip}=${None}    ${end_dip}=${None}
-    ...    ${protcol}=ALL    ${start_port}=${None}    ${end_port}=${None}    ${day_locator}=${None}    ${start_time}=0    ${end_time}=0
+    ...    ${protcol}=ALL    ${start_port}=${None}    ${end_port}=${None}    ${day_locator}=${None}    ${start_time}=00:00    ${end_time}=00:00
     ...    ${allday_locator}=${None}
     ${rdes}    process_special_charators    ${des}
     Run Keyword If    '${rdes}'!='${None}'    Input text    id=ip_describe    ${des}
@@ -212,10 +212,12 @@ Library           common.py
     Run Keyword If    '${rend_port}'!='${None}'    Input text    id=ip_port_end    ${end_port}
     @{day_locator}    Get Variable Value    ${day_locator}
     : FOR    ${i}    IN    @{day_locator}
-    \    Run Keyword If    '${i}'!='${None}'    Click Element    ${i}
-    Select From List By Value    id=start    ${start_time}
-    Select From List By Value    id=end    ${end_time}
-    Run Keyword If    '${allday_locator}'!='${None}'    Click Element    ${allday_locator}
+    \    ${ri}    process_special_charators    ${i}
+    \    Run Keyword If    '${ri}'!='${None}'    Click Element    ${i}
+    Select From List By Label    id=start    ${start_time}
+    Select From List By Label    id=end    ${end_time}
+    ${rallday_locator}    process_special_charators    ${allday_locator}
+    Run Keyword If    '${rallday_locator}'!='${None}'    Click Element    ${allday_locator}
     Click Element    id=add_ip_filter
 
 转到MAC过滤页面
@@ -474,8 +476,8 @@ WAN口IP是${ip}
     Run Keyword If    '${radio_band}'!='${None}'    Select From List By Label    id=wl_stand    ${radio_band}
     ${rssid}    process_special_charators    ${ssid}
     Run Keyword If    '${rssid}'!='${None}'    Input Text    id=ssid    ${ssid}
-    Run Keyword If    '${ssid_broadcast}'==1     Click Element    id=ssid_broad_on
-    Run Keyword If    '${ssid_broadcast}'==0     Click Element    id=ssid_broad_off
+    Run Keyword If    '${ssid_broadcast}'==1    Click Element    id=ssid_broad_on
+    Run Keyword If    '${ssid_broadcast}'==0    Click Element    id=ssid_broad_off
     Run Keyword If    '${region}'!='${None}'    Select From List By Label    id=region    ${region}
     Run Keyword If    '${channel_width}'==1    Click Element    id=channel_width_40
     Run Keyword If    '${channel_width}'==0    Click Element    id=channel_width_20
