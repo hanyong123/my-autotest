@@ -1,6 +1,140 @@
 *** Settings ***
-Suite Setup       Run Keywords    打开浏览器    AND    ${EMPTY}
+Suite Setup       Run Keywords    打开浏览器    AND    转到AP模式的无线基本设置页面
 Suite Teardown    关闭浏览器
 Resource          keyword.txt
 
+*** Variables ***
+@{string}         [u'0']
+
 *** Test Cases ***
+Wireless_ONorOff_test_1
+    [Documentation]    *无线状态选择“关闭”时，无线配置界面只保留无线状态的“开启”、“关闭”选项、“保存”按钮。其余组件均隐藏。
+    ...    *
+    验证无线状态开关    0
+    Element Should Not Be Visible    ssid
+    Element Should Not Be Visible    net_mode
+    Element Should Not Be Visible    sec_mode
+    Element Should Not Be Visible    ssid_broad_on
+
+Wireless_ONorOff_test_2
+    [Documentation]    *无线状态选择“开启”时，无线配置界面的组件均正常显示。
+    ...    *
+    验证无线状态开关    1
+    Element Should Be Visible    ssid
+    Element Should Be Visible    net_mode
+    Element Should Be Visible    sec_mode
+    Element Should Be Visible    ssid_broad_on
+
+Wireless_RadioBand_test_7
+    [Documentation]    *选择无线标准为802.11b时，无线配置页面隐藏“频道带宽（20Mhz/40Mhz）”和“频道绑定（向上绑定/向下绑定）”*
+    验证无线制式标准    802.11b
+    Element Should Not Be Visible    channel_width_20
+    Element Should Not Be Visible    channel_width_40
+    Element Should Not Be Visible    channel_bind_down
+    Element Should Not Be Visible    channel_bind_up
+
+Wireless_RadioBand_test_8
+    [Documentation]    *选择无线标准为802.11g时，无线配置页面隐藏“频道带宽（20Mhz/40Mhz）”和“频道绑定（向上绑定/向下绑定）”
+    ...    *
+    验证无线制式标准    802.11g
+    Element Should Not Be Visible    channel_width_20
+    Element Should Not Be Visible    channel_width_40
+    Element Should Not Be Visible    channel_bind_down
+    Element Should Not Be Visible    channel_bind_up
+
+Wireless_RadioBand_test_9
+    [Documentation]    *选择无线标准为802.11n时，无线配置页面显示“频道带宽（20Mhz/40Mhz）”和“频道绑定（向上绑定/向下绑定）”；*
+    ...    *当选择频道带宽为20Mhz时，无线配置页面隐藏“频道绑定（向上绑定/向下绑定）”
+    ...    *
+    验证无线制式标准    802.11n    0
+    #显示频道带宽
+    Element Should Be Visible    channel_width_20
+    Element Should Be Visible    channel_width_40
+    #隐藏频道绑定
+    Element Should Not Be Visible    channel_bind_down
+    Element Should Not Be Visible    channel_bind_up
+
+Wireless_RadioBand_test_10
+    [Documentation]    *选择无线标准为802.11b+g时，无线配置页面隐藏“频道带宽（20Mhz/40Mhz）”和“频道绑定（向上绑定/向下绑定）”
+    ...    *
+    验证无线制式标准    802.11b+g
+    Element Should Not Be Visible    channel_width_20
+    Element Should Not Be Visible    channel_width_40
+    Element Should Not Be Visible    channel_bind_down
+    Element Should Not Be Visible    channel_bind_up
+
+Wireless_RadioBand_test_11
+    [Documentation]    *选择无线标准为802.11g+n时，无线配置页面显示“频道带宽（20Mhz/40Mhz）”和“频道绑定（向上绑定/向下绑定）”；*
+    ...    *当选择频道带宽为20Mhz时，无线配置页面隐藏“频道绑定（向上绑定/向下绑定）”
+    ...    *
+    验证无线制式标准    802.11g+n    0
+    #显示频道带宽
+    Element Should Be Visible    channel_width_20
+    Element Should Be Visible    channel_width_40
+    #隐藏频道绑定
+    Element Should Not Be Visible    channel_bind_down
+    Element Should Not Be Visible    channel_bind_up
+
+Wireless_RadioBand_test_12
+    [Documentation]    *选择无线标准为802.11b+g+n时，无线配置页面显示“频道带宽（20Mhz/40Mhz）”和“频道绑定（向上绑定/向下绑定）”；*
+    ...    *当选择频道带宽为20Mhz时，无线配置页面隐藏“频道绑定（向上绑定/向下绑定）”
+    ...    *
+    验证无线制式标准    802.11b+g+n    0
+    Element Should Be Visible    channel_width_20
+    Element Should Be Visible    channel_width_40
+    Element Should Not Be Visible    channel_bind_down
+    Element Should Not Be Visible    channel_bind_up
+
+Wireless_SSID_test_23
+    [Documentation]    *SSID不能为空，SSID输入框的内容为空时有错误提示*
+    [Template]    验证无线SSID
+    ${EMPTY}    ${common_string_err}
+
+Wireless_SSID_test_25
+    [Documentation]    *SSID输入框的内容带有'"\和空格时，有错误提示*
+    [Template]    验证无线SSID
+    \\    ${common_string_err}
+    '    ${common_string_err}
+    "    ${common_string_err}
+    ${SPACE}    ${common_string_err}
+    fsfds fsdaf    ${common_string_err}
+
+Wireless_SSID_test_26
+    [Documentation]    *SSID输入数据需要支持中文，编码格式为GB2312；在GB2312中的字符集均可输入*
+    验证无线SSID    中文字符    ${common_unlock_save}
+    sleep    5s
+    ${var}    get value    id=ssid
+    Should Be Equal    ${var}    中文字符
+
+Wireless_SSIDMaxLen_test_24
+    验证输入框最大输入长度    ssid    jk;lfdsakj;lfdsjaklfdjklsafdjklsajkfsdajkfdsafdsjakl    32
+
+Wireless_Region_test_31
+    验证区域设置    US    0    \    @{string}
+
+*** Keywords ***
+验证无线状态开关
+    [Arguments]    ${enable}
+    run keyword if     '${enable}'=='1'    clickelement    wl_enable_on
+    run keyword if     '${enable}'=='0'    clickelement    wl_enable_off
+    Click Element    id=save_wl_base
+    sleep    10s
+    Wait Until Page Contains Element    save_wl_base
+
+验证无线制式标准
+    [Arguments]    ${radio_band}    ${channel_width}={None}
+    设置AP模式的无线基本参数    enable=1    radio_band=${radio_band}    channel_width=${channel_width}
+    sleep    5s
+    Wait Until Page Contains Element    save_wl_base
+
+验证无线SSID
+    [Arguments]    ${ssid}    ${message}
+    设置AP模式的无线基本参数    ssid=${ssid}
+    显示消息    ${message}
+
+验证区域设置
+    [Arguments]    ${region}=US    ${channel_width}=0    ${control_side}=${None}    ${string1}=${None}
+    设置AP模式的无线基本参数    region=${region}     channel_width=${channel_width}    control_side=${control_side}
+    sleep    5s
+    ${var}    Get Selected List Values    channel
+    Should Be Equal    ${var}    ${string1}
