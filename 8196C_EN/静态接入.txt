@@ -4,14 +4,505 @@ Suite Teardown    关闭浏览器
 Resource          keyword.txt
 
 *** Test Cases ***
-try
-    验证静态接入地址    ${EMPTY}    255.255.255.0    192.168.1.1    Invalid IP Address! Please input another one.
+static_ip_test_1
+    [Documentation]    IP地址输入框超过15个字符后，无法输入
+    验证静态IP地址最大输入长度    1234567890123456    15
+
+static_ip_test_2
+    [Documentation]    IP地址输入框：小数点>3，提示IP长度不正确
+    [Template]    验证静态接入地址
+    10.0.0.1.    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_3
+    [Documentation]    IP地址输入框：小数点<3，提示IP长度不正确
+    [Template]    验证静态接入地址
+    10.0.01    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_4
+    [Documentation]    IP地址不能为空
+    [Template]    验证静态接入地址
+    ${EMPTY}    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_5
+    [Documentation]    IP地址输入框第一段IP值超出范围，提示只能在0~255之间
+    [Template]    验证静态接入地址
+    -1.0.0.2    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+    256.0.0.1    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_6
+    [Documentation]    IP地址输入框第二段IP值超出范围，提示只能在0~255之间
+    [Template]    验证静态接入地址
+    10.-1.0.10    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+    10.256.0.10    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_7
+    [Documentation]    IP地址输入框第三段IP值超出范围，提示只能在0~255之间
+    [Template]    验证静态接入地址
+    10.0.-1.10    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+    10.0.256.10    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_8
+    [Documentation]    IP地址输入框第四段IP值超出范围，提示只能在0~255之间
+    [Template]    验证静态接入地址
+    10.0.0.-1    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+    10.0.0.256    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_9
+    [Documentation]    IP地址输入框存在非法字符，提示发现n个非法字符
+    [Template]    验证静态接入地址
+    192,168;1:s    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_10
+    [Documentation]    IP地址第一段、第二段、第三段、第四段均不能为空
+    [Template]    验证静态接入地址
+    .168.1.10    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+    192..1.10    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+    192.168..10    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+    192.168.1.    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_11
+    [Documentation]    IP地址输入0.0.0.0，提示IP不能为全0
+    [Template]    验证静态接入地址
+    0.0.0.0    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_12
+    [Documentation]    IP地址不为组播地址或保留地址：223 < n1 < 255
+    [Template]    验证静态接入地址
+    224.0.0.1    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+    255.0.0.1    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+    254.0.0.1    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_13
+    [Documentation]    IP地址不为回环地址：n1 = 127
+    [Template]    验证静态接入地址
+    127.0.0.1    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_14
+    [Documentation]    IP地址不为保留地址：n1=0
+    [Template]    验证静态接入地址
+    0.168.1.10    255.255.255.0    10.0.0.25    ${common_ip_addr_err}
+
+static_ip_test_15
+    [Documentation]    IP地址不能等于网段地址；IP地址和子网掩码做与运算，得出网段地址
+    [Template]    验证静态接入地址
+    192.168.1.0    255.255.255.0    192.168.1.1    ${common_segment_err}
+    172.16.0.0    255.255.0.0    172.16.1.1    ${common_segment_err}
+    10.0.0.0    255.0.0.0    10.1.2.3    ${common_segment_err}
+
+static_ip_test_16
+    [Documentation]    IP地址不能等于广播地址；IP地址和子网掩码做与运算，得出网段地址，由下一个网段地址减1得出本网段地址
+    [Template]    验证静态接入地址
+    192.168.1.255    255.255.255.0    192.168.1.1    ${common_Bcast_err}
+    172.16.255.255    255.255.0.0    172.16.1.1    ${common_Bcast_err}
+    10.255.255.255    255.0.0.0    10.1.1.2    ${common_Bcast_err}
+
+static_mask_test_17
+    [Documentation]    子网掩码输入框超过15个字符后，无法输入
+    [Template]
+    验证静态子网掩码最大输入长度    1234567890123456    15
+
+static_mask_test_18
+    [Documentation]    子网掩码输入框：小数点>3，提示IP长度不正确
+    [Template]    验证静态接入地址
+    10.0.0.100    255.0.0.0.    10.0.10.100    ${common_mask_addr_err}
+
+static_mask_test_19
+    [Documentation]    子网掩码输入框：小数点<3，提示IP长度不正确
+    [Template]    验证静态接入地址
+    10.0.0.100    255.0.0    10.0.10.100    ${common_mask_addr_err}
+
+static_mask_test_20
+    [Documentation]    子网掩码不能为空
+    [Template]    验证静态接入地址
+    10.0.0.100    ${EMPTY}    10.0.10.100    ${common_mask_addr_err}
+
+static_mask_test_21
+    [Documentation]    子网掩码输入框第一段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
+    [Template]    验证静态接入地址
+    10.0.0.100    255.0.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    254.0.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    252.0.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    248.0.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    240.0.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    224.0.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    192.0.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    128.0.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    129.0.0.0    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    253.0.0.0    10.0.0.10    ${common_mask_addr_err}
+
+static_mask_test_22
+    [Documentation]    子网掩码输入框第二段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
+    [Template]    验证静态接入地址
+    10.0.0.100    255.255.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.254.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.252.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.248.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.240.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.224.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.192.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.128.0.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.129.0.0    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    255.253.0.0    10.0.0.10    ${common_mask_addr_err}
+
+static_mask_test_23
+    [Documentation]    子网掩码输入框第三段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
+    [Template]    验证静态接入地址
+    10.0.0.100    255.255.255.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.255.254.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.255.252.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.255.248.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.255.240.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.255.224.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.255.192.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.255.128.0    10.0.0.10    ${common_unlock_save}
+    10.0.0.100    255.255.129.0    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    255.255.253.0    10.0.0.10    ${common_mask_addr_err}
+
+static_mask_test_24
+    [Documentation]    子网掩码输入框第四段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
+    [Template]    验证静态接入地址
+    10.0.0.1    255.255.255.255    10.0.0.1    ${common_unlock_error}
+    10.0.0.1    255.255.255.254    10.0.0.1    ${common_Bcast_err}
+    10.0.0.1    255.255.255.252    10.0.0.1    ${common_unlock_save}
+    10.0.0.1    255.255.255.248    10.0.0.1    ${common_unlock_save}
+    10.0.0.1    255.255.255.240    10.0.0.1    ${common_unlock_save}
+    10.0.0.1    255.255.255.224    10.0.0.1    ${common_unlock_save}
+    10.0.0.1    255.255.255.192    10.0.0.1    ${common_unlock_save}
+    10.0.0.1    255.255.255.129    10.0.0.1    ${common_unlock_save}
+    10.0.0.1    255.255.255.253    10.0.0.1    ${common_mask_addr_err}
+
+static_mask_test_25
+    [Documentation]    子网掩码输入框存在非法字符，提示发现n个非法字符
+    [Template]    验证静态接入地址
+    10.0.0.1    255,255;0:s    10.0.0.1    ${common_mask_addr_err}
+
+static_mask_test_26
+    [Documentation]    子网掩码第一段、第二段、第三段、第四段均不能为空
+    [Template]    验证静态接入地址
+    10.0.0.1    .255.0.0    10.0.0.1    ${common_mask_addr_err}
+    10.0.0.1    255..0.0    10.0.0.1    ${common_mask_addr_err}
+    10.0.0.1    255.255..0    10.0.0.1    ${common_mask_addr_err}
+    10.0.0.1    255.255.0.    10.0.0.1    ${common_mask_addr_err}
+
+static_mask_test_27
+    [Documentation]    子网掩码输入0.0.0.0，255.255.255.255，提示子网掩码不合法
+    [Template]    验证静态接入地址
+    10.0.0.1    0.0.0.0    10.0.0.1    ${common_mask_addr_err}
+    10.0.0.1    255.255.255.255    10.0.0.1    ${common_mask_addr_err}
+
+static_mask_test_28
+    [Documentation]    子网掩码地址第四段不等于0或255时，第一段、第二段、第三段均等于255
+    [Template]    验证静态接入地址
+    10.0.0.100    254.255.255.128    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    255.254.255.128    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    255.255.254.128    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    255.255.255.128    10.0.0.10    ${common_unlock_save}
+
+static_mask_test_29
+    [Documentation]    子网掩码地址第三段不等于0或255时，第一段、第二段均等于255，第四段等于0
+    [Template]    验证静态接入地址
+    10.0.0.100    254.255.128.0    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    255.254.128.0    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    255.255.128.255    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    255.255.128.0    10.0.0.10    ${common_unlock_save}
+
+static_mask_test_30
+    [Documentation]    子网掩码地址第二段不等于0或255时，第一段等于255，第三段等于第四段等于0
+    [Template]    验证静态接入地址
+    10.0.0.100    254.128.0.0    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    255.128.254.0    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    255.128.0.254    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    255.128.0.0    10.0.0.10    ${common_unlock_save}
+
+static_mask_test_31
+    [Documentation]    子网掩码第一段不等于0或255时，第一段、第二段、第三段均等于0
+    [Template]    验证静态接入地址
+    10.0.0.100    128.254.0.0    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    128.0.254.0    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    128.0.0.254    10.0.0.10    ${common_mask_addr_err}
+    10.0.0.100    128.0.0.0    10.0.0.10    ${common_unlock_save}
+
+static_gw_test_32
+    [Documentation]    默认网关输入框超过15个字符后，无法输入
+    验证静态默认网关最大输入长度    1234567890123456    15
+
+static_gw_test_33
+    [Documentation]    默认网关输入框：小数点>3，提示IP长度不正确
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    10.0.0.1.    ${common_ip_addr_err}
+
+static_gw_test_34
+    [Documentation]    默认网关输入框：小数点<3，提示IP长度不正确
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    10.0.01    ${common_ip_addr_err}
+
+static_gw_test_35
+    [Documentation]    默认网关不能为空
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    ${EMPTY}    ${common_ip_addr_err}
+
+static_gw_test_36
+    [Documentation]    默认网关输入框第一段IP值超出范围，提示只能在0~255之间
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    -1.0.0.2    ${common_ip_addr_err}
+    10.0.0.1    255.0.0.0    256.0.0.1    ${common_ip_addr_err}
+
+static_gw_test_37
+    [Documentation]    默认网关输入框第二段IP值超出范围，提示只能在0~255之间
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    10.-1.0.10    ${common_ip_addr_err}
+    10.0.0.1    255.0.0.0    10.256.0.10    ${common_ip_addr_err}
+
+static_gw_test_38
+    [Documentation]    默认网关输入框第三段IP值超出范围，提示只能在0~255之间
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    10.0.-1.10    ${common_ip_addr_err}
+    10.0.0.1    255.0.0.0    10.0.256.10    ${common_ip_addr_err}
+
+static_gw_test_39
+    [Documentation]    默认网关输入框第四段IP值超出范围，提示只能在0~255之间
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    10.0.0.-1    ${common_ip_addr_err}
+    10.0.0.1    255.0.0.0    10.0.0.256    ${common_ip_addr_err}
+
+static_gw_test_40
+    [Documentation]    默认网关输入框存在非法字符，提示发现n个非法字符
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    192,168;1:s    ${common_ip_addr_err}
+
+static_gw_test_41
+    [Documentation]    默认网关第一段、第二段、第三段、第四段均不能为空
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    .168.1.10    ${common_ip_addr_err}
+    10.0.0.1    255.0.0.0    192..1.10    ${common_ip_addr_err}
+    10.0.0.1    255.0.0.0    192.168..10    ${common_ip_addr_err}
+    10.0.0.1    255.0.0.0    192.168.1.    ${common_ip_addr_err}
+
+static_gw_test_43
+    [Documentation]    默认网关输入0.0.0.0，提示IP不能为全0
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    0.0.0.0    ${common_ip_addr_err}
+
+static_gw_test_44
+    [Documentation]    默认网关不为组播地址或保留地址：223 < n1 < 255
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    224.0.0.1    ${common_ip_addr_err}
+    10.0.0.1    255.0.0.0    255.0.0.1    ${common_ip_addr_err}
+    10.0.0.1    255.0.0.0    254.0.0.1    ${common_ip_addr_err}
+
+static_gw_test_45
+    [Documentation]    默认网关不为回环地址：n1 = 127
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    127.0.0.1    ${common_ip_addr_err}
+
+static_gw_test_46
+    [Documentation]    默认网关不为保留地址：n1=0
+    [Template]    验证静态接入地址
+    10.0.0.1    255.0.0.0    0.168.1.10    ${common_ip_addr_err}
+
+static_gw_test_47
+    [Documentation]    默认网关等于网段地址，提示不能等于网段地址；IP地址和子网掩码做与运算，得出网段地址
+    [Template]    验证静态接入地址
+    192.168.1.100    255.255.255.0    192.168.1.0    ${common_segment_err}
+    172.16.1.100    255.255.0.0    172.16.0.0    ${common_segment_err}
+    10.0.0.100    255.0.0.0    10.0.0.0    ${common_segment_err}
+
+static_gw_test_48
+    [Documentation]    默认网关等于广播地址，提示不能等于广播地址；IP地址和子网掩码做与运算，得出网段地址，由下一个网段地址减1得出本网段地址
+    [Template]    验证静态接入地址
+    192.168.1.100    255.255.255.0    192.168.1.255    ${common_Bcast_err}
+    172.16.1.100    255.255.0.0    172.16.255.255    ${common_Bcast_err}
+    10.0.0.100    255.0.0.0    10.255.255.255    ${common_Bcast_err}
+
+static_gw_test_49
+    [Documentation]    默认网关不在本网段地址中；本网段地址属于（网段地址,广播地址）
+    [Template]    验证静态接入地址
+    192.168.1.100    255.255.255.0    192.168.2.100    ${common_segment_len_err}
+    172.16.1.100    255.255.0.0    172.17.1.100    ${common_segment_len_err}
+    10.0.0.100    255.0.0.0    11.0.0.100    ${common_segment_len_err}
+
+static_dns_test_50
+    [Documentation]    首选DNS服务器输入框超过15个字符后，无法输入
+    验证静态首选DNS最大输入长度    1234567890123456    15
+
+static_dns_test_51
+    [Documentation]    首选DNS服务器输入框：小数点>3，提示IP长度不正确
+    [Template]    验证静态首选DNS
+    10.0.0.1.    ${common_ip_addr_err}
+
+static_dns_test_52
+    [Documentation]    首选DNS服务器输入框：小数点<3，提示IP长度不正确
+    [Template]    验证静态首选DNS
+    10.0.01    ${common_ip_addr_err}
+
+static_dns_test_53
+    [Documentation]    首选DNS服务器和备选DNS服务器不能全为空；当首选DNS服务器和备选DNS服务器均为空时，提示请填写DNS服务器地址
+    [Template]    验证静态DNS
+    ${EMPTY}    ${EMPTY}    ${common_dns_null_err}
+    8.8.8.8    ${EMPTY}    ${common_unlock_save}
+    ${EMPTY}    10.10.10.10    ${common_unlock_save}
+
+static_dns_test_54
+    [Documentation]    首选DNS服务器输入框第一段IP值超出范围，提示只能在0~255之间
+    [Template]    验证静态首选DNS
+    -1.0.0.2    ${common_ip_addr_err}
+    256.0.0.1    ${common_ip_addr_err}
+
+static_dns_test_55
+    [Documentation]    首选DNS服务器输入框第二段IP值超出范围，提示只能在0~255之间
+    [Template]    验证静态首选DNS
+    10.-1.0.10    ${common_ip_addr_err}
+    10.256.0.10    ${common_ip_addr_err}
+
+static_dns_test_56
+    [Documentation]    首选DNS服务器输入框第三段IP值超出范围，提示只能在0~255之间
+    [Template]    验证静态首选DNS
+    10.0.-1.10    ${common_ip_addr_err}
+    10.0.256.10    ${common_ip_addr_err}
+
+static_dns_test_57
+    [Documentation]    首选DNS服务器输入框第四段IP值超出范围，提示只能在0~255之间
+    [Template]    验证静态首选DNS
+    10.0.0.-1    ${common_ip_addr_err}
+    10.0.0.256    ${common_ip_addr_err}
+
+static_dns_test_58
+    [Documentation]    首选DNS服务器输入框存在非法字符，提示发现n个非法字符
+    [Template]    验证静态首选DNS
+    192,168;1:s    ${common_ip_addr_err}
+
+static_dns_test_59
+    [Documentation]    首选DNS服务器第一段、第二段、第三段、第四段均不能为空
+    [Template]    验证静态首选DNS
+    .168.1.10    ${common_ip_addr_err}
+    192..1.10    ${common_ip_addr_err}
+    192.168..10    ${common_ip_addr_err}
+    192.168.1.    ${common_ip_addr_err}
+
+static_dns_test_61
+    [Documentation]    首选DNS服务器输入0.0.0.0，提示IP不能为全0
+    [Template]    验证静态首选DNS
+    0.0.0.0    ${common_ip_addr_err}
+
+static_dns_test_62
+    [Documentation]    首选DNS服务器不为组播地址或保留地址：223 < n1 < 255
+    [Template]    验证静态首选DNS
+    224.0.0.1    ${common_ip_addr_err}
+    255.0.0.1    ${common_ip_addr_err}
+    254.0.0.1    ${common_ip_addr_err}
+    223.255.255.254    ${common_unlock_save}
+
+static_dns_test_63
+    [Documentation]    首选DNS服务器不为回环地址：n1 = 127
+    [Template]    验证静态首选DNS
+    127.0.0.1    ${common_ip_addr_err}
+
+static_dns_test_64
+    [Documentation]    首选DNS服务器不为保留地址：n1=0
+    [Template]    验证静态首选DNS
+    0.168.1.10    ${common_ip_addr_err}
+
+static_dns_test_65
+    [Documentation]    备用DNS服务器输入框超过15个字符后，无法输入
+    [Template]
+    验证静态备选DNS最大输入长度    1234567890123456    15
+
+static_dns_test_66
+    [Documentation]    备用DNS服务器输入框：小数点>3，提示IP长度不正确
+    [Template]    验证静态备选DNS
+    10.0.0.1.    ${common_ip_addr_err}
+
+static_dns_test_67
+    [Documentation]    备用DNS服务器输入框：小数点<3，提示IP长度不正确
+    [Template]    验证静态备选DNS
+    10.0.01    ${common_ip_addr_err}
+
+static_dns_test_68
+    [Documentation]    备用DNS服务器输入框第一段IP值超出范围，提示只能在0~255之间
+    [Template]    验证静态备选DNS
+    -1.0.0.2    ${common_ip_addr_err}
+    256.0.0.1    ${common_ip_addr_err}
+
+static_dns_test_69
+    [Documentation]    备用DNS服务器输入框第二段IP值超出范围，提示只能在0~255之间
+    [Template]    验证静态备选DNS
+    10.-1.0.10    ${common_ip_addr_err}
+    10.256.0.10    ${common_ip_addr_err}
+
+static_dns_test_70
+    [Documentation]    备用DNS服务器输入框第三段IP值超出范围，提示只能在0~255之间
+    [Template]    验证静态备选DNS
+    10.0.-1.10    ${common_ip_addr_err}
+    10.0.256.10    ${common_ip_addr_err}
+
+static_dns_test_71
+    [Documentation]    备用DNS服务器输入框第四段IP值超出范围，提示只能在0~255之间
+    [Template]    验证静态备选DNS
+    10.0.0.-1    ${common_ip_addr_err}
+    10.0.0.256    ${common_ip_addr_err}
+
+static_dns_test_72
+    [Documentation]    备用DNS服务器输入框存在非法字符，提示发现n个非法字符
+    [Template]    验证静态备选DNS
+    192,168;1:s    ${common_ip_addr_err}
+
+static_dns_test_73
+    [Documentation]    备用DNS服务器第一段、第二段、第三段、第四段均不能为空
+    [Template]    验证静态备选DNS
+    .168.1.10    ${common_ip_addr_err}
+    192..1.10    ${common_ip_addr_err}
+    192.168..10    ${common_ip_addr_err}
+    192.168.1.    ${common_ip_addr_err}
+
+static_dns_test_75
+    [Documentation]    备用DNS服务器输入0.0.0.0，提示IP不能为全0
+    [Template]    验证静态备选DNS
+    0.0.0.0    ${common_ip_addr_err}
+
+static_dns_test_76
+    [Documentation]    备用DNS服务器不为组播地址或保留地址：223 < n1 < 255
+    [Template]    验证静态备选DNS
+    224.0.0.1    ${common_ip_addr_err}
+    255.0.0.1    ${common_ip_addr_err}
+    254.0.0.1    ${common_ip_addr_err}
+    223.255.255.254    ${common_unlock_save}
+
+static_dns_test_77
+    [Documentation]    备用DNS服务器不为回环地址：n1 = 127
+    [Template]    验证静态备选DNS
+    127.0.0.1    ${common_ip_addr_err}
+
+static_dns_test_78
+    [Documentation]    备用DNS服务器不为保留地址：n1=0
+    [Template]    验证静态备选DNS
+    0.168.1.10    ${common_ip_addr_err}
+
+static_dns_test_79
+    [Documentation]    成功配置静态接入信息并保存生效，提示“操作成功！”
+    [Template]
+    设置静态接入参数    10.0.0.100    255.0.0.0    10.0.0.10    dns1=8.8.8.8    dns2=88.88.88.88
+    显示消息    ${common_unlock_save}
+    Sleep    15
+    Execute JavaScript    $.CurrentApp="wan";$.load("wan")
+    Wait Until Page Contains Element    id=wan_ip    15
+    ${v}    Get Value    id=wan_ip
+    Should Be Equal    ${v}    10.0.0.100
+    ${v}    Get Value    id=wan_mask
+    Should Be Equal    ${v}    255.0.0.0
+    ${v}    Get Value    id=wan_gw
+    Should Be Equal    ${v}    10.0.0.10
+    ${v}    Get Value    id=dns_a
+    Should Be Equal    ${v}    8.8.8.8
+    ${v}    Get Value    id=dns_b
+    Should Be Equal    ${v}    88.88.88.88
 
 *** Keywords ***
 验证静态接入地址
     [Arguments]    ${ip}    ${mask}    ${gw}    ${message}
     设置静态接入参数    ${ip}    ${mask}    ${gw}    dns1=8.8.8.8    dns2=9.9.9.9
     显示消息    ${message}
+    ${rmessage}    process_special_charators    ${message}
+    Run Keyword If    '${rmessage}'=='${common_unlock_save}'    Sleep    15
 
 验证静态IP地址最大输入长度
     [Arguments]    ${ip}    ${max_len}
@@ -29,11 +520,15 @@ try
     [Arguments]    ${dns}    ${message}
     设置静态接入参数    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}    dns1=${dns}    dns2=8.8.8.8
     显示消息    ${message}
+    ${rmessage}    process_special_charators    ${message}
+    Run Keyword If    '${rmessage}'=='${common_unlock_save}'    Sleep    15
 
 验证静态备选DNS
     [Arguments]    ${dns}    ${message}
     设置静态接入参数    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}    dns1=8.8.8.8    dns2=${dns}
     显示消息    ${message}
+    ${rmessage}    process_special_charators    ${message}
+    Run Keyword If    '${rmessage}'=='${common_unlock_save}'    Sleep    15
 
 验证静态首选DNS最大输入长度
     [Arguments]    ${dns}    ${max_len}
@@ -42,3 +537,10 @@ try
 验证静态备选DNS最大输入长度
     [Arguments]    ${dns}    ${max_len}
     验证输入框最大输入长度    id=dns_b    ${dns}    ${max_len}
+
+验证静态DNS
+    [Arguments]    ${dns1}    ${dns2}    ${message}
+    设置静态接入参数    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}    dns1=${dns1}    dns2=${dns2}
+    显示消息    ${message}
+    ${rmessage}    process_special_charators    ${message}
+    Run Keyword If    '${rmessage}'=='${common_unlock_save}'    Sleep    15

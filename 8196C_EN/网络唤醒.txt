@@ -1,0 +1,109 @@
+*** Settings ***
+Suite Setup       Run Keywords    打开浏览器    AND    转到网络唤醒页面
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
+*** Test Cases ***
+WakeUP_MAC_test_14
+    [Documentation]    *主机MAC地址XX-XX-XX-XX-XX-XX，XX不属于[00，FF]，例如GG，不能增加，提示“MAC地址错误”
+    ...    *
+    [Template]    验证网络唤醒MAC
+    00-00-00-00-00-ew    ${common_mac_addr_err}
+    wd:00:00:00:00:00    ${common_mac_addr_err}
+    00-4r-00-00-00-00    ${common_mac_addr_err}
+    00-4e-0m-00-00-00    ${common_mac_addr_err}
+    00-4%-0=-00-00-00    ${common_mac_addr_err}
+    00-48-09-h*-00-00    ${common_mac_addr_err}
+    00-48-09-89-78-i\    ${common_mac_addr_err}
+
+WakeUP_MAC_test_15
+    [Documentation]    *主机MAC地址输入非法字符，例如中文，不能增加，提示“MAC地址有错”*
+    [Template]    验证网络唤醒MAC
+    00-00-00-00-00-你方    ${common_mac_addr_err}
+    "":\\:00:00:00:00    ${common_mac_addr_err}
+    中文    ${common_mac_addr_err}
+
+WakeUP_MACMaxLen_test_16
+    [Documentation]    *主机MAC地址输入超过17个字符不能输入*
+    验证输入框最大输入长度    wakeup_mac    fdsafdsafdsafdsadgdsagdsa    17
+
+WakeUP_MAC_test_17
+    [Documentation]    *主机MAC地址输入“-”或“:”不为6个，不能输入，提示“MAC地址有错”*
+    [Template]    验证网络唤醒MAC
+    00-00-00-00-00+99    ${common_mac_addr_err}
+    00-00-00-00-0099    ${common_mac_addr_err}
+    00800-00-00-00-99    ${common_mac_addr_err}
+    00-00-00-00-0099-    ${common_mac_addr_err}
+    00:00-00-00-0099-    ${common_mac_addr_err}
+    00:00:00:00:00%99    ${common_mac_addr_err}
+
+WakeUP_MAC_test_18
+    [Documentation]    *主机MAC地址输入为空，不能增加，提示"MAC地址有错"*
+    [Template]    验证网络唤醒MAC
+    ${EMPTY}    ${common_mac_addr_err}
+
+WakeUP_MAC_test_28
+    [Documentation]    *MAC配置输入框长度不满17个字符，提示格式错误*
+    [Template]    验证网络唤醒MAC
+    00-00-00-00-00    ${common_mac_addr_err}
+
+WakeUP_MAC_test_29
+    [Documentation]    *MAC地址的分隔符不全为-时，提示格式错误*
+    [Template]    验证网络唤醒MAC
+    00-00-00-00-00:99    ${common_mac_addr_err}
+
+WakeUP_MAC_test_30
+    [Documentation]    *MAC地址的分隔符不全为:时，提示格式错误*
+    [Template]    验证网络唤醒MAC
+    00:00:00:00-00:99    ${common_mac_addr_err}
+
+WakeUP_MAC_test_31
+    [Documentation]    *MAC配置输入框以xx-xx-xx-xx-xx-xx格式输入MAC地址，xx不能为空*
+    [Template]    验证网络唤醒MAC
+    :00:00:00:00:99    ${common_mac_addr_err}
+    00::00:00:00:99    ${common_mac_addr_err}
+    00:00::00:00:99    ${common_mac_addr_err}
+    00:00:00::00:99    ${common_mac_addr_err}
+    00:00:00:00::99    ${common_mac_addr_err}
+    00:00:00:00:00:    ${common_mac_addr_err}
+
+WakeUP_MAC_test_32
+    [Documentation]    *MAC配置输入框以xx-xx-xx-xx-xx-xx格式输入MAC地址，xx不能大于2字节*
+    [Template]    验证网络唤醒MAC
+    001:00:00:00:00:99    ${common_mac_addr_err}
+    00:001:00:00:00:99    ${common_mac_addr_err}
+    00:00:001:00:00:99    ${common_mac_addr_err}
+    00:00:00:001:00:99    ${common_mac_addr_err}
+    00:00:00:00:001:99    ${common_mac_addr_err}
+
+WakeUP_MAC_test_33
+    [Documentation]    *MAC地址为全0时 00-00-00-00-00-00，提示格式错误*
+    [Template]    验证网络唤醒MAC
+    00-00-00-00-00-00    ${common_mac_addr_err}
+
+WakeUP_MAC_test_34
+    [Documentation]    *MAC地址为全F时 FF-FF-FF-FF-FF-FF，提示格式错误*
+    [Template]    验证网络唤醒MAC
+    FF-FF-FF-FF-FF-FF    ${common_mac_addr_err}
+
+WakeUP_MAC_test_35
+    [Documentation]    *MAC地址为组播地址时 xn-xx-xx-xx-xx-xx（n属于[1,3,5,7,9,B,D,F]），提示格式错误*
+    [Template]    验证网络唤醒MAC
+    01-00-00-00-00-00    ${common_mac_addr_err}
+    03-00-00-00-00-00    ${common_mac_addr_err}
+    05-00-00-00-00-00    ${common_mac_addr_err}
+    07-00-00-00-00-00    ${common_mac_addr_err}
+    09-00-00-00-00-00    ${common_mac_addr_err}
+    0b-00-00-00-00-00    ${common_mac_addr_err}
+    0B-00-00-00-00-00    ${common_mac_addr_err}
+    0d-00-00-00-00-00    ${common_mac_addr_err}
+    0D-00-00-00-00-00    ${common_mac_addr_err}
+    0F-00-00-00-00-00    ${common_mac_addr_err}
+    0f-00-00-00-00-00    ${common_mac_addr_err}
+
+*** Keywords ***
+验证网络唤醒MAC
+    [Arguments]    ${wakeup_mac}    ${message}
+    设置网络唤醒参数    ${wakeup_mac}
+    显示消息    ${message}
+    sleep    1s

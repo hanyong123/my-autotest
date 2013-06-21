@@ -1,0 +1,77 @@
+*** Settings ***
+Suite Setup       Run Keywords    打开浏览器    AND    转到WPS模式的无线配置页面
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
+*** Test Cases ***
+WPS_Pin_test_12
+    [Documentation]    *PIN码输入框不能为空，输入为空时，有错误提示*
+    [Template]    验证pin码
+    ${EMPTY}    ${common_pin_number_err}
+
+WPS_Pin_test_14
+    [Documentation]    *PIN码只能为数字，当输入非数字字符时，有错误提示*
+    [Template]    验证pin码
+    gfdsgfsd    ${common_pin_number_err}
+    1234567\    ${common_pin_number_err}
+    1234567'    ${common_pin_number_err}
+    1234567"    ${common_pin_number_err}
+    123 567"    ${common_pin_number_err}
+    ${SPACE}*8    ${common_pin_number_err}
+    -=+%&*()    ${common_pin_number_err}
+    fdsafdsafgdsafdafds    ${common_pin_number_err}
+
+WPS_PinMaxLen_test_13
+    [Documentation]    *PIN码输入框只能输入8个字符，超过8个字符就无法输入*
+    验证pin码输入框长度    safdsafdsafdsafdsafdsa    8
+
+WPS_Pin_test_15
+    [Documentation]    *PIN码输入框只能输入8个字符，内容不满8个字符时，有错误提示*
+    [Template]    验证pin码
+    123456    ${common_pin_number_err}
+    1234567    ${common_pin_number_err}
+    gfdsgf    ${common_pin_number_err}
+
+WPS_OFF_test_6
+    [Documentation]    *WPS状态为“禁用”时，“生产新PIN码”按钮不可用*
+    开启或关闭WPS功能    0
+    Element Should Be Disabled    wps_pin
+
+WPS_GetPin_test_5
+    [Documentation]    *WPS状态为“启用”时，点击“生产新PIN码”按钮，成功生成新PIN码*
+    开启或关闭WPS功能    1
+    ${val}    GEt text    xpath=//div[@id='content_layer']/div/div[2]/div[2]/span/span
+    clickElement    wps_pin
+    sleep    5s
+    Wait Until Page Contains Element    id=hand_add_show
+    ${val1}    GEt text    xpath=//div[@id='content_layer']/div/div[2]/div[2]/span/span
+    Should Not Be Equal    ${val}    ${val1}
+
+WPS_Status_test_1
+    [Documentation]    *按钮状态显示为“启用”WPS时，WPS状态显示为“禁用”*
+    验证WPS状态和按键值    0    Enable WPS    Disable
+
+WPS_Status_test_2
+    [Documentation]    *按钮状态显示为“禁用”WPS时，WPS状态显示为“启用”*
+    验证WPS状态和按键值    1    Disable WPS    Enable
+
+*** Keywords ***
+验证pin码
+    [Arguments]    ${pin}    ${message}
+    设置WPS页面基本参数    ${pin}
+    显示消息    ${message}
+
+验证pin码输入框长度
+    [Arguments]    ${new_pin}    ${len}
+    clickElement    id=hand_add_show
+    验证输入框最大输入长度    id=new_pin    ${new_pin}    ${len}
+
+验证获取新pin码
+
+验证WPS状态和按键值
+    [Arguments]    ${enble}    ${button_val}    ${status_val}
+    开启或关闭WPS功能    ${enble}
+    ${val}    Get value    wps_enable
+    Should Be Equal    ${val}    ${button_val}
+    ${val1}    get text    css=span.df_con
+    Should Be Equal    ${val1}    ${status_val}

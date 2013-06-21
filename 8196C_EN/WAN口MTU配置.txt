@@ -3,9 +3,80 @@ Suite Setup       打开浏览器
 Suite Teardown    关闭浏览器
 Resource          keyword.txt
 
+*** Variables ***
+@{error_mtu_string}    啊    A    %    0900    a    ${EMPTY}    *
+
 *** Test Cases ***
-try
-    验证静态接入MTU    ${EMPTY}    MTU Size should be between 576 and 1500 bytes. Please try again.
+wan_mtuConfig_test_1
+    [Documentation]    向MTU输入框中输入空值，提示MTU不能为空
+    Run Keyword And Continue On Failure    验证DHCP接入MTU    ${EMPTY}    ${common_dhcp_mtu_err}
+    Run Keyword And Continue On Failure    验证静态接入MTU    ${EMPTY}    ${common_static_mtu_err}
+    Run Keyword And Continue On Failure    验证PPPOE接入MTU    ${EMPTY}    ${common_pppoe_mtu_err}
+    Run Keyword And Continue On Failure    验证L2TP接入MTU    ${EMPTY}    ${common_l2tp_mtu_err}
+    Run Keyword And Continue On Failure    验证PPTP接入MTU    ${EMPTY}    ${common_pptp_mtu_err}
+
+wan_mtuConfig_test_2
+    [Documentation]    向MTU输入框中输入字符长度超过4个之后，将不能输入
+    Run Keyword And Continue On Failure    验证DHCP接入MTU最大输入长度    12345    4
+    Run Keyword And Continue On Failure    验证PPPOE接入MTU最大输入长度    12345    4
+    Run Keyword And Continue On Failure    验证静态接入MTU最大输入长度    12345    4
+    Run Keyword And Continue On Failure    验证L2TP接入MTU最大输入长度    12345    4
+    Run Keyword And Continue On Failure    验证PPTP接入MTU最大输入长度    12345    4
+
+wan_mtuConfig_test_3
+    [Documentation]    当接入方式为静态接入时，向MTU输入框中输入超出576~1500范围的值，提示MTU值在576~1500之间。
+    [Template]    验证静态接入MTU
+    575    ${common_static_mtu_err}
+    1501    ${common_static_mtu_err}
+    1000    ${common_unlock_save}
+    576    ${common_unlock_save}
+    1500    ${common_unlock_save}
+
+wan_mtuConfig_test_4
+    [Documentation]    当接入方式为DHCP接入时，向MTU输入框中输入超出576~1500范围的值，提示MTU值在576~1500之间。
+    [Template]    验证DHCP接入MTU
+    575    ${common_dhcp_mtu_err}
+    1501    ${common_dhcp_mtu_err}
+    1000    ${common_unlock_save}
+    576    ${common_unlock_save}
+    1500    ${common_unlock_save}
+
+wan_mtuConfig_test_5
+    [Documentation]    当接入方式为PPPOE接入时，向MTU输入框中输入超出576~1500范围的值，提示MTU值在576~1492之间。
+    [Template]    验证PPPOE接入MTU
+    575    ${common_pppoe_mtu_err}
+    1493    ${common_pppoe_mtu_err}
+    1000    ${common_unlock_save}
+    576    ${common_unlock_save}
+    1492    ${common_unlock_save}
+
+wan_mtuConfig_test_6
+    [Documentation]    当接入方式为PPTP接入时，向MTU输入框中输入超出576~1500范围的值，提示MTU值在576~1440之间。
+    [Template]    验证PPTP接入MTU
+    575    ${common_pptp_mtu_err}
+    1421    ${common_pptp_mtu_err}
+    1000    ${common_unlock_save}
+    576    ${common_unlock_save}
+    1420    ${common_unlock_save}
+
+wan_mtuConfig_test_7
+    [Documentation]    当接入方式为L2TP接入时，向MTU输入框中输入超出576~1500范围的值，提示MTU值在576~1440之间。
+    [Template]    验证L2TP接入MTU
+    575    ${common_l2tp_mtu_err}
+    1461    ${common_l2tp_mtu_err}
+    1000    ${common_unlock_save}
+    576    ${common_unlock_save}
+    1460    ${common_unlock_save}
+
+wan_mtuConfig_test_8
+    [Documentation]    向MTU输入框中输入不为[0-9]的字符，提示MTU只能为正整数
+    [Template]
+    : FOR    ${mtu}    IN    @{error_mtu_string}
+    \    Run Keyword And Continue On Failure    验证DHCP接入MTU    ${mtu}    ${common_dhcp_mtu_err}
+    \    Run Keyword And Continue On Failure    验证PPPOE接入MTU    ${mtu}    ${common_pppoe_mtu_err}
+    \    Run Keyword And Continue On Failure    验证静态接入MTU    ${mtu}    ${common_static_mtu_err}
+    \    Run Keyword And Continue On Failure    验证L2TP接入MTU    ${mtu}    ${common_l2tp_mtu_err}
+    \    Run Keyword And Continue On Failure    验证PPTP接入MTU    ${mtu}    ${common_pptp_mtu_err}
 
 *** Keywords ***
 验证DHCP接入MTU
@@ -13,18 +84,24 @@ try
     转到DHCP接入设置页面
     设置DHCP接入参数    mtu=${mtu}
     显示消息    ${message}
+    ${rmessage}    process_special_charators    ${message}
+    Run Keyword If    '${rmessage}'=='${common_unlock_save}'    检查DHCP接入MTU的值是${mtu}
 
 验证PPPOE接入MTU
     [Arguments]    ${mtu}    ${message}
     转到PPPoE接入设置页面
     设置PPPoE接入参数    mtu=${mtu}
     显示消息    ${message}
+    ${rmessage}    process_special_charators    ${message}
+    Run Keyword If    '${rmessage}'=='${common_unlock_save}'    检查PPPOE接入MTU的值是${mtu}
 
 验证静态接入MTU
     [Arguments]    ${mtu}    ${message}
     转到静态接入设置页面
     设置静态接入参数    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}    mtu=${mtu}    dns1=9.9.9.9    dns2=8.8.8.8
     显示消息    ${message}
+    ${rmessage}    process_special_charators    ${message}
+    Run Keyword If    '${rmessage}'=='${common_unlock_save}'    检查静态接入MTU的值是${mtu}
 
 验证DHCP接入MTU最大输入长度
     [Arguments]    ${mtu}    ${max_len}
@@ -40,3 +117,59 @@ try
     [Arguments]    ${mtu}    ${max_len}
     转到静态接入设置页面
     验证输入框最大输入长度    id=static_mtu    ${mtu}    ${max_len}
+
+检查静态接入MTU的值是${v}
+    Sleep    15
+    转到静态接入设置页面
+    ${a}    Get Value    id=static_mtu
+    Should Be Equal    ${a}    ${v}
+
+检查DHCP接入MTU的值是${v}
+    Sleep    15
+    转到DHCP接入设置页面
+    ${a}    Get Value    id=dhcp_mtu
+    Should Be Equal    ${a}    ${v}
+
+检查PPPOE接入MTU的值是${v}
+    Sleep    15
+    转到PPPoE接入设置页面
+    ${a}    Get Value    id=pppoe_mtu
+    Should Be Equal    ${a}    ${v}
+
+验证L2TP接入MTU
+    [Arguments]    ${mtu}    ${message}
+    转到L2TP设置页面
+    设置L2TP参数    hany    969090    aaaa    mtu=${mtu}
+    显示消息    ${message}
+    ${rmessage}    process_special_charators    ${message}
+    Run Keyword If    '${rmessage}'=='${common_unlock_save}'    检查L2TP接入MTU的值是${mtu}
+
+验证L2TP接入MTU最大输入长度
+    [Arguments]    ${mtu}    ${max_len}
+    转到L2TP设置页面
+    验证输入框最大输入长度    id=l2tp_mtu    ${mtu}    ${max_len}
+
+检查L2TP接入MTU的值是${v}
+    Sleep    15
+    转到L2TP设置页面
+    ${a}    Get Value    id=l2tp_mtu
+    Should Be Equal    ${a}    ${v}
+
+验证PPTP接入MTU
+    [Arguments]    ${mtu}    ${message}
+    转到PPTP设置页面
+    设置PPTP参数    hany    969090    aaaa    mtu=${mtu}
+    显示消息    ${message}
+    ${rmessage}    process_special_charators    ${message}
+    Run Keyword If    '${rmessage}'=='${common_unlock_save}'    检查PPTP接入MTU的值是${mtu}
+
+检查PPTP接入MTU的值是${v}
+    Sleep    15
+    转到PPTP设置页面
+    ${a}    Get Value    id=pptp_mtu
+    Should Be Equal    ${a}    ${v}
+
+验证PPTP接入MTU最大输入长度
+    [Arguments]    ${mtu}    ${max_len}
+    转到PPTP设置页面
+    验证输入框最大输入长度    id=pptp_mtu    ${mtu}    ${max_len}

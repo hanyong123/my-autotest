@@ -1,1 +1,585 @@
+*** Settings ***
+Suite Setup       Run Keywords    打开浏览器    AND    转到Russia-PPPoE接入页面
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
 *** Test Cases ***
+RussiaPPPOE_name_test_1
+    [Documentation]    PPPOE帐号为空时，提示“帐号不能为空”
+    验证Russia-PPPOE帐号    ${EMPTY}    ${common_string_null}
+
+RussiaPPPOE_name_test_2
+    [Documentation]    PPPOE帐号：长度最大127个字符，超过127字符无法输入
+    验证Russia-PPPOE帐号最大输入长度    12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678    127
+
+RussiaPPPOE_name_test_3
+    [Documentation]    PPPOE帐号：输入数据带有 '"\或空格，提示“ 不能含有特殊字符 \ '"\和空格 ”
+    [Template]    验证Russia-PPPOE帐号
+    9 9    ${common_string_err}
+    \\    ${common_string_err}
+    "    ${common_string_err}
+    '    ${common_string_err}
+
+RussiaPPPOE_name_test_4
+    [Documentation]    PPPOE帐号：账号中含有不在ascii码0~255范围中的字符时（例如中文、韩文），提示“不能含有无法识别的字符集”
+    [Template]    验证Russia-PPPOE帐号
+    NIHAO你好    ${common_string_null}
+    繁體    ${common_string_null}
+
+RussiaPPPOE_passwd_test_5
+    [Documentation]    PPPOE密码不能为空
+    验证Russia-PPPOE密码    ${EMPTY}    ${common_string_null}
+
+RussiaPPPOE_passwd_test_6
+    [Documentation]    PPPOE密码：输入超过127个字符后，无法输入
+    验证Russia-PPPOE密码最大输入长度    12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678    127
+
+RussiaPPPOE_passwd_test_7
+    [Documentation]    PPPOE密码：输入数据带有 '"\或空格，提示“ 不能含有特殊字符 \ '"\和空格 ”
+    [Template]    验证Russia-PPPOE密码
+    9 9    ${common_string_err}
+    \\    ${common_string_err}
+    "    ${common_string_err}
+    '    ${common_string_err}
+
+RussiaPPPOE_passwd_test_8
+    [Documentation]    PPPOE密码：内容隐藏显示
+    [Template]
+    ${type}    Get Element Attribute    pppoe_pwd@type
+    Should Be Equal    ${type}    password
+
+RussiaPPPOE_passwd_test_10
+    [Documentation]    PPPOE密码：密码中含有不在ascii码0~255范围中的字符时（例如中文、韩文），提示“不能含有无法识别的字符集”
+    [Template]    验证Russia-PPPOE密码
+    NIHAO你好    ${common_string_null}
+    繁體    ${common_string_null}
+
+RussiaPPPOE_demandTime_test_11
+    [Documentation]    按需连接老化时间不能为空
+    [Template]
+    验证Russia-PPPOE老化时间    ${EMPTY}    ${common_int_number_err}
+
+RussiaPPPOE_demandTime_test_12
+    [Documentation]    按需连接老化时间：超过2个字符后，无法输入
+    [Template]
+    验证Russia-PPPOE老化时间最大输入长度    999    2
+
+RussiaPPPOE_demandTime_test_13
+    [Documentation]    按需老化时间：超出1~30的范围
+    [Template]    验证Russia-PPPOE老化时间
+    0    ${common_auto_disconnect_time_err}
+    31    ${common_auto_disconnect_time_err}
+    1    ${common_unlock_save}
+    30    ${common_unlock_save}
+
+RussiaPPPOE_demandTime_test_14
+    [Documentation]    按需老化时间：输入非正整数的字符，提示只能为正整数
+    [Template]    验证Russia-PPPOE老化时间
+    \ 9    ${common_int_number_err}
+    \\    ${common_int_number_err}
+    "    ${common_int_number_err}
+    '    ${common_int_number_err}
+    09    ${common_int_number_err}
+    @    ${common_int_number_err}
+    好    ${common_int_number_err}
+
+RussiaPPPOE_staticIP_test_15
+    [Documentation]    IP地址输入框超过15个字符后，无法输入
+    验证Russia-PPPOE静态接入IP最大输入长度    1234567890123456    15
+
+RussiaPPPOE_staticIP_test_16
+    [Documentation]    IP地址输入框：小数点>3，提示IP长度不正确
+    [Template]    验证Russia-PPPOE静态接入
+    10.0.0.1.    255.255.255.0    ${common_ip_addr_err}
+
+RussiaPPPOE_staticIP_test_17
+    [Documentation]    IP地址输入框：小数点<3，提示IP长度不正确
+    [Template]    验证Russia-PPPOE静态接入
+    10.0.01    255.255.255.0    ${common_ip_addr_err}
+
+RussiaPPPOE_staticIP_test_18
+    [Documentation]    IP地址不能为空
+    [Template]    验证Russia-PPPOE静态接入
+    ${EMPTY}    255.255.255.0    ${common_ip_addr_err}
+
+RussiaPPPOE_staticIP_test_19
+    [Documentation]    IP地址输入框第一段IP值超出范围，提示只能在0~255之间
+    [Template]    验证Russia-PPPOE静态接入
+    -1.0.0.2    255.255.255.0    ${common_ip_addr_err}
+    256.0.0.1    255.255.255.0    ${common_ip_addr_err}
+
+RussiaPPPOE_staticIP_test_20
+    [Documentation]    IP地址输入框第二段IP值超出范围，提示只能在0~255之间
+    [Template]    验证Russia-PPPOE静态接入
+    10.-1.0.10    255.255.255.0    ${common_ip_addr_err}
+    10.256.0.10    255.255.255.0    ${common_ip_addr_err}
+
+RussiaPPPOE_staticIP_test_21
+    [Documentation]    IP地址输入框第三段IP值超出范围，提示只能在0~255之间
+    [Template]    验证Russia-PPPOE静态接入
+    10.0.-1.10    255.255.255.0    ${common_ip_addr_err}
+    10.0.256.10    255.255.255.0    ${common_ip_addr_err}
+
+RussiaPPPOE_staticIP_test_22
+    [Documentation]    IP地址输入框第四段IP值超出范围，提示只能在0~255之间
+    [Template]    验证Russia-PPPOE静态接入
+    10.0.0.-1    255.255.255.0    ${common_ip_addr_err}
+    10.0.0.256    255.255.255.0    ${common_ip_addr_err}
+
+RussiaPPPOE_staticIP_test_23
+    [Documentation]    IP地址输入框存在非法字符，提示发现n个非法字符
+    [Template]    验证Russia-PPPOE静态接入
+    192,168;1:s    255.255.255.0    ${common_ip_addr_err}
+
+RussiaPPPOE_staticIP_test_24
+    [Documentation]    IP地址第一段、第二段、第三段、第四段均不能为空
+    [Template]    验证Russia-PPPOE静态接入
+    .168.1.10    255.255.255.0    ${common_ip_addr_err}
+    192..1.10    255.255.255.0    ${common_ip_addr_err}
+    192.168..10    255.255.255.0    ${common_ip_addr_err}
+    192.168.1.    255.255.255.0    ${common_ip_addr_err}
+
+RussiaPPPOE_staticIP_test_25
+    [Documentation]    IP地址输入0.0.0.0，提示IP不能为全0
+    [Template]    验证Russia-PPPOE静态接入
+    0.0.0.0    255.255.255.0    ${common_ip_addr_err}
+
+RussiaPPPOE_staticIP_test_26
+    [Documentation]    IP地址不为组播地址或保留地址：223 < n1 < 255
+    [Template]    验证Russia-PPPOE静态接入
+    224.0.0.1    255.255.255.0    ${common_ip_addr_err}
+    255.0.0.1    255.255.255.0    ${common_ip_addr_err}
+    254.0.0.1    255.255.255.0    ${common_ip_addr_err}
+
+RussiaPPPOE_staticIP_test_27
+    [Documentation]    IP地址不为回环地址：n1 = 127
+    [Template]    验证Russia-PPPOE静态接入
+    127.0.0.1    255.255.255.0    ${common_ip_addr_err}
+
+RussiaPPPOE_staticIP_test_28
+    [Documentation]    IP地址不为保留地址：n1=0
+    [Template]    验证Russia-PPPOE静态接入
+    0.168.1.10    255.255.255.0    ${common_ip_addr_err}
+
+RussiaPPPOE_staticIP_test_29
+    [Documentation]    IP地址不能等于网段地址；IP地址和子网掩码做与运算，得出网段地址
+    [Template]    验证Russia-PPPOE静态接入
+    192.168.1.0    255.255.255.0    ${common_segment_err}
+    172.16.0.0    255.255.0.0    ${common_segment_err}
+    10.0.0.0    255.0.0.0    ${common_segment_err}
+
+RussiaPPPOE_staticIP_test_30
+    [Documentation]    IP地址不能等于广播地址；IP地址和子网掩码做与运算，得出网段地址，由下一个网段地址减1得出本网段地址
+    [Template]    验证Russia-PPPOE静态接入
+    192.168.1.255    255.255.255.0    ${common_Bcast_err}
+    172.16.255.255    255.255.0.0    ${common_Bcast_err}
+    10.255.255.255    255.0.0.0    ${common_Bcast_err}
+
+RussiaPPPOE_staticIP_test_31
+    [Documentation]    子网掩码输入框超过15个字符后，无法输入
+    [Template]
+    验证Russia-PPPOE静态接入mask最大输入长度    1234567890123456    15
+
+RussiaPPPOE_staticIP_test_32
+    [Documentation]    子网掩码输入框：小数点>3，提示IP长度不正确
+    [Template]    验证Russia-PPPOE静态接入
+    10.0.0.100    255.0.0.0.    ${common_mask_addr_err}
+
+RussiaPPPOE_staticIP_test_33
+    [Documentation]    子网掩码输入框：小数点<3，提示IP长度不正确
+    [Template]    验证Russia-PPPOE静态接入
+    10.0.0.100    255.0.0    ${common_mask_addr_err}
+
+RussiaPPPOE_staticIP_test_34
+    [Documentation]    子网掩码不能为空
+    [Template]    验证Russia-PPPOE静态接入
+    10.0.0.100    ${EMPTY}    ${common_mask_addr_err}
+
+RussiaPPPOE_staticIP_test_35
+    [Documentation]    子网掩码输入框第一段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
+    [Template]    验证Russia-PPPOE静态接入
+    10.0.0.100    255.0.0.0    ${common_unlock_save}
+    10.0.0.100    254.0.0.0    ${common_unlock_save}
+    10.0.0.100    252.0.0.0    ${common_unlock_save}
+    10.0.0.100    248.0.0.0    ${common_unlock_save}
+    10.0.0.100    240.0.0.0    ${common_unlock_save}
+    10.0.0.100    224.0.0.0    ${common_unlock_save}
+    10.0.0.100    192.0.0.0    ${common_unlock_save}
+    10.0.0.100    128.0.0.0    ${common_unlock_save}
+    10.0.0.100    129.0.0.0    ${common_mask_addr_err}
+    10.0.0.100    253.0.0.0    ${common_mask_addr_err}
+
+RussiaPPPOE_staticIP_test_36
+    [Documentation]    子网掩码输入框第二段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
+    [Template]    验证Russia-PPPOE静态接入
+    10.0.0.100    255.255.0.0    ${common_unlock_save}
+    10.0.0.100    255.254.0.0    ${common_unlock_save}
+    10.0.0.100    255.252.0.0    ${common_unlock_save}
+    10.0.0.100    255.248.0.0    ${common_unlock_save}
+    10.0.0.100    255.240.0.0    ${common_unlock_save}
+    10.0.0.100    255.224.0.0    ${common_unlock_save}
+    10.0.0.100    255.192.0.0    ${common_unlock_save}
+    10.0.0.100    255.128.0.0    ${common_unlock_save}
+    10.0.0.100    255.129.0.0    ${common_mask_addr_err}
+    10.0.0.100    255.253.0.0    ${common_mask_addr_err}
+
+RussiaPPPOE_staticIP_test_37
+    [Documentation]    子网掩码输入框第三段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
+    [Template]    验证Russia-PPPOE静态接入
+    10.0.0.100    255.255.255.0    ${common_unlock_save}
+    10.0.0.100    255.255.254.0    ${common_unlock_save}
+    10.0.0.100    255.255.252.0    ${common_unlock_save}
+    10.0.0.100    255.255.248.0    ${common_unlock_save}
+    10.0.0.100    255.255.240.0    ${common_unlock_save}
+    10.0.0.100    255.255.224.0    ${common_unlock_save}
+    10.0.0.100    255.255.192.0    ${common_unlock_save}
+    10.0.0.100    255.255.128.0    ${common_unlock_save}
+    10.0.0.100    255.255.129.0    ${common_mask_addr_err}
+    10.0.0.100    255.255.253.0    ${common_mask_addr_err}
+
+RussiaPPPOE_staticIP_test_38
+    [Documentation]    子网掩码输入框第四段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
+    [Template]    验证Russia-PPPOE静态接入
+    10.0.0.100    255.255.255.255    ${common_unlock_save}
+    10.0.0.100    255.255.255.254    ${common_unlock_save}
+    10.0.0.100    255.255.255.252    ${common_unlock_save}
+    10.0.0.100    255.255.255.248    ${common_unlock_save}
+    10.0.0.100    255.255.255.240    ${common_unlock_save}
+    10.0.0.100    255.255.255.224    ${common_unlock_save}
+    10.0.0.100    255.255.255.192    ${common_unlock_save}
+    10.0.0.100    255.255.255.129    ${common_unlock_save}
+    10.0.0.100    255.255.255.253    ${common_mask_addr_err}
+
+RussiaPPPOE_staticIP_test_39
+    [Documentation]    子网掩码输入框存在非法字符，提示发现n个非法字符
+    [Template]    验证Russia-PPPOE静态接入
+    10.0.0.100    255,255;0:s    ${common_mask_addr_err}
+
+RussiaPPPOE_staticIP_test_40
+    [Documentation]    子网掩码第一段、第二段、第三段、第四段均不能为空
+    [Template]    验证Russia-PPPOE静态接入
+    10.0.0.100    .255.0.0    ${common_mask_addr_err}
+    10.0.0.100    255..0.0    ${common_mask_addr_err}
+    10.0.0.100    255.255..0    ${common_mask_addr_err}
+    10.0.0.100    255.255.0.    ${common_mask_addr_err}
+
+RussiaPPPOE_staticIP_test_42
+    [Documentation]    子网掩码地址第四段不等于0或255时，第一段、第二段、第三段均等于255
+    [Template]    验证Russia-PPPOE静态接入
+    10.0.0.100    254.255.255.128    ${common_mask_addr_err}
+    10.0.0.100    255.254.255.128    ${common_mask_addr_err}
+    10.0.0.100    255.255.254.128    ${common_mask_addr_err}
+    10.0.0.100    255.255.255.128    ${common_unlock_save}
+
+RussiaPPPOE_staticIP_test_43
+    [Documentation]    子网掩码地址第三段不等于0或255时，第一段、第二段均等于255，第四段等于0
+    [Template]    验证Russia-PPPOE静态接入
+    10.0.0.100    254.255.128.0    ${common_mask_addr_err}
+    10.0.0.100    255.254.128.0    ${common_mask_addr_err}
+    10.0.0.100    255.255.128.255    ${common_mask_addr_err}
+    10.0.0.100    255.255.128.0    ${common_unlock_save}
+
+RussiaPPPOE_staticIP_test_44
+    [Documentation]    子网掩码地址第二段不等于0或255时，第一段等于255，第三段等于第四段等于0
+    [Template]    验证Russia-PPPOE静态接入
+    10.0.0.100    254.128.0.0    ${common_mask_addr_err}
+    10.0.0.100    255.128.254.0    ${common_mask_addr_err}
+    10.0.0.100    255.128.0.254    ${common_mask_addr_err}
+    10.0.0.100    255.128.0.0    ${common_unlock_save}
+
+RussiaPPPOE_staticIP_test_45
+    [Documentation]    子网掩码第一段不等于0或255时，第一段、第二段、第三段均等于0
+    [Template]    验证Russia-PPPOE静态接入
+    10.0.0.100    128.254.0.0    ${common_mask_addr_err}
+    10.0.0.100    128.0.254.0    ${common_mask_addr_err}
+    10.0.0.100    128.0.0.254    ${common_mask_addr_err}
+    10.0.0.100    128.0.0.0    ${common_unlock_save}
+
+RussiaPPPOE_serviceName_test_46
+    [Documentation]    服务器名可以为空，表示不设置服务器名
+    验证RussiaPPPOE服务名    ${EMPTY}    ${common_unlock_save}
+
+RussiaPPPOE_serviceName_test_47
+    [Documentation]    服务器名：长度最大40个字符，超过40字符无法输入
+    验证RussiaPPPOE服务名最大输入长度    12345678901234567890123456789012345678901    40
+
+RussiaPPPOE_serviceName_test_48
+    [Documentation]    服务器名：输入数据带有 '"\或空格，提示“ 不能含有特殊字符 \ '"\和空格 ”
+    [Template]    验证RussiaPPPOE服务名
+    9 9    ${common_string_err}
+    \\    ${common_string_err}
+    "    ${common_string_err}
+    '    ${common_string_err}
+
+RussiaPPPOE_serviceName_test_49
+    [Documentation]    服务器名：服务器名中含有不在ascii码0~255范围中的字符时（例如中文、韩文），提示“不能含有无法识别的字符集”
+    [Template]    验证RussiaPPPOE服务名
+    NIHAO你好    ${common_string_null}
+    繁體    ${common_string_null}
+    netcore&netis&baidu.com    ${common_unlock_save}
+
+RussiaPPPOE_acName_test_50
+    [Documentation]    AC名可以为空，表示不设置AC名
+    验证Russia-PPPOE AC名    ${EMPTY}    ${common_unlock_save}
+
+RussiaPPPOE_acName_test_51
+    [Documentation]    AC名：长度最大40个字符，超过40字符无法输入
+    验证Russia-PPPOE AC名最大输入长度    12345678901234567890123456789012345678901    40
+
+RussiaPPPOE_acName_test_52
+    [Documentation]    AC名：输入数据带有 '"\或空格，提示“ 不能含有特殊字符 \ '"\和空格 ”
+    [Template]    验证Russia-PPPOE AC名
+    9 9    ${common_string_err}
+    \\    ${common_string_err}
+    "    ${common_string_err}
+    '    ${common_string_err}
+
+RussiaPPPOE_acName_test_53
+    [Documentation]    AC名：AC名中含有不在ascii码0~255范围中的字符时（例如中文、韩文），提示“不能含有无法识别的字符集”
+    [Template]    验证Russia-PPPOE AC名
+    NIHAO你好    ${common_string_null}
+    繁體    ${common_string_null}
+    netcore&netis&baidu.com    ${common_unlock_save}
+
+RussiaPPPOE_dns_test_54
+    [Documentation]    首选DNS服务器输入框超过15个字符后，无法输入
+    验证Russia-PPPOE首选DNS最大输入长度    1234567890123456    15
+
+RussiaPPPOE_dns_test_55
+    [Documentation]    首选DNS服务器输入框：小数点>3，提示IP长度不正确
+    [Template]    验证Russia-PPPOE首选DNS
+    10.0.0.1.    ${common_ip_addr_err}
+
+RussiaPPPOE_dns_test_56
+    [Documentation]    首选DNS服务器输入框：小数点<3，提示IP长度不正确
+    [Template]    验证Russia-PPPOE首选DNS
+    10.0.01    ${common_ip_addr_err}
+
+RussiaPPPOE_dns_test_57
+    [Documentation]    首选DNS服务器输入框第一段IP值超出范围，提示只能在0~255之间
+    [Template]    验证Russia-PPPOE首选DNS
+    -1.0.0.2    ${common_ip_addr_err}
+    256.0.0.1    ${common_ip_addr_err}
+
+RussiaPPPOE_dns_test_58
+    [Documentation]    首选DNS服务器输入框第二段IP值超出范围，提示只能在0~255之间
+    [Template]    验证Russia-PPPOE首选DNS
+    10.-1.0.10    ${common_ip_addr_err}
+    10.256.0.10    ${common_ip_addr_err}
+
+RussiaPPPOE_dns_test_59
+    [Documentation]    首选DNS服务器输入框第三段IP值超出范围，提示只能在0~255之间
+    [Template]    验证Russia-PPPOE首选DNS
+    10.0.-1.10    ${common_ip_addr_err}
+    10.0.256.10    ${common_ip_addr_err}
+
+RussiaPPPOE_dns_test_60
+    [Documentation]    首选DNS服务器输入框第四段IP值超出范围，提示只能在0~255之间
+    [Template]    验证Russia-PPPOE首选DNS
+    10.0.0.-1    ${common_ip_addr_err}
+    10.0.0.256    ${common_ip_addr_err}
+
+RussiaPPPOE_dns_test_61
+    [Documentation]    首选DNS服务器输入框存在非法字符，提示发现n个非法字符
+    [Template]    验证Russia-PPPOE首选DNS
+    192,168;1:s    ${common_ip_addr_err}
+
+RussiaPPPOE_dns_test_62
+    [Documentation]    首选DNS服务器第一段、第二段、第三段、第四段均不能为空
+    [Template]    验证Russia-PPPOE首选DNS
+    .168.1.10    ${common_ip_addr_err}
+    192..1.10    ${common_ip_addr_err}
+    192.168..10    ${common_ip_addr_err}
+    192.168.1.    ${common_ip_addr_err}
+
+RussiaPPPOE_dns_test_64
+    [Documentation]    首选DNS服务器输入0.0.0.0，提示IP不能为全0
+    [Template]    验证Russia-PPPOE首选DNS
+    0.0.0.0    ${common_ip_addr_err}
+
+RussiaPPPOE_dns_test_65
+    [Documentation]    首选DNS服务器不为组播地址或保留地址：223 < n1 < 255
+    [Template]    验证Russia-PPPOE首选DNS
+    224.0.0.1    ${common_ip_addr_err}
+    255.0.0.1    ${common_ip_addr_err}
+    254.0.0.1    ${common_ip_addr_err}
+    223.255.255.254    ${common_unlock_save}
+
+RussiaPPPOE_dns_test_66
+    [Documentation]    首选DNS服务器不为回环地址：n1 = 127
+    [Template]    验证Russia-PPPOE首选DNS
+    127.0.0.1    ${common_ip_addr_err}
+
+RussiaPPPOE_dns_test_67
+    [Documentation]    首选DNS服务器不为保留地址：n1=0
+    [Template]    验证Russia-PPPOE首选DNS
+    0.168.1.10    ${common_ip_addr_err}
+
+RussiaPPPOE_dns_test_68
+    [Documentation]    备用DNS服务器输入框超过15个字符后，无法输入
+    [Template]
+    验证Russia-PPPOE备选DNS最大输入长度    1234567890123456    15
+
+RussiaPPPOE_dns_test_69
+    [Documentation]    备用DNS服务器输入框：小数点>3，提示IP长度不正确
+    [Template]    验证Russia-PPPOE备选DNS
+    10.0.0.1.    ${common_ip_addr_err}
+
+RussiaPPPOE_dns_test_70
+    [Documentation]    备用DNS服务器输入框：小数点<3，提示IP长度不正确
+    [Template]    验证Russia-PPPOE备选DNS
+    10.0.01    ${common_ip_addr_err}
+
+RussiaPPPOE_dns_test_71
+    [Documentation]    备用DNS服务器输入框第一段IP值超出范围，提示只能在0~255之间
+    [Template]    验证Russia-PPPOE备选DNS
+    -1.0.0.2    ${common_ip_addr_err}
+    256.0.0.1    ${common_ip_addr_err}
+
+RussiaPPPOE_dns_test_72
+    [Documentation]    备用DNS服务器输入框第二段IP值超出范围，提示只能在0~255之间
+    [Template]    验证Russia-PPPOE备选DNS
+    10.-1.0.10    ${common_ip_addr_err}
+    10.256.0.10    ${common_ip_addr_err}
+
+RussiaPPPOE_dns_test_73
+    [Documentation]    备用DNS服务器输入框第三段IP值超出范围，提示只能在0~255之间
+    [Template]    验证Russia-PPPOE备选DNS
+    10.0.-1.10    ${common_ip_addr_err}
+    10.0.256.10    ${common_ip_addr_err}
+
+RussiaPPPOE_dns_test_74
+    [Documentation]    备用DNS服务器输入框第四段IP值超出范围，提示只能在0~255之间
+    [Template]    验证Russia-PPPOE备选DNS
+    10.0.0.-1    ${common_ip_addr_err}
+    10.0.0.256    ${common_ip_addr_err}
+
+RussiaPPPOE_dns_test_75
+    [Documentation]    备用DNS服务器输入框存在非法字符，提示发现n个非法字符
+    [Template]    验证Russia-PPPOE备选DNS
+    192,168;1:s    ${common_ip_addr_err}
+
+RussiaPPPOE_dns_test_76
+    [Documentation]    备用DNS服务器第一段、第二段、第三段、第四段均不能为空
+    [Template]    验证Russia-PPPOE备选DNS
+    .168.1.10    ${common_ip_addr_err}
+    192..1.10    ${common_ip_addr_err}
+    192.168..10    ${common_ip_addr_err}
+    192.168.1.    ${common_ip_addr_err}
+
+RussiaPPPOE_dns_test_77
+    [Documentation]    备用DNS服务器第一段、第二段、第三段、第四段均不能大于3个字符
+    [Template]    验证Russia-PPPOE备选DNS
+    1921.168.1.10    ${common_ip_addr_err}
+    192.1681.1.10    ${common_ip_addr_err}
+    192.168.1111.10    ${common_ip_addr_err}
+    192.168.1.1011    ${common_ip_addr_err}
+
+RussiaPPPOE_dns_test_78
+    [Documentation]    备用DNS服务器输入0.0.0.0，提示IP不能为全0
+    [Template]    验证Russia-PPPOE备选DNS
+    0.0.0.0    ${common_ip_addr_err}
+
+RussiaPPPOE_dns_test_79
+    [Documentation]    备用DNS服务器不为组播地址或保留地址：223 < n1 < 255
+    [Template]    验证Russia-PPPOE备选DNS
+    224.0.0.1    ${common_ip_addr_err}
+    255.0.0.1    ${common_ip_addr_err}
+    254.0.0.1    ${common_ip_addr_err}
+    223.255.255.254    ${common_unlock_save}
+
+RussiaPPPOE_dns_test_80
+    [Documentation]    备用DNS服务器不为回环地址：n1 = 127
+    [Template]    验证Russia-PPPOE备选DNS
+    127.0.0.1    ${common_ip_addr_err}
+
+RussiaPPPOE_dns_test_81
+    [Documentation]    备用DNS服务器不为保留地址：n1=0
+    [Template]    验证Russia-PPPOE备选DNS
+    0.168.1.10    ${common_ip_addr_err}
+
+*** Keywords ***
+验证Russia-PPPOE帐号
+    [Arguments]    ${user}    ${message}
+    设置Russia-PPPoE参数    ${user}    123456
+    显示消息    ${message}
+
+验证Russia-PPPOE帐号最大输入长度
+    [Arguments]    ${user}    ${max_len}
+    验证输入框最大输入长度    id=pppoe_username    ${user}    ${max_len}
+
+验证Russia-PPPOE密码
+    [Arguments]    ${passwd}    ${message}
+    设置Russia-PPPoE参数    hany    ${passwd}
+    显示消息    ${message}
+
+验证Russia-PPPOE密码最大输入长度
+    [Arguments]    ${passwd}    ${max_len}
+    验证输入框最大输入长度    id=pppoe_pwd    ${passwd}    ${max_len}
+
+验证Russia-PPPOE老化时间
+    [Arguments]    ${time}    ${message}
+    设置Russia-PPPoE参数    hany    969090    connectMode=2    timeout=${time}
+    显示消息    ${message}
+    ${rmessage}    process_special_charators    ${message}
+    Run Keyword If    '${rmessage}'=='${common_unlock_save}'    Sleep    15
+
+验证Russia-PPPOE老化时间最大输入长度
+    [Arguments]    ${time}    ${max_len}
+    Click Element    id=ppp_connect_mode_time
+    验证输入框最大输入长度    id=ppp_time    ${time}    ${max_len}
+
+验证Russia-PPPOE静态接入
+    [Arguments]    ${ip}    ${mask}    ${message}
+    设置Russia-PPPoE参数    han    969090    connection_type=1    ip_addr=${ip}    mask=${mask}
+    显示消息    ${message}
+    ${rmessage}    process_special_charators    ${message}
+    Run Keyword If    '${rmessage}'=='${common_unlock_save}'    Sleep    15
+
+验证Russia-PPPOE静态接入IP最大输入长度
+    [Arguments]    ${ip}    ${max_len}
+    Click Element    id=second_in_type_st
+    Sleep    5
+    验证输入框最大输入长度    xpath=(//input[@id="wan_ip"])[2]    ${ip}    ${max_len}
+
+验证Russia-PPPOE静态接入mask最大输入长度
+    [Arguments]    ${mask}    ${max_len}
+    Click Element    id=second_in_type_st
+    Sleep    5
+    验证输入框最大输入长度    xpath=(//input[@id="wan_mask"])[2]    ${mask}    ${max_len}
+
+验证RussiaPPPOE服务名
+    [Arguments]    ${name}    ${message}
+    设置Russia-PPPoE参数    hany    969090    serverName=${name}
+    显示消息    ${message}
+
+验证RussiaPPPOE服务名最大输入长度
+    [Arguments]    ${name}    ${max_len}
+    验证输入框最大输入长度    id=pppoe_service_name    ${name}    ${max_len}
+
+验证Russia-PPPOE AC名
+    [Arguments]    ${name}    ${message}
+    设置Russia-PPPoE参数    hany    969090    acName=${name}
+    显示消息    ${message}
+
+验证Russia-PPPOE AC名最大输入长度
+    [Arguments]    ${name}    ${max_len}
+    验证输入框最大输入长度    id=pppoe_ac_name    ${name}    ${max_len}
+
+验证Russia-PPPOE首选DNS
+    [Arguments]    ${dns}    ${message}
+    设置Russia-PPPoE参数    hany    969090    dns1=${dns}
+    显示消息    ${message}
+
+验证Russia-PPPOE首选DNS最大输入长度
+    [Arguments]    ${dns}    ${max_len}
+    验证输入框最大输入长度    id=dns_a    ${dns}    ${max_len}
+
+验证Russia-PPPOE备选DNS
+    [Arguments]    ${dns}    ${message}
+    设置Russia-PPPoE参数    hany    969090    dns1=8.8.8.8    dns2=${dns}
+    显示消息    ${message}
+
+验证Russia-PPPOE备选DNS最大输入长度
+    [Arguments]    ${dns}    ${max_len}
+    验证输入框最大输入长度    id=dns_b    ${dns}    ${max_len}
