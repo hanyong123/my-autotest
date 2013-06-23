@@ -4,7 +4,10 @@ Suite Teardown    关闭浏览器
 Resource          keyword.txt
 
 *** Variables ***
-@{string}         [u'0']
+@{channel1-11}    1    2    3    4    5    6    7
+...               8    9    10    11
+@{channel1-9}     1    2    3    4    5    6    7
+...               8    9
 
 *** Test Cases ***
 Wireless_ONorOff_test_1
@@ -112,11 +115,21 @@ Wireless_SSIDMaxLen_test_24
 Wireless_Region_test_31
     验证区域设置    US    0    \    @{string}
 
+try
+    Select From List By Label    id=channel    Auto
+    List selection should be    id=channel    Auto
+    :FOR    ${i}    IN    @{channel1-9}
+    \    Select From List By Label    id=channel    Channel ${i}
+    \    List selection should be    id=channel    Channel ${i}
+    click element    id=save_wl_base
+    sleep    5s
+    List selection should be    id=channel    Channel ${i}
+
 *** Keywords ***
 验证无线状态开关
     [Arguments]    ${enable}
-    run keyword if     '${enable}'=='1'    clickelement    wl_enable_on
-    run keyword if     '${enable}'=='0'    clickelement    wl_enable_off
+    run keyword if    '${enable}'=='1'    clickelement    wl_enable_on
+    run keyword if    '${enable}'=='0'    clickelement    wl_enable_off
     Click Element    id=save_wl_base
     sleep    10s
     Wait Until Page Contains Element    save_wl_base
@@ -134,7 +147,7 @@ Wireless_Region_test_31
 
 验证区域设置
     [Arguments]    ${region}=US    ${channel_width}=0    ${control_side}=${None}    ${string1}=${None}
-    设置AP模式的无线基本参数    region=${region}     channel_width=${channel_width}    control_side=${control_side}
+    设置AP模式的无线基本参数    region=${region}    channel_width=${channel_width}    control_side=${control_side}
     sleep    5s
-    ${var}    Get Selected List Values    channel
+    ${var}    Get Selected List Value    channel
     Should Be Equal    ${var}    ${string1}
