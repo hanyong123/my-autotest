@@ -486,8 +486,9 @@ WAN口IP是${ip}
     Select From List By Label    id=net_mode    Access Point
 
 设置AP模式的无线基本参数
-    [Arguments]    ${enable}=1    ${radio_band}=${None}    ${ssid}=${None}    ${ssid_broadcast}=1    ${region}=${None}    ${channel_width}=1
-    ...    ${channel}=${None}    ${control_side}=0    ${auth_type}=${None}    ${encryption_type}=3    ${key_mode}=1    ${passwd}=${None}
+    [Arguments]    ${enable}=${None}    ${radio_band}=${None}    ${ssid}=${None}    ${ssid_broadcast}=1    ${region}=${None}    ${channel_width}=${None}
+    ...    ${channel}=${None}    ${control_side}=${None}    ${auth_type}=${None}    ${encryption_type_wpa}=${None}    ${key_mode_wpa}=${None}    ${passwd_wpa}=${None}
+    ...    ${encryption_type_wep}=${None}    ${key_mode_wep}=${None}    ${passwd_wep}=${None}
     Run Keyword If    '${enable}'=='1'    Click Element    id=wl_enable_on
     Run Keyword If    '${enable}'=='0'    Click Element    id=wl_enable_off
     Run Keyword If    '${radio_band}'!='${None}'    Select From List By Label    id=wl_stand    ${radio_band}
@@ -502,13 +503,19 @@ WAN口IP是${ip}
     Run Keyword If    '${control_side}'=='0'    Click Element    id=channel_bind_down
     Run Keyword If    '${control_side}'=='1'    Click Element    id=channel_bind_up
     Run Keyword If    '${auth_type}'!='${None}'    Select From List By Label    id=sec_mode    ${auth_type}
-    Run Keyword If    '${encryption_type}'=='1'    Click Element    id=key_type_t
-    Run Keyword If    '${encryption_type}'=='2'    Click Element    id=key_type_a
-    Run Keyword If    '${encryption_type}'=='3'    Click Element    id=key_type_ta
-    Run Keyword If    '${key_mode}'=='0'    Click Element    id=key_mode_wpa_hex
-    Run Keyword If    '${key_mode}'=='1'    Click Element    id=key_mode_wpa_asc
-    ${rpasswd}    process_special_charators    ${passwd}
-    Run Keyword If    '${rpasswd}'!='${None}'    Input Text    id=key_wpa    ${passwd}
+    Run Keyword If    '${encryption_type_wpa}'=='1'    Click Element    id=key_type_t
+    Run Keyword If    '${encryption_type_wpa}'=='2'    Click Element    id=key_type_a
+    Run Keyword If    '${encryption_type_wpa}'=='3'    Click Element    id=key_type_ta
+    Run Keyword If    '${key_mode_wpa}'=='0'    Click Element    id=key_mode_wpa_hex
+    Run Keyword If    '${key_mode_wpa}'=='1'    Click Element    id=key_mode_wpa_asc
+    ${rpasswd}    process_special_charators    ${passwd_wpa}
+    Run Keyword If    '${rpasswd}'!='${None}'    Input Text    id=key_wpa    ${passwd_wpa}
+    Run Keyword If    '${encryption_type_wep}'=='1'    Click Element    id=key_size_64
+    Run Keyword If    '${encryption_type_wep}'=='2'    Click Element    id=key_size_128
+    Run Keyword If    '${key_mode_wep}'=='0'    Click Element    id=key_mode_wep_hex
+    Run Keyword If    '${key_mode_wep}'=='1'    Click Element    id=key_mode_wep_asc
+    ${rpasswd1}    process_special_charators    ${passwd_wep}
+    Run Keyword If    '${rpasswd1}'!='${None}'    Input Text    id=key_wep    ${passwd_wep}
     Click Element    id=save_wl_base
 
 转到L2TP设置页面
