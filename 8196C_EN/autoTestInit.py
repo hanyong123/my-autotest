@@ -108,6 +108,8 @@ class autoTestInit:
             if i[3] != '':
                 print i[3]
                 v = i[3]
+            if k == 'time_r':
+                continue
             if v.find('\\\'') != -1:
                 v= v.replace(u'\\\'', u'\'')
             if v.find('\\\\') != -1:
