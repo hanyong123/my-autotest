@@ -1,0 +1,155 @@
+*** Settings ***
+Suite Setup       Run Keywords    打开浏览器    AND    转到系统用户管理页面
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
+*** Test Cases ***
+UserManager_oldPwd_test_1
+    [Documentation]    认证密码：输入框不能为空
+    使旧密码框可以输入
+    设置旧密码新用户名新密码    ${common_az09_string_err}    ${EMPTY}    guest    guest    guest
+
+UserManager_oldPwd_test_3
+    [Documentation]    认证密码：输入数据带有 '"\或空格 ，提示“ 不能含有特殊字符 \ '"\和空格 ”
+    [Template]
+    使旧密码框可以输入
+    设置旧密码新用户名新密码    ${common_az09_string_err}    guest'    guest    guest    guest
+    设置旧密码新用户名新密码    ${common_az09_string_err}    guest"    guest    guest    guest
+    设置旧密码新用户名新密码    ${common_az09_string_err}    gue st    guest    guest    guest
+
+UserManager_oldPwd_test_4
+    [Documentation]    认证密码：认证密码中含有不在ascii码0~255范围中的字符时（例如中文、韩文），提示“不能含有无法识别的字符集”
+    [Template]
+    使旧密码框可以输入
+    设置旧密码新用户名新密码    ${common_az09_string_err}    我11    guest    guest    guest
+    设置旧密码新用户名新密码    ${common_az09_string_err}    11我    guest    guest    guest
+
+UserManager_oldPwd_test_5
+    [Documentation]    认证密码框：内容隐藏显示
+    使旧密码框可以输入
+    ${type}    Get Element Attribute    id=old_pwd@type
+    Should Be Equal    ${type}    password
+
+UserManager_oldPwd_test_7
+    [Documentation]    认证密码错误，WEB用户名密码修改失败，旧账号密码依然生效，新修改的帐号密码无效。
+    使旧密码框可以输入
+    设置旧密码新用户名新密码    ${common_password_err}    netcore    netcore    netcore    netcore
+    关闭浏览器
+    Comment     Choose Cancel On Next Confirmation
+    Comment    Open Browser    http://netcore:netcore@192.168.1.1/index.htm    ${browser}
+    Comment    ${sta}    Run Keyword And Return Status    Wait Until Page Contains Element    id=p_menu_status    10
+    Comment    ${statStr}    Convert To String    ${sta}
+    Comment    Should Be equal    ${statStr}    False
+    Comment    关闭浏览器
+    Open Browser    http://guest:guest@192.168.1.1/index.htm    ${browser}
+    Wait Until Page Contains Element    id=p_menu_status    10
+    关闭浏览器
+
+UserManager_NewUserName_test_8
+    [Documentation]    新用户名：输入框为空，默认不修改用户名
+    设置旧密码新用户名新密码    ${common_az09_string_err}    guest    ${EMPTY}    guest    guest
+
+UserManager_NewUserName_test_9
+    [Documentation]    新用户名：输入超过31个字符后，无法输入
+    验证新用户名最大输入长度    01234566gggggggggggggggggggggg666666666666666666666666666666666666666665    31
+
+UserManager_NewUserName_test_10
+    [Documentation]    新用户名：输入数据带有 '"\或空格 ，提示“ 不能含有特殊字符 \ '"\和空格 ”
+    [Template]    设置旧密码新用户名新密码
+    ${common_az09_string_err}    guest    gu est    guest    guest
+    ${common_az09_string_err}    guest    guest'    guest    guest
+    ${common_az09_string_err}    guest    guest"    guest    guest
+
+UserManager_NewUserName_test_11
+    [Documentation]    新用户名：新用户名中含有不在ascii码0~255范围中的字符时（例如中文、韩文），提示“不能含有无法识别的字符集”
+    [Template]    设置旧密码新用户名新密码
+    ${common_az09_string_err}    guest    我11    guest    guest
+    ${common_az09_string_err}    guest    1我    guest    guest
+
+UserManager_NewPwd_test_12
+    [Documentation]    新密码：输入框不能为空
+    设置旧密码新用户名新密码    ${common_az09_string_err}    ${EMPTY}    guest    guest    guest
+
+UserManager_NewPwd_test_13
+    [Documentation]    新密码：输入超过31个字符后，无法输入
+    ${maxlength}    Get Element Attribute    id=new_pwd@maxlength
+    Should Be Equal    ${maxlength}    31
+
+UserManager_NewPwd_test_14
+    [Documentation]    新密码：输入数据带有 '"\或空格 ，提示“ 不能含有特殊字符 \ '"\和空格 ”
+    [Template]    设置旧密码新用户名新密码
+    ${common_az09_string_err}    guest    guest    gu est    guest
+    ${common_az09_string_err}    guest    guest    guest'    guest
+    ${common_az09_string_err}    guest    guest    guest"    guest
+
+UserManager_NewPwd_test_15
+    [Documentation]    新密码：新密码中含有不在ascii码0~255范围中的字符时（例如中文、韩文），提示“不能含有无法识别的字符集”
+    [Template]    设置旧密码新用户名新密码
+    ${common_az09_string_err}    guest    guest    我1    guest
+    ${common_az09_string_err}    guest    guest    1我    guest
+
+UserManager_NewPwd_test_17
+    [Documentation]    新密码框：内容隐藏显示
+    ${type}    Get Element Attribute    id=new_pwd@type
+    Should Be Equal    ${type}    password
+
+UserManager_ConfirmPwd_test_18
+    [Documentation]    确认密码：输入框不能为空
+    设置旧密码新用户名新密码    ${common_az09_string_err}    guest    guest    guest    ${EMPTY}
+
+UserManager_ConfirmPwd_test_19
+    [Documentation]    确认密码：输入超过31个字符后，无法输入
+    ${maxlength}    Get Element Attribute    id=new_pwd_confirm @maxlength
+    Should Be Equal    ${maxlength}    31
+
+UserManager_ConfirmPwd_test_20
+    [Documentation]    确认密码：输入数据带有 '"\或空格 ，提示“ 不能含有特殊字符 \ '"\和空格 ”
+    [Template]    设置旧密码新用户名新密码
+    ${common_az09_string_err}    guest    guest    guest    gu est
+    ${common_az09_string_err}    guest    guest    guest    guest'
+    ${common_az09_string_err}    guest    guest    guest    guest"
+
+UserManager_ConfirmPwd_test_21
+    [Documentation]    确认密码：确认密码中含有不在ascii码0~255范围中的字符时（例如中文、韩文），提示“不能含有无法识别的字符集”
+    [Template]    设置旧密码新用户名新密码
+    ${common_az09_string_err}    guest    guest    guest    我1
+    ${common_az09_string_err}    guest    guest    guest    1我
+
+UserManager_ConfirmPwd_test_22
+    [Documentation]    确认密码：和新密码不同，提示两次输入密码不同
+    设置旧密码新用户名新密码    ${common_password_err}     guest    jishan    guest    jishan
+
+UserManager_ConfirmPwd_test_23
+    [Documentation]    确认密码框：内容隐藏显示
+    ${type}    Get Element Attribute    id=new_pwd_confirm@type
+    Should Be Equal    ${type}    password
+
+*** Keywords ***
+转到系统用户管理页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="passwd";$.load("passwd")
+
+设置旧密码新用户名新密码
+    [Arguments]    ${message}    ${oldpwd}    ${newname}    ${newpwd}    ${confirmpwd}
+    Input Text    id=old_pwd    ${oldpwd}
+    Input Text    id=new_user    ${newname}
+    Input Text    id=new_pwd    ${newpwd}
+    Input Text    id=new_pwd_confirm    ${confirmpwd}
+    Click Element    id=save_passwd
+    显示消息    ${message}
+
+第一次修改密码
+    [Arguments]    ${message}    ${newname}    ${newpwd}    ${confirmpwd}
+    Input Text    id=new_user    ${newname}
+    Input Text    id=new_pwd    ${newpwd}
+    Input Text    id=new_pwd_confirm    ${confirmpwd}
+    Click Element    id=save_passwd
+    显示消息    ${message}
+
+验证新用户名最大输入长度
+    [Arguments]    ${pwd}    ${max_len}
+    验证输入框最大输入长度    id=new_user    ${pwd}    ${max_len}
+
+使旧密码框可以输入
+    ${disable}    Get Element Attribute    id=old_pwd@disabled
+    Run Keyword If    '${disable}'=='true'    第一次修改密码    ${common_unlock_save}    guest    guest    guest

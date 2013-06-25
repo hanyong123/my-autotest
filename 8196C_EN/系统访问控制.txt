@@ -1,1 +1,37 @@
+*** Settings ***
+Suite Setup       Run Keywords    打开浏览器    AND    转到系统访问控制
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
 *** Test Cases ***
+SysAccessContr_remountPort_test_7
+    [Documentation]    WEB远程端口：输入非正整数的字符，提示只能为正整数
+    [Template]    验证远程端口
+    port=1.1
+    port=-43
+    port=我
+    port=1'1
+    port=1"1
+    port=1 1
+
+SysAccessContr_remountPort_test_8
+    [Documentation]    WEB远程端口：超出1~65535的范围
+    [Template]    验证远程端口
+    port=0
+    port=65536
+
+SysAccessContr_remountPort_test_9
+    [Documentation]    WEB远程端口：输入超过5个字符后，无法输入
+    ${maxlength}    Get Element Attribute    id=remote_port@maxlength
+    Should Be Equal    ${maxlength}    5
+
+SysAccessContr_remountPort_test_10
+    [Documentation]    WEB远程端口：输入框不能为空
+    [Template]    验证远程端口
+    port=${EMPTY}
+
+*** Keywords ***
+验证远程端口
+    [Arguments]    ${port}
+    设置系统访问控制参数    port= ${port}
+    显示消息    ${common_port_err}

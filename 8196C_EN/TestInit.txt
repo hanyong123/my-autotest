@@ -7,12 +7,13 @@ Library           autoTestInit.py
 *** Test Cases ***
 autoTestInit
     Create HTTP Context    ${router_lan_ip}
-    Comment    Set Basic Auth    ${login_user}    ${login_passwd}
+    Set Basic Auth    ${login_user}    ${login_passwd}
     GET    /config/config.js
     ${html}    get_response_body
     ${content}    convert_string_to_utf8    ${html}
     get_all_mould_applications    ${content}
     Create HTTP Context    ${router_lan_ip}
+    Set Basic Auth    ${login_user}    ${login_passwd}
     GET    /config/language_us.js
     ${html}    get_response_body
     ${content}    convert_string_to_utf8    ${html}

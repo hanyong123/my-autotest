@@ -1,0 +1,43 @@
+*** Settings ***
+Suite Setup       Run Keywords    打开浏览器    AND    转到系统参数管理页面
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
+*** Test Cases ***
+SysConfManager_NotChange_test_1
+    [Documentation]    在已经恢复系统缺省参数的前置条件下，点击参数备份按钮，提示“您尚未对路由器进行系统参数的配置”
+
+SysConfManager_HaveChange_test_2
+    [Documentation]    在已有系统参数的情况下，点击参数备份按钮，成功完成参数备份
+    Click Element    id=save_backup
+
+SysConfManager_NotChoose_test_3
+    [Documentation]    未选择系统参数文件时，不能进行参数恢复，并提示
+    Click Element    id=save_backup
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_backup_err}
+
+SysConfManager_OtherFile_test_4
+    [Documentation]    不是由该设备导出的系统参数文件格式，不能进行参数恢复，并提示
+
+SysConfManager_EmptyFile_test_5
+    [Documentation]    选择一个参数文件，该文件内容为空，不能进行参数恢复，并提示
+
+SysConfManager_BiggerFile_test_6
+    [Documentation]    选择内容超大（1G）的参数文件，不能进行参数恢复，并提示
+
+SysConfManager_NomalFile_test_7
+    [Documentation]    选择正确参数文件进行恢复，跳转到重启倒计时页面，倒计时完成后自动跳转至WEB默认页面
+
+SysConfManager_ChangeToDefault_test_8
+    [Documentation]    点击“恢复缺省参数”按钮进行缺省参数恢复，跳转到重启倒计时页面，倒计时完成后自动跳转至WEB默认页面
+    Click Element    id=default_set
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+*** Keywords ***
+转到系统参数管理页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="default";$.load("default")

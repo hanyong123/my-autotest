@@ -146,10 +146,10 @@ Library           String
 
 设置DHCP服务器
     [Arguments]    ${start_ip}    ${end_ip}    ${enable}=1
-    Run Keyword If    '${enable}'==1    Click Element    id=dhcp_enable_on
-    Run Keyword If    '${enable}'==0    Click Element    id=dhcp_enable_off
-    Run Keyword If    '${enable}'==1    Input Text    id=dhcp_start_ip    ${start_ip}
-    Run Keyword If    '${enable}'==1    Input Text    id=dhcp_end_ip    ${end_ip}
+    Run Keyword If    '${enable}'=='1'    Click Element    id=dhcp_enable_on
+    Run Keyword If    '${enable}'=='0'    Click Element    id=dhcp_enable_off
+    Run Keyword If    '${enable}'=='1'    Input Text    id=dhcp_start_ip    ${start_ip}
+    Run Keyword If    '${enable}'=='1'    Input Text    id=dhcp_end_ip    ${end_ip}
     Click Button    id=save_dhcp_server
 
 转到DHCP保留地址设置页面
