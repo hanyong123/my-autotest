@@ -58,7 +58,7 @@ LanConfig_MAC_test_8
 LanConfig_MAC_test_9
     [Documentation]    MAC配置输入框以xx-xx-xx-xx-xx-xx格式输入MAC地址，xx不能为空
     [Template]    验证LAN口MAC
-     :1c:c0:a2:c3:87    ${common_mac_addr_err}
+    :1c:c0:a2:c3:87    ${common_mac_addr_err}
     00: :c0:a2:c3:87    ${common_mac_addr_err}
     00:1c: :a2:c3:87    ${common_mac_addr_err}
     00:1c:c0: \ :c3:87    ${common_mac_addr_err}
@@ -69,7 +69,7 @@ LanConfig_MAC_test_9
     00-1c- \ \ -a2-c3-87    ${common_mac_addr_err}
     00-1c-c0- \ \ -c3-87    ${common_mac_addr_err}
     00-1c-c0-a2- \ \ -87    ${common_mac_addr_err}
-    00-1c-c0-a2-c3- \     ${common_mac_addr_err}
+    00-1c-c0-a2-c3- \    ${common_mac_addr_err}
 
 LanConfig_MAC_test_10
     [Documentation]    MAC配置输入框以xx-xx-xx-xx-xx-xx格式输入MAC地址，xx不能大于2字节

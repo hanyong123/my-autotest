@@ -10,6 +10,7 @@ SystemReboot_ManualReboot_test_14
     ${message}    Confirm Action
     Should Be Equal    ${message}    ${common_reboot_tip}
     等待系统重启完成
+    Wait Until Page Contains Element    id=p_menu_status    20
 
 *** Keywords ***
 转到系统重启界面

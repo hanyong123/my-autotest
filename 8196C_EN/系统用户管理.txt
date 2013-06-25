@@ -34,15 +34,12 @@ UserManager_oldPwd_test_7
     [Documentation]    认证密码错误，WEB用户名密码修改失败，旧账号密码依然生效，新修改的帐号密码无效。
     使旧密码框可以输入
     设置旧密码新用户名新密码    ${common_password_err}    netcore    netcore    netcore    netcore
-    关闭浏览器
+    Comment    关闭浏览器
     Comment    Open Browser    http://netcore:netcore@192.168.1.1/index.htm    ${browser}
     Comment    ${sta}    Run Keyword And Return Status    Wait Until Page Contains Element    id=p_menu_status    10
     Comment    ${statStr}    Convert To String    ${sta}
     Comment    Should Be equal    ${statStr}    False
     Comment    关闭浏览器
-    Open Browser    http://guest:guest@192.168.1.1/index.htm    ${browser}
-    Wait Until Page Contains Element    id=p_menu_status    10
-    关闭浏览器
 
 UserManager_NewUserName_test_8
     [Documentation]    新用户名：输入框为空，默认不修改用户名
