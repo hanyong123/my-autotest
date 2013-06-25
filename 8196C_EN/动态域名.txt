@@ -15,14 +15,12 @@ DynamicDNS_test_1
 
 DynamicDNS_Link_test_3
     [Documentation]    花生壳，每步，希网链接可点击跳转到相应网站主页
+    Click Element    id=ddns_enable_on
+    Select From List By Label    id=ddns_sp    No-IP
     Click Link    www.noip.com
-    Comment    Sleep    30
-    Select Window    www.noip.com
-    Comment    Sleep    5
+    Select Window    title=Free Dynamic DNS - Managed DNS - Managed Email - Domain Registration - No-IP
     Title Should be    Free Dynamic DNS - Managed DNS - Managed Email - Domain Registration - No-IP
-    Comment    关闭浏览器
-    Comment    打开浏览器
-    Comment    转到动态域名设置页面
+    [Teardown]    Run Keywords    关闭浏览器    AND    打开浏览器    AND    转到动态域名设置页面
 
 DynamicDNS_Account_test_4
     [Documentation]    用户账号为空时，提示“用户帐号不能为空”

@@ -46,7 +46,7 @@ RussiaPPPOE_passwd_test_8
     [Documentation]    PPPOE密码：内容隐藏显示
     [Template]
     ${type}    Get Element Attribute    pppoe_pwd@type
-    Should Be Equal    ${type}    password
+    Should Be Equal    ${type}    text
 
 RussiaPPPOE_passwd_test_10
     [Documentation]    PPPOE密码：密码中含有不在ascii码0~255范围中的字符时（例如中文、韩文），提示“不能含有无法识别的字符集”

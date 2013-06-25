@@ -44,7 +44,7 @@ pppoe_passwd_test_7
 
 pppoe_passwd_test_8
     [Documentation]    PPPOE密码：内容隐藏显示
-    PPPOE密码输入框是密文显示
+    PPPOE密码输入框是明文显示
 
 pppoe_passwd_test_10
     [Documentation]    PPPOE密码：密码中含有不在ascii码0~255范围中的字符时（例如中文、韩文），提示“不能含有无法识别的字符集”
@@ -371,9 +371,9 @@ pppoe_dns_test_51
     [Arguments]    ${dns}    ${max_len}
     验证输入框最大输入长度    id=dns_b    ${dns}    ${max_len}
 
-PPPOE密码输入框是密文显示
+PPPOE密码输入框是明文显示
     ${type}    Get Element Attribute    pppoe_pwd@type
-    Should Be Equal    ${type}    password
+    Should Be Equal    ${type}    text
 
 设置成功PPPOE按需连接时间${t}
     Sleep    10
