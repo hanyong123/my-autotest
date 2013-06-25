@@ -226,7 +226,7 @@ Library           String
     Execute JavaScript    $.CurrentApp="mac_filter";$.load("mac_filter")
 
 设置MAC过滤
-    [Arguments]    ${des}=${None}    ${rule}=1    ${mac}=${None}    ${day_locator}=${None}    ${start_time}=0    ${end_time}=0
+    [Arguments]    ${des}=${None}    ${rule}=1    ${mac}=${None}    ${day_locator}=${None}    ${start_time}=00:00    ${end_time}=00:00
     ...    ${allday_locator}=${None}
     ${rdes}    process_special_charators    ${des}
     Run Keyword If    '${rdes}'!='${None}'    Input text    id=mac_describe    ${des}
@@ -236,8 +236,8 @@ Library           String
     @{day_locator}    Get Variable Value    ${day_locator}
     : FOR    ${i}    IN    @{day_locator}
     \    Click Element    ${i}
-    Select From List By Value    id=start    ${start_time}
-    Select From List By Value    id=end    ${end_time}
+    Select From List By Label    id=start    ${start_time}
+    Select From List By Label    id=end    ${end_time}
     Run Keyword If    '${allday_locator}'!='${None}'    Click Element    ${allday_locator}
     Click Element    id=add_mac_filter
 
@@ -292,7 +292,7 @@ WAN口IP是${ip}
     ${rstart_internal_port}    process_special_charators    ${start_internal_port}
     Run Keyword If    '${rstart_internal_port}'!='${None}'    Input Text    id=vir_inport_start    ${start_internal_port}
     ${rend_internal_port}    process_special_charators    ${end_internal_port}
-    Run Keyword If    '${rend_internal_port}'    Input Text    id=vir_inport_end    ${end_internal_port}
+    Run Keyword If    '${rend_internal_port}'!='${None}'    Input Text    id=vir_inport_end    ${end_internal_port}
     Click Element    id=save_virtual
 
 转到DMZ设置页面
@@ -317,7 +317,7 @@ WAN口IP是${ip}
     Run Keyword If    '${enable}'=='0'    Click Element    id=super_dmz_enable_off
     ${rmac}    process_special_charators    ${mac}
     Run Keyword If    '${rmac}'!='${None}'    Input Text    id=super_dmz_addr    ${mac}
-    Click Element    id=save
+    Click Element    id=save_super_dmz
 
 转到静态NAT设置页面
 
@@ -330,6 +330,9 @@ WAN口IP是${ip}
 
 设置UPNP参数
     [Arguments]    ${enable}=1    ${upnp_time}=${None}
+    Run Keyword If    '${enable}'=='1'    Click Element    id=upnp_enable_on
+    Run Keyword If    '${enable}'=='0'    Click Element    id=upnp_enable_off
+    Click Element    id=save_upnp
 
 转到动态域名设置页面
     Set Selenium Speed    0.5
@@ -339,7 +342,7 @@ WAN口IP是${ip}
     [Arguments]    ${enable}=1    ${service_provider}=${None}    ${user}=${None}    ${passwd}=${None}    ${port}=${None}    ${domain}=${None}
     Run Keyword If    '${enable}'=='1'    Click Element    id=ddns_enable_on
     Run Keyword If    '${enable}'=='0'    Click Element    id=ddns_enable_off
-    Run Keyword If    '${service_provider}'!='${None}'    Select From List By Value    id=ddns_sp    ${service_provider}
+    Run Keyword If    '${service_provider}'!='${None}'    Select From List By Label    id=ddns_sp    ${service_provider}
     ${ruser}    process_special_charators    ${user}
     Run Keyword If    '${ruser}'!='${None}'    Input Text    id=ddns_username    ${user}
     ${rpasswd}    process_special_charators    ${passwd}

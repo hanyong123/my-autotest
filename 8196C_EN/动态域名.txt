@@ -1,1 +1,122 @@
+*** Settings ***
+Suite Setup       Run Keywords    打开浏览器    AND    转到动态域名设置页面
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
 *** Test Cases ***
+DynamicDNS_test_1
+    [Documentation]    成功设置动态域名
+    设置动态域名参数    service_provider=No-IP    user=taonaqunying    passwd=19880509wan    domain=taonaqunying.no-ip.org
+    验证连接状态
+    显示消息    ${common_unlock_save}
+    设置动态域名参数    service_provider=Dyndns    user=netiskoxea    passwd=netcore123    domain=netiscd.dyndns.org
+    验证连接状态
+    显示消息    ${common_unlock_save}
+
+DynamicDNS_Link_test_3
+    [Documentation]    花生壳，每步，希网链接可点击跳转到相应网站主页
+    Click Link    www.noip.com
+    Comment    Sleep    30
+    Select Window    www.noip.com
+    Comment    Sleep    5
+    Title Should be    Free Dynamic DNS - Managed DNS - Managed Email - Domain Registration - No-IP
+    Comment    关闭浏览器
+    Comment    打开浏览器
+    Comment    转到动态域名设置页面
+
+DynamicDNS_Account_test_4
+    [Documentation]    用户账号为空时，提示“用户帐号不能为空”
+    [Template]    验证账号
+    ${EMPTY}    ${common_unlock_error}
+
+DynamicDNS_Account_test_5
+    [Documentation]    用户账号输入数据带有 '"\或空格 ，提示“ 不能含有特殊字符 \ '"\和空格 ”
+    [Template]    验证账号
+    aa'aa    ${common_string_err}
+    aa"aa    ${common_string_err}
+    aa\\aa    ${common_string_err}
+    aa aa    ${common_string_err}
+
+DynamicDNS_Account_test_6
+    [Documentation]    用户账号长度最大31个字符，超过31字符无法输入
+    [Template]    验证最大输入长度
+    ddns_username    1111111111222222222233333333334我    31
+
+DynamicDNS_Account_test_7
+    [Documentation]    用户账号中含有不在ascii码0~255范围中的字符时（例如中文、韩文），提示“不能含有无法识别的字符集”
+    [Template]    验证账号
+    中文    ${common_string_null}
+    사람은    ${common_string_null}
+
+DynamicDNS_Password_test_8
+    [Documentation]    密码为空时，提示“密码不能为空”
+    [Template]    验证密码
+    ${EMPTY}    ${common_unlock_error}
+
+DynamicDNS_Password_test_9
+    [Documentation]    密码输入数据带有 '"\或空格 ，提示“ 不能含有特殊字符 \ '"\和空格 ”
+    [Template]    验证密码
+    aa'aa    ${common_string_err}
+    aa"aa    ${common_string_err}
+    aa\\aa    ${common_string_err}
+    aa aa    ${common_string_err}
+
+DynamicDNS_Password_test_10
+    [Documentation]    密码长度最大31个字符，超过31字符无法输入
+    [Template]    验证最大输入长度
+    ddns_password    1111111111222222222233333333334我    31
+
+DynamicDNS_Password_test_11
+    [Documentation]    密码中含有不在ascii码0~255范围中的字符时（例如中文、韩文），提示“不能含有无法识别的字符集”
+    [Template]    验证密码
+    中文    ${common_string_null}
+    사람은    ${common_string_null}
+
+DynamicDNS_Password_test_13
+    [Documentation]    密码输入后显示为隐写
+    验证密码为密文
+
+DynamicDNS_Domain_test_19
+    [Documentation]    域名输入中文，提示域名不能含有中文
+    [Template]    验证域名
+    中文    ${common_string_url_err}
+
+DynamicDNS_Domain_test_20
+    [Documentation]    域名输入连续两个点，提示域名格式错误
+    [Template]    验证域名
+    taonaqunying..no-ip.org    ${common_domain_err}
+
+*** Keywords ***
+验证连接状态
+    Sleep    60
+    Click Element    refresh_ddns
+    Sleep    10
+    ${i}    Get Text    xpath=//span[@class="df_context"]
+    ${string}    Set Variable    Conneted
+    Should Be Equal    ${i}    ${string}
+
+验证账号
+    [Arguments]    ${username}    ${message}
+    设置动态域名参数    user=${username}    passwd=${EMPTY}    domain=${EMPTY}
+    显示消息    ${message}
+
+验证最大输入长度
+    [Arguments]    ${id}    ${name}    ${max_len}
+    验证输入框最大输入长度    ${id}    ${name}    ${max_len}
+
+验证密码
+    [Arguments]    ${pwd}    ${message}
+    设置动态域名参数    user=taonaqunying    passwd=${pwd}    domain=${EMPTY}
+    显示消息    ${message}
+
+验证域名
+    [Arguments]    ${dmain}    ${message}
+    设置动态域名参数    user=taonaqunying    passwd=19880509wan    domain=${dmain}
+    显示消息    ${message}
+
+验证密码为密文
+    ${type}    Get Element Attribute    id=ddns_password@type
+    Should Be Equal    ${type}    password
+
+等待时间
+    Sleep    5
