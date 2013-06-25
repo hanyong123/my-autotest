@@ -1,0 +1,33 @@
+*** Settings ***
+Resource          keyword.txt
+
+*** Test Cases ***
+SystemLogin_WrongUser_test_1
+    [Documentation]    帐号不存在，无法进入路由器WEB页面
+    Open Browser    http://adsdsa:guest@192.168.1.1/index.htm
+    ${sta}    Run Keyword And Return Status    Wait Until Page Contains Element    id=p_menu_status    10
+    ${statStr}    Convert To String    ${sta}
+    Should Be equal    ${statStr}    False
+    关闭浏览器
+
+SystemLogin_WrongPwd_test_2
+    [Documentation]    密码错误，无法进入路由器WEB页面
+    Open Browser    http://guest:erre@192.168.1.1/index.htm
+    ${sta}    Run Keyword And Return Status    Wait Until Page Contains Element    id=p_menu_status    10
+    ${statStr}    Convert To String    ${sta}
+    Should Be equal    ${statStr}    False
+    关闭浏览器
+
+SystemLogin_RighUserPwd_test_3
+    [Documentation]    认证成功，进入路由器WEB页面
+    Open Browser    http://guest:guest@192.168.1.1/index.htm
+    ${sta}    Run Keyword And Return Status    Wait Until Page Contains Element    id=p_menu_status    10
+    ${statStr}    Convert To String    ${sta}
+    Should Be equal    ${statStr}    True
+    关闭浏览器
+
+SystemLogin_WrongThreeTimes_test_4
+    [Documentation]    认证失败三次后，自动跳转到“登录失败解决方案页面”
+    Open Browser    http://df:guest@192.168.1.1/index.htm
+    Open Browser    http://guest:gffd@192.168.1.1/index.htm
+    Open Browser    http://gest:gust@192.168.1.1/index.htm

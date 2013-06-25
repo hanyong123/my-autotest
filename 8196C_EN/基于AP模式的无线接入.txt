@@ -1,6 +1,447 @@
 *** Settings ***
-Suite Setup       Run Keywords    打开浏览器    AND    ${EMPTY}
+Suite Setup       Run Keywords    打开浏览器    AND    转到AP模式的无线基本设置页面
 Suite Teardown    关闭浏览器
 Resource          keyword.txt
 
+*** Variables ***
+@{channel1-11}    1    2    3    4    5    6    7
+...               8    9    10    11
+@{channel1-9}     1    2    3    4    5    6    7
+...               8    9
+@{channel5-11}    5    6    7    8    9    10    11
+@{channel5-13}    5    6    7    8    9    10    11
+...               12    13
+@{channel1-13}    1    2    3    4    5    6    7
+...               8    9    10    11    12    13
+@{channel1-14}    1    2    3    4    5    6    7
+...               8    9    10    11    12    13    14
+
 *** Test Cases ***
+Wireless_ONorOff_test_1
+    [Documentation]    *无线状态选择“关闭”时，无线配置界面只保留无线状态的“开启”、“关闭”选项、“保存”按钮。其余组件均隐藏。
+    ...    *
+    验证无线状态开关    0
+    Element Should Not Be Visible    ssid
+    Element Should Not Be Visible    net_mode
+    Element Should Not Be Visible    sec_mode
+    Element Should Not Be Visible    ssid_broad_on
+
+Wireless_ONorOff_test_2
+    [Documentation]    *无线状态选择“开启”时，无线配置界面的组件均正常显示。
+    ...    *
+    验证无线状态开关    1
+    Element Should Be Visible    ssid
+    Element Should Be Visible    net_mode
+    Element Should Be Visible    sec_mode
+    Element Should Be Visible    ssid_broad_on
+
+Wireless_RadioBand_test_7
+    [Documentation]    *选择无线标准为802.11b时，无线配置页面隐藏“频道带宽（20Mhz/40Mhz）”和“频道绑定（向上绑定/向下绑定）”*
+    验证无线制式标准    802.11b
+    Element Should Not Be Visible    channel_width_20
+    Element Should Not Be Visible    channel_width_40
+    Element Should Not Be Visible    channel_bind_down
+    Element Should Not Be Visible    channel_bind_up
+
+Wireless_RadioBand_test_8
+    [Documentation]    *选择无线标准为802.11g时，无线配置页面隐藏“频道带宽（20Mhz/40Mhz）”和“频道绑定（向上绑定/向下绑定）”
+    ...    *
+    验证无线制式标准    802.11g
+    Element Should Not Be Visible    channel_width_20
+    Element Should Not Be Visible    channel_width_40
+    Element Should Not Be Visible    channel_bind_down
+    Element Should Not Be Visible    channel_bind_up
+
+Wireless_RadioBand_test_9
+    [Documentation]    *选择无线标准为802.11n时，无线配置页面显示“频道带宽（20Mhz/40Mhz）”和“频道绑定（向上绑定/向下绑定）”；*
+    ...    *当选择频道带宽为20Mhz时，无线配置页面隐藏“频道绑定（向上绑定/向下绑定）”
+    ...    *
+    验证无线制式标准    802.11n    0
+    #显示频道带宽
+    Element Should Be Visible    channel_width_20
+    Element Should Be Visible    channel_width_40
+    #隐藏频道绑定
+    Element Should Not Be Visible    channel_bind_down
+    Element Should Not Be Visible    channel_bind_up
+
+Wireless_RadioBand_test_10
+    [Documentation]    *选择无线标准为802.11b+g时，无线配置页面隐藏“频道带宽（20Mhz/40Mhz）”和“频道绑定（向上绑定/向下绑定）”
+    ...    *
+    验证无线制式标准    802.11b+g
+    Element Should Not Be Visible    channel_width_20
+    Element Should Not Be Visible    channel_width_40
+    Element Should Not Be Visible    channel_bind_down
+    Element Should Not Be Visible    channel_bind_up
+
+Wireless_RadioBand_test_11
+    [Documentation]    *选择无线标准为802.11g+n时，无线配置页面显示“频道带宽（20Mhz/40Mhz）”和“频道绑定（向上绑定/向下绑定）”；*
+    ...    *当选择频道带宽为20Mhz时，无线配置页面隐藏“频道绑定（向上绑定/向下绑定）”
+    ...    *
+    验证无线制式标准    802.11g+n    0
+    #显示频道带宽
+    Element Should Be Visible    channel_width_20
+    Element Should Be Visible    channel_width_40
+    #隐藏频道绑定
+    Element Should Not Be Visible    channel_bind_down
+    Element Should Not Be Visible    channel_bind_up
+
+Wireless_RadioBand_test_12
+    [Documentation]    *选择无线标准为802.11b+g+n时，无线配置页面显示“频道带宽（20Mhz/40Mhz）”和“频道绑定（向上绑定/向下绑定）”；*
+    ...    *当选择频道带宽为20Mhz时，无线配置页面隐藏“频道绑定（向上绑定/向下绑定）”
+    ...    *
+    验证无线制式标准    802.11b+g+n    0
+    Element Should Be Visible    channel_width_20
+    Element Should Be Visible    channel_width_40
+    Element Should Not Be Visible    channel_bind_down
+    Element Should Not Be Visible    channel_bind_up
+
+Wireless_SSID_test_23
+    [Documentation]    *SSID不能为空，SSID输入框的内容为空时有错误提示*
+    [Template]    验证无线SSID
+    ${EMPTY}    ${common_string_err}
+
+Wireless_SSID_test_25
+    [Documentation]    *SSID输入框的内容带有'"\和空格时，有错误提示*
+    [Template]    验证无线SSID
+    \\    ${common_string_err}
+    '    ${common_string_err}
+    "    ${common_string_err}
+    ${SPACE}    ${common_string_err}
+    fsfds fsdaf    ${common_string_err}
+
+Wireless_SSID_test_26
+    [Documentation]    *SSID输入数据需要支持中文，编码格式为GB2312；在GB2312中的字符集均可输入*
+    验证无线SSID    中文字符    ${common_unlock_save}
+    sleep    5s
+    ${var}    get value    id=ssid
+    Should Be Equal    ${var}    中文字符
+
+Wireless_SSIDMaxLen_test_24
+    [Documentation]    *SSID长度不能超过32个字符，当SSID输入框的内容达到32个字符时，就无法输入*
+    验证输入框最大输入长度    ssid    jk;lfdsakj;lfdsjaklfdjklsafdjklsajkfsdajkfdsafdsjakl    32
+
+Wireless_Region_test_31
+    [Documentation]    *在802.11b+g+n模式下，设置区域为US（FCC），频道带宽为20Mhz时，无线频道频道可选项为：Auto，channel 1-channel 11*
+    验证区域设置    US    0    \    @{channel1-11}
+
+Wireless_Region_test_32
+    [Documentation]    *在802.11b+g+n模式下，设置区域为US（FCC），频道带宽为40Mhz时*
+    ...    *频道绑定为向下绑定时，无线频道频道可选项为：Auto，channel 1-channel 9*
+    验证区域设置    US    1    0    @{channel1-9}
+
+Wireless_Region_test_33
+    [Documentation]    *在802.11b+g+n模式下，设置区域为US（FCC），频道带宽为40Mhz时*
+    ...    *频道绑定为向上绑定时，无线频道频道可选项为：Auto，channel 5-channel 11*
+    验证区域设置    US    1    1    @{channel5-11}
+
+Wireless_Region_test_34
+    [Documentation]    *在802.11b+g+n模式下，设置区域为IC，频道带宽为20Mhz时*
+    ...
+    ...    *无线频道频道可选项为：Auto，channel 1-channel 11*
+    验证区域设置    IC    0    \    @{channel1-11}
+
+Wireless_Region_test_35
+    [Documentation]    *在802.11b+g+n模式下，设置区域为IC，频道带宽为40Mhz时*
+    ...
+    ...    *频道绑定为向下绑定时，无线频道频道可选项为：Auto，channel 1-channel 9*
+    验证区域设置    IC    1    0    @{channel1-9}
+
+Wireless_Region_test_36
+    [Documentation]    *在802.11b+g+n模式下，设置区域为IC，频道带宽为40Mhz时*
+    ...
+    ...    *频道绑定为向上绑定时，无线频道频道可选项为：Auto，channel 5-channel 11
+    ...    *
+    验证区域设置    IC    1    1    @{channel5-11}
+
+Wireless_Region_test_37
+    [Documentation]    *在802.11b+g+n模式下，设置区域为EU（ETSI），频道带宽为20Mhz时*
+    ...
+    ...    *无线频道频道可选项为：Auto，channel 1-channel 13*
+    验证区域设置    EU    0    \    @{channel1-13}
+
+Wireless_Region_test_38
+    [Documentation]    *在802.11b+g+n模式下，设置区域为EU（ETSI），频道带宽为40Mhz时*
+    ...    *频道绑定为向下绑定时，无线频道频道可选项为：Auto，channel 1-channel 9
+    ...    *
+    验证区域设置    EU    1    0    @{channel1-9}
+
+Wireless_Region_test_39
+    [Documentation]    *在802.11b+g+n模式下，设置区域为EU（ETSI），频道带宽为40Mhz时*
+    ...    *频道绑定为向上绑定时，无线频道频道可选项为：Auto，channel 5-channel 13
+    ...    *
+    验证区域设置    EU    1    1    @{channel5-13}
+
+Wireless_Region_test_46
+    [Documentation]    *在802.11b+g+n模式下，设置区域为MKK，频道带宽为20Mhz时*
+    ...
+    ...    *无线频道频道可选项为：Auto，channel 1-channel 14
+    ...    *
+    验证区域设置    MKK    0    \    @{channel1-14}
+
+Wireless_Region_test_47
+    [Documentation]    *在802.11b+g+n模式下，设置区域为MKK，频道带宽为40Mhz时*
+    ...
+    ...    *频道绑定为向下绑定时，无线频道频道可选项为：Auto，channel 1-channel 9*
+    验证区域设置    MKK    1    0    @{channel1-9}
+
+Wireless_Region_test_48
+    [Documentation]    *在802.11b+g+n模式下，设置区域为MKK，频道带宽为40Mhz时*
+    ...
+    ...    *频道绑定为向上绑定时，无线频道频道可选项为：Auto，channel 5-channel 13*
+    验证区域设置    MKK    1    1    @{channel5-13}
+
+Wireless_PasswdWEP_test_68
+    [Documentation]    *在AP模式下，选择WEP加密，密钥长度为64 bits，格式为ASCII时，密钥为空时*
+    ...
+    ...    *有”请输入任意5位ASCII字符：(A-Z，a-z，0-9）“提示
+    ...    *
+    [Template]    验证WEP加密
+    1    1    ${EMPTY}    ${common_after_map_b}
+
+Wireless_PasswdWEP_test_69
+    [Documentation]    *在AP模式下，选择WEP加密，密钥长度为64 bits，格式为ASCII时，输入低于5位字符的密钥*
+    ...
+    ...    *有”请输入任意5位ASCII字符：(A-Z，a-z，0-9）“提示
+    ...    *
+    [Template]    验证WEP加密
+    1    1    1234    ${common_after_map_b}
+
+Wireless_PasswdWEP_test_70
+    [Documentation]    *在AP模式下，选择WEP加密，密钥长度为64 bits，格式为ASCII时，输入有字符中含有 '"\\和空格的密钥*
+    ...
+    ...    *提示“ 不能含有特殊字符 \ '"\和空格”
+    ...    *
+    [Template]    验证WEP加密
+    1    1    \\1234    ${common_string_err}
+    1    1    12"34    ${common_string_err}
+    1    1    1234'    ${common_string_err}
+    1    1    123 4    ${common_string_err}
+    1    1    ${SPACE*5}    ${common_string_err}
+
+Wireless_PasswdWEP_test_71
+    [Template]    验证WEP加密
+    1    1    中文字符耶    ${common_string_null}
+    1    1    당신은날사    ${common_string_null}
+
+Wireless_PasswdWEPMaxLen_test_67
+    [Documentation]    *在AP模式下，选择WEP加密，密钥长度为64 bits，格式为ASCII时*
+    ...
+    ...    *密钥长度最大为5,超过5个字符无法输入*
+    验证WEP加密的长度    1    1    fdsafdsafdsafdfa    5
+
+Try
+    验证WEP加密提示信息    1    2    ${common_after_map_b}
+    \    //div[@id='content_layer']/div[3]/div[2]/div[8]/span
+    \    //div[@id='content_layer']/div[3]/div[2]/div[9]/span
+
+Wireless_PasswdWEPINFO_test_66
+    [Documentation]    *在AP模式下，选择WEP加密，密钥长度为64 bits，格式为ASCII时*
+    ...
+    ...    *页面有”（请输入任意5位ASCII字符：(A-Z，a-z，0-9)）“提示*
+    验证WEP加密提示信息    1    1    ${common_after_map_b}
+
+Wireless_PasswdWEPINFO_test_72
+    [Documentation]    *在AP模式下，选择WEP加密，密钥长度为64 bits，格式为HEX时*
+    ...
+    ...    *页面有”（请输入10位十六进制字符：(A-F，a-f，0-9)）“提示*
+    验证WEP加密提示信息    1    0    ${common_after_map_a}
+
+Wireless_PasswdWEPMaxLen_test_73
+    [Documentation]    *在AP模式下，选择WEP加密，密钥长度为64 bits，格式为HEX时*
+    ...
+    ...    *密钥长度最大为10，超过10个字符无法输入*
+    验证WEP加密的长度    1    0    1234567890123    10
+
+Wireless_PasswdWEP_test_74
+    [Documentation]    *在AP模式下，选择WEP加密，密钥长度为64 bits，格式为HEX时，密钥为空时*
+    ...
+    ...    *有”请输入10位十六进制字符：(A-F，a-f，0-9)“提示
+    ...    *
+    [Template]    验证WEP加密
+    1    0    ${EMPTY}    ${common_after_map_a}
+
+Wireless_PasswdWEP_test_75
+    [Documentation]    *在AP模式下，选择WEP加密，密钥长度为64 bits，格式为HEX时，输入低于10位字符的密钥*
+    ...
+    ...    *有”请输入10位十六进制字符：(A-F，a-f，0-9)“提示
+    ...    *
+    [Template]    验证WEP加密
+    1    0    123456789    ${common_after_map_a}
+
+Wireless_PasswdWEP_test_76
+    [Documentation]    *在AP模式下，选择WEP加密，密钥长度为64 bits，格式为HEX时*
+    ...
+    ...    *输入有字符中含有 '"\\和空格的密钥，提示“ 不能含有特殊字符 '"\\和空格”
+    ...    *
+    [Template]    验证WEP加密
+    1    0    \\123456789    ${common_string_hex_err}
+    1    0    123"456789    ${common_string_hex_err}
+    1    0    123456789'    ${common_string_hex_err}
+    1    0    123456 789    ${common_string_hex_err}
+    1    0    ${SPACE*10}    ${common_string_hex_err}
+
+Wireless_PasswdWEP_test_77
+    [Documentation]    *在AP模式下，选择WEP加密，密钥长度为64 bits，格式为HEX时*
+    ...    *输入含有不在十六进制范围中的字符时（例如中文、韩文）的密钥，有”请输入10位十六进制字符：(A-F，a-f，0-9)“提示*
+    [Template]    验证WEP加密
+    1    0    中文字符耶一二三四五    ${common_az09_string_err}
+    1    0    당신은날사당신은날사    ${common_az09_string_err}
+
+Wireless_PasswdWEPINFO_test_78
+    [Documentation]    *在AP模式下，选择WEP加密，密钥长度为128 bits，格式为ASCII时*
+    ...
+    ...    *页面有”（（请输入任意13位ASCII字符：(A-Z，a-z，0-9)）“提示
+    ...    *
+    验证WEP加密提示信息    2    1    ${common_after_map_d}
+
+Wireless_PasswdWEPMaxLen_test_79
+    [Documentation]    *在AP模式下，选择WEP加密，密钥长度为128 bits，格式为ASCII时，密钥长度最大为13*
+    ...
+    ...    *超过13个字符无法输入
+    ...    *
+    验证WEP加密的长度    2    1    1234567890123456    13
+
+Wireless_PasswdWEP_test_80
+    [Documentation]    *在AP模式下，选择WEP加密，密钥长度为128 bits，格式为ASCII时，密钥为空时*
+    ...
+    ...    *有”（请输入任意13位ASCII字符：(A-Z，a-z，0-9)）“提示
+    ...    *
+    [Template]    验证WEP加密
+    2    1    ${EMPTY}    ${common_after_map_d}
+
+Wireless_PasswdWEP_test_81
+    [Documentation]    *在AP模式下，选择WEP加密，密钥长度为128 bits，格式为ASCII时*
+    ...
+    ...    *输入低于10位字符的密钥，有”（请输入任意13位ASCII字符：(A-Z，a-z，0-9)）“提示
+    ...    *
+    [Template]    验证WEP加密
+    2    1    123456789012    ${common_after_map_d}
+
+Wireless_PasswdWEP_test_82
+    [Documentation]    *在AP模式下，选择WEP加密，密钥长度为128 bits，格式为ASCII时*
+    ...
+    ...    *输入有字符中含有 '"\和空格的密钥，提示“ 不能含有特殊字符 \ '"\和空格”
+    ...    *
+    [Template]    验证WEP加密
+    2    1    123456789012'    ${common_string_err}
+    2    1    123456789012"    ${common_string_err}
+    2    1    123456789012\\    ${common_string_err}
+    2    1    12345678 9012    ${common_string_err}
+    2    1    ${SPACE*13}    ${common_string_err}
+
+Wireless_PasswdWEP_test_83
+    [Documentation]    *在AP模式下，选择WEP加密，密钥长度为128 bits，格式为ASCII时*
+    ...
+    ...    *输入含有不在ascii码0~255范围中的字符时（例如中文、韩文）的密钥，有”（请输入任意13位ASCII字符：(A-Z，a-z，0-9)）“提示
+    ...    *
+    [Template]    验证WEP加密
+    2    1    你好你好你好你好你好你好你    ${common_string_null}
+    2    1    당신은날사당신은날사당신은    ${common_string_null}
+
+Wireless_PasswdWEPINFO_test_84
+    [Documentation]    *在AP模式下，选择WEP加密，密钥长度为128 bits，格式为HEX时*
+    ...
+    ...    *页面有”（请输入26位十六进制字符：(A-F，a-f，0-9)）“提示
+    ...    *
+    验证WEP加密提示信息    2    0    ${common_after_map_c}
+
+Wireless_PasswdWEP_test_85
+    [Documentation]    *在AP模式下，选择WEP加密，密钥长度为128 bits，格式为HEX时，密钥长度最大为26*
+    ...
+    ...    *超过26个字符无法输入
+    ...    *
+    验证WEP加密的长度    2    0    123456789012345678901234567890123456    26
+
+Wireless_PasswdWEP_test_86
+    [Documentation]    *在AP模式下，选择WEP加密，密钥长度为128 bits，格式为HEX时，密钥为空时*
+    ...
+    ...    *有”请输入26位十六进制字符：(A-F，a-f，0-9)“提示
+    ...    *
+    [Template]    验证WEP加密
+    2    0    ${EMPTY}    ${common_after_map_c}
+
+Wireless_PasswdWEP_test_87
+    [Documentation]    *在AP模式下，选择WEP加密，密钥长度为128 bits，格式为HEX时*
+    ...
+    ...    *输入低于26位字符的密钥，有”请输入26位十六进制字符：(A-F，a-f，0-9)“提示
+    ...    *
+    [Template]    验证WEP加密
+    2    0    12345678    ${common_after_map_c}
+
+Wireless_PasswdWEP_test_88
+    [Documentation]    *在AP模式下，选择WEP加密，密钥长度为128 bits，格式为HEX时*
+    ...
+    ...    *输入有字符中含有 '"\\和空格的密钥，提示“ 不能含有特殊字符 \ '"\\和空格”
+    ...    *
+    [Template]    验证WEP加密
+    2    0    1234567890123456789012345\\    ${common_string_hex_err}
+    2    0    1234567890123456789012345'    ${common_string_hex_err}
+    2    0    1234567890123456789012345"    ${common_string_hex_err}
+    2    0    12345678901234567890 12345    ${common_string_hex_err}
+    2    0    ${SPACE*26}    ${common_string_hex_err}
+
+*** Keywords ***
+验证无线状态开关
+    [Arguments]    ${enable}
+    run keyword if    '${enable}'=='1'    clickelement    wl_enable_on
+    run keyword if    '${enable}'=='0'    clickelement    wl_enable_off
+    Click Element    id=save_wl_base
+    sleep    10s
+    Wait Until Page Contains Element    save_wl_base
+
+验证无线制式标准
+    [Arguments]    ${radio_band}    ${channel_width}={None}
+    设置AP模式的无线基本参数    enable=1    radio_band=${radio_band}    channel_width=${channel_width}
+    sleep    5s
+    Wait Until Page Contains Element    save_wl_base
+
+验证无线SSID
+    [Arguments]    ${ssid}    ${message}
+    设置AP模式的无线基本参数    ssid=${ssid}
+    显示消息    ${message}
+
+验证区域设置
+    [Arguments]    ${region}=US    ${channel_width}=0    ${control_side}=${None}    @{channel_range}
+    clickElement    wl_enable_on
+    Select From List By Label    wl_stand    802.11b+g+n
+    Select From List By Label    region    ${region}
+    Run Keyword If    '${channel_width}'=='1'    Click Element    id=channel_width_40
+    Run Keyword If    '${channel_width}'=='0'    Click Element    id=channel_width_20
+    Run Keyword If    '${control_side}'=='0'    Click Element    id=channel_bind_down
+    Run Keyword If    '${control_side}'=='1'    Click Element    id=channel_bind_up
+    频道选择和验证    @{channel_range}
+
+频道选择和验证
+    [Arguments]    @{channel_range}
+    Select From List By Label    id=channel    Auto
+    List selection should be    id=channel    Auto
+    : FOR    ${i}    IN    @{channel_range}
+    \    Select From List By Label    id=channel    Channel ${i}
+    \    List selection should be    id=channel    Channel ${i}
+    click element    id=save_wl_base
+    sleep    5s
+    List selection should be    id=channel    Channel ${i}
+
+验证WEP加密
+    [Arguments]    ${key_size}    ${key_mode}    ${passwd}    ${message}
+    设置AP模式的无线基本参数    enable=1    auth_type=WEP    encryption_type_wep=${key_size}    key_mode_wep=${key_mode}    passwd_wep=${passwd}
+    显示消息    ${message}
+
+验证WEP加密的长度
+    [Arguments]    ${key_size}    ${key_mode}    ${passwd}    ${maxLen}
+    Select From List By Label    id=sec_mode    WEP
+    Run Keyword If    '${key_size}'=='1'    Click Element    id=key_size_64
+    Run Keyword If    '${key_size}'=='2'    Click Element    id=key_size_128
+    Run Keyword If    '${key_mode}'=='0'    Click Element    id=key_mode_wep_hex
+    Run Keyword If    '${key_mode} '=='1'    Click Element    id=key_mode_wep_asc
+    验证输入框最大输入长度    id=key_wep    ${passwd}    ${maxLen}
+
+验证WEP加密提示信息
+    [Arguments]    ${key_size}    ${key_mode}    ${string}
+    Select From List By Label    id=sec_mode    WEP
+    Run Keyword If    '${key_size}'=='1'    Click Element    id=key_size_64
+    Run Keyword If    '${key_size}'=='2'    Click Element    id=key_size_128
+    Run Keyword If    '${key_mode}'=='0'    Click Element    id=key_mode_wep_hex
+    Run Keyword If    '${key_mode} '=='1'    Click Element    id=key_mode_wep_asc
+    ${val1}    get text    //div[@id='content_layer']/div[3]/div[2]/div[8]/span
+    Should Be Equal    ${val1}    ${string}

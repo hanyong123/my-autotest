@@ -49,11 +49,11 @@ WPS_GetPin_test_5
 
 WPS_Status_test_1
     [Documentation]    *按钮状态显示为“启用”WPS时，WPS状态显示为“禁用”*
-    验证WPS状态和按键值    0    Enable WPS    Disable
+    验证WPS状态和按键值    0    ${common_wps_on}    ${common_off}
 
 WPS_Status_test_2
     [Documentation]    *按钮状态显示为“禁用”WPS时，WPS状态显示为“启用”*
-    验证WPS状态和按键值    1    Disable WPS    Enable
+    验证WPS状态和按键值    1    ${common_wps_off}    ${common_on}
 
 *** Keywords ***
 验证pin码

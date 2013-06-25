@@ -1,0 +1,17 @@
+*** Settings ***
+Suite Setup       Run Keywords    打开浏览器    AND    转到系统重启界面
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
+*** Test Cases ***
+SystemReboot_ManualReboot_test_14
+    Choose Ok On Next Confirmation
+    Click Element    id=reboot
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_reboot_tip}
+    等待系统重启完成
+
+*** Keywords ***
+转到系统重启界面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="reboot";$.load("reboot")

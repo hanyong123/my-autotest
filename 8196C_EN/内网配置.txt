@@ -4,6 +4,370 @@ Suite Teardown    关闭浏览器
 Resource          keyword.txt
 
 *** Test Cases ***
+LanConfig_MAC_test_1
+    [Documentation]    MAC配置输入框不能为空
+    验证LAN口MAC    ${EMPTY}    ${common_mac_addr_err}
+
+LanConfig_MAC_test_2
+    [Documentation]    MAC配置输入框超出17个字符后无法输入
+    验证LAN口MAC最大输入长度    00:1c:c0:a2:c3:87123    17
+
+LanConfig_MAC_test_3
+    [Documentation]    MAC配置输入框长度不满17个字符，提示格式错误
+    验证LAN口MAC    00:1c:c0:a2:c3:8    ${common_mac_addr_err}
+
+LanConfi_MAC_test_4
+    [Documentation]    MAC地址的分隔符不全为-时，提示格式错误
+    验证LAN口MAC    00-1c-c0-a2-c3:87    ${common_mac_addr_err}
+
+LanConfig_MAC_test_5
+    [Documentation]    MAC地址的分隔符不全为:时，提示格式错误
+    验证LAN口MAC    00:1c:c0:a2:c3-87    ${common_mac_addr_err}
+
+LanConfig_MAC_test_6
+    [Documentation]    MAC地址的分隔符个数不等于5，提示错误
+    [Template]    验证LAN口MAC
+    00:1c:c0:a2:c3    ${common_mac_addr_err}
+    00-1c-c0-a2-c3    ${common_mac_addr_err}
+    0:1:c:a:c:3:6:7:8    ${common_mac_addr_err}
+
+LanConfig_MAC_test_7
+    [Documentation]    MAC地址的内容超出00~FF的范围时，提示格式错误
+    [Template]    验证LAN口MAC
+    fg:1c:c0:a2:c3:87    ${common_mac_addr_err}
+    gf:1c:c0:a2:c3:87    ${common_mac_addr_err}
+    00:fg:c0:a2:c3:87    ${common_mac_addr_err}
+    00:1c:fg:a2:c3:87    ${common_mac_addr_err}
+    00:1c:c0:fg:c3:87    ${common_mac_addr_err}
+    00:1c:c0:a2:fg:87    ${common_mac_addr_err}
+    00:1c:c0:a2:c3:fg    ${common_mac_addr_err}
+
+LanConfig_MAC_test_8
+    [Documentation]    MAC地址中的内容有不属于｛0-9，A-F，a-f｝范围的，提示格式错误
+    [Template]    验证LAN口MAC
+    00:1c:c0:a2:c3:8'    ${common_mac_addr_err}
+    00:1c:c0:a2:c3:8"    ${common_mac_addr_err}
+    00:1c:c0:a2:c3:8//    ${common_mac_addr_err}
+    00:1c:c0:a2:c3:8\    ${common_mac_addr_err}
+    00:1c:c0:a2:c3: 7    ${common_mac_addr_err}
+    00:1c:c0:a2:c3:8‘    ${common_mac_addr_err}
+    00:1c:c0:a2:c3:8“    ${common_mac_addr_err}
+    00:1c:c0:a2:c3:8？    ${common_mac_addr_err}
+    g0:1c:c0:a2:c3:87    ${common_mac_addr_err}
+
+LanConfig_MAC_test_9
+    [Documentation]    MAC配置输入框以xx-xx-xx-xx-xx-xx格式输入MAC地址，xx不能为空
+    [Template]    验证LAN口MAC
+     :1c:c0:a2:c3:87    ${common_mac_addr_err}
+    00: :c0:a2:c3:87    ${common_mac_addr_err}
+    00:1c: :a2:c3:87    ${common_mac_addr_err}
+    00:1c:c0: \ :c3:87    ${common_mac_addr_err}
+    00:1c:c0:a2: \ :87    ${common_mac_addr_err}
+    00:1c:c0:a2:c3:    ${common_mac_addr_err}
+    -1c-c0-a2-c3-87    ${common_mac_addr_err}
+    00- \ -c0-a2-c3-87    ${common_mac_addr_err}
+    00-1c- \ \ -a2-c3-87    ${common_mac_addr_err}
+    00-1c-c0- \ \ -c3-87    ${common_mac_addr_err}
+    00-1c-c0-a2- \ \ -87    ${common_mac_addr_err}
+    00-1c-c0-a2-c3- \     ${common_mac_addr_err}
+
+LanConfig_MAC_test_10
+    [Documentation]    MAC配置输入框以xx-xx-xx-xx-xx-xx格式输入MAC地址，xx不能大于2字节
+    [Template]    验证LAN口MAC
+    001:c:c0:a2:c3:87    ${common_mac_addr_err}
+    00:1c0:0:a2:c3:87    ${common_mac_addr_err}
+    00:1c:00a:2:c3:87    ${common_mac_addr_err}
+    00:1c:00:a2c:3:87    ${common_mac_addr_err}
+    00:1c:00:a2:c38:8    ${common_mac_addr_err}
+    00:1c:00:a2:c:388    ${common_mac_addr_err}
+    001-c-c0-a2-c3-87    ${common_mac_addr_err}
+    00-1c0-0-a2-c3-87    ${common_mac_addr_err}
+    00-1c-00a-2-c3-87    ${common_mac_addr_err}
+    00-1c-00-a2c-3-87    ${common_mac_addr_err}
+    00-1c-00-a2-c38-8    ${common_mac_addr_err}
+    00-1c-00-a2-c-388    ${common_mac_addr_err}
+
+LanConfig_MAC_test_11
+    [Documentation]    MAC地址为全0时 00-00-00-00-00-00，提示格式错误
+    [Template]    验证LAN口MAC
+    00-00-00-00-00-00    ${common_mac_addr_err}
+    00:00:00:00:00:00    ${common_mac_addr_err}
+
+LanConfig_MAC_test_12
+    [Documentation]    MAC地址为全F时 FF-FF-FF-FF-FF-FF，提示格式错误
+    [Template]    验证LAN口MAC
+    ff:ff:ff:ff:ff:ff    ${common_mac_addr_err}
+    ff-ff-ff-ff-ff-ff    ${common_mac_addr_err}
+
+LanConfig_MAC_test_13
+    [Documentation]    MAC地址为组播地址时 xn-xx-xx-xx-xx-xx（n属于[1,3,5,7,9,B,D,F]），提示格式错误
+    [Template]    验证LAN口MAC
+    01:1c:c0:a2:c3:87    ${common_mac_addr_err}
+    03:1c:c0:a2:c3:87    ${common_mac_addr_err}
+    05:1c:c0:a2:c3:87    ${common_mac_addr_err}
+    07:1c:c0:a2:c3:87    ${common_mac_addr_err}
+    09:1c:c0:a2:c3:87    ${common_mac_addr_err}
+    0b:1c:c0:a2:c3:87    ${common_mac_addr_err}
+    0d:1c:c0:a2:c3:87    ${common_mac_addr_err}
+    0f:1c:c0:a2:c3:87    ${common_mac_addr_err}
+    01-1c-c0-a2-c3-87    ${common_mac_addr_err}
+    03-1c-c0-a2-c3-87    ${common_mac_addr_err}
+    05-1c-c0-a2-c3-87    ${common_mac_addr_err}
+    07-1c-c0-a2-c3-87    ${common_mac_addr_err}
+    09-1c-c0-a2-c3-87    ${common_mac_addr_err}
+    0B-1c-c0-a2-c3-87    ${common_mac_addr_err}
+    0D-1c-c0-a2-c3-87    ${common_mac_addr_err}
+    0F-1c-c0-a2-c3-87    ${common_mac_addr_err}
+
+LanConfig_MAC_test_14
+    [Documentation]    MAC地址符合格式规范，成功保存并生效
+    设置LAN口MAC    00:1c:c0:a2:c2:80
+    显示消息    common_unlock_save
+    Sleep    3
+    ${v}    Get Value    id=lan_mac
+    Should Be Equal    ${v}    00:1c:c0:a2:c3:80
+
+LanConfig_IP_test_16
+    [Documentation]    IP地址输入框超过15个字符后，无法输入
+    验证LAN口IP最大输入长度    192.168.111.1234567    15
+
+LanConfig_IP_test_17
+    [Documentation]    IP地址输入框：小数点>3，提示IP长度不正确
+    验证LAN口IP和MASK    192.168.1.1.1    255.255.255.0    ${common_ip_addr_err}
+
+LanConfig_IP_test_18
+    [Documentation]    IP地址输入框：小数点<3，提示IP长度不正确
+    验证LAN口IP和MASK    192.168.1    255.255.255.0    ${common_ip_addr_err}
+
+LanConfig_IP_test_19
+    [Documentation]    IP地址不能为空
+    验证LAN口IP和MASK    ${EMPTY}    255.255.255.0    ${common_ip_addr_err}
+
+LanConfig_IP_test_20
+    [Documentation]    IP地址输入框第一段IP值超出范围，提示只能在0~255之间
+    [Template]    验证LAN口IP和MASK
+    -1.168.1.1    255.255.255.0    ${common_ip_addr_err}
+    256.168.1.1    255.255.255.0    ${common_ip_addr_err}
+
+LanConfig_IP_test_21
+    [Documentation]    IP地址输入框第二段IP值超出范围，提示只能在0~255之间
+    [Template]    验证LAN口IP和MASK
+    192.-1.1.1    255.255.255.0    ${common_ip_addr_err}
+    192.256.1.1    255.255.255.0    ${common_ip_addr_err}
+
+LanConfig_IP_test_22
+    [Documentation]    IP地址输入框第三段IP值超出范围，提示只能在0~255之间
+    [Template]    验证LAN口IP和MASK
+    192.168.-1.1    255.255.255.0    ${common_ip_addr_err}
+    192.168.256.1    255.255.255.0    ${common_ip_addr_err}
+
+LanConfig_IP_test_23
+    [Documentation]    IP地址输入框第四段IP值超出范围，提示只能在0~255之间
+    [Template]    验证LAN口IP和MASK
+    192.168.1.-1    255.255.255.0    ${common_ip_addr_err}
+    192.168.1.256    255.255.255.0    ${common_ip_addr_err}
+
+LanConfig_IP_test_24
+    [Documentation]    IP地址输入框存在非法字符，提示发现n个非法字符
+    [Template]    验证LAN口IP和MASK
+    19*.168.1.1    255.255.255.0    ${common_ip_addr_err}
+    192.16#.1.1    255.255.255.0    ${common_ip_addr_err}
+    192.168.1'.1    255.255.255.0    ${common_ip_addr_err}
+    192.168.1.1"    255.255.255.0    ${common_ip_addr_err}
+    192.168.1.1\\    255.255.255.0    ${common_ip_addr_err}
+    192.168.1.1/    255.255.255.0    ${common_ip_addr_err}
+    192.168.1.1?    255.255.255.0    ${common_ip_addr_err}
+    192.168.1’.1    255.255.255.0    ${common_ip_addr_err}
+    192.168.1.1”    255.255.255.0    ${common_ip_addr_err}
+    192.168.1.1、    255.255.255.0    ${common_ip_addr_err}
+    192.168.1.1：    255.255.255.0    ${common_ip_addr_err}
+
+LanConfig_IP_test_25
+    [Documentation]    IP地址第一段、第二段、第三段、第四段均不能为空
+    [Template]    验证LAN口IP和MASK
+    168.1.1    255.255.255.0    ${common_ip_addr_err}
+    192. .1.1    255.255.255.0    ${common_ip_addr_err}
+    192.168. .1    255.255.255.0    ${common_ip_addr_err}
+    192.168.1.    255.255.255.0    ${common_ip_addr_err}
+
+LanConfig_IP_test_26
+    [Documentation]    IP地址输入0.0.0.0，提示IP不能为全0
+    验证LAN口IP和MASK    0.0.0.0    255.255.255.0    ${common_ip_addr_err}
+
+LanConfig_IP_test_27
+    [Documentation]    IP地址不为组播地址：223 < n1 < 255
+    [Template]    验证LAN口IP和MASK
+    224.168.1.1    255.255.255.0    ${common_ip_addr_err}
+    228.168.1.1    255.255.255.0    ${common_ip_addr_err}
+    230.168.1.1    255.255.255.0    ${common_ip_addr_err}
+    233.168.1.1    255.255.255.0    ${common_ip_addr_err}
+    240.168.1.1    255.255.255.0    ${common_ip_addr_err}
+    250.168.1.1    255.255.255.0    ${common_ip_addr_err}
+    254.168.1.1    255.255.255.0    ${common_ip_addr_err}
+    255.168.1.1    255.255.255.0    ${common_ip_addr_err}
+
+LanConfig_IP_test_28
+    [Documentation]    IP地址不为回环地址：n1 = 127
+    验证LAN口IP和MASK    127.168.1.1    255.255.255.0    ${common_ip_addr_err}
+
+LanConfig_IP_test_29
+    [Documentation]    IP地址不为保留地址：n1=0
+    验证LAN口IP和MASK    0.168.1.1    255.255.255.0    ${common_ip_addr_err}
+
+LanConfig_IP_test_30
+    [Documentation]    IP地址不能等于网段地址；IP地址和子网掩码做与运算，得出网段地址
+    [Template]    验证LAN口IP和MASK
+    192.168.1.0    255.255.255.0    ${common_segment_err}
+    192.168.0.0    255.255.0.0    ${common_segment_err}
+    10.0.0.0    255.0.0.0    ${common_segment_err}
+    100.100.0.0    255.255.0.0    ${common_segment_err}
+    192.168.1.128    255.255.255.128    ${common_segment_err}
+    192.168.1.192    255.255.255.192    ${common_segment_err}
+    192.168.224.0    255.255.224.0    ${common_segment_err}
+    192.168.248.0    255.255.248.0    ${common_segment_err}
+    192.254.0.0    255.254.0.0    ${common_segment_err}
+    192.252.0.0    255.252.0.0    ${common_segment_err}
+
+LanConfig_IP_test_31
+    [Documentation]    IP地址不能等于广播地址；IP地址和子网掩码做与运算，得出网段地址，由下一个网段地址减1得出本网段地址
+    [Template]    验证LAN口IP和MASK
+    192.168.1.255    255.255.255.0    ${common_Bcast_err}
+    192.168.255.255    255.255.0.0    ${common_Bcast_err}
+    192.255.255.255    255.0.0.0    ${common_Bcast_err}
+    10.255.255.255    255.0.0.0    ${common_Bcast_err}
+    192.168.1.127    255.255.255.128    ${common_Bcast_err}
+    192.168.1.191    255.255.255.192    ${common_Bcast_err}
+    192.168.223.255    255.255.224.0    ${common_Bcast_err}
+    192.168.247.255    255.255.248.0    ${common_Bcast_err}
+    192.253.255.255    255.254.0.0    ${common_Bcast_err}
+    192.251.255.255    255.252.0.0    ${common_Bcast_err}
+
+LanConfig_MASK_test_32
+    [Documentation]    子网掩码输入框超过15个字符后，无法输入
+    验证LAN口MASK最大输入长度    255.255.255.2566666666    15
+
+LanConfig_MASK_test_33
+    [Documentation]    子网掩码输入框：小数点>3，提示IP长度不正确
+    验证LAN口IP和MASK    192.168.1.1    255.255.255.0.0    ${common_mask_err}
+    验证LAN口IP和MASK    192.168.1.1    255.255.128.0.0    ${common_mask_err}
+
+LanConfig_MASK_test_34
+    [Documentation]    子网掩码输入框：小数点<3，提示IP长度不正确
+    验证LAN口IP和MASK    192.168.1.1    255.255.255    ${common_mask_err}
+    验证LAN口IP和MASK    192.168.1.1    255.128.0    ${common_mask_err}
+
+LanConfig_MASK_test_35
+    [Documentation]    子网掩码不能为空
+    验证LAN口IP和MASK    192.168.1.1    ${EMPTY}    ${common_mask_err}
+
+LanConfig_MASK_test_36
+    [Documentation]    子网掩码输入框第一段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
+    [Template]    验证LAN口IP和MASK
+    192.168.1.1    10.0.0.0    ${common_mask_err}
+    192.168.1.1    50.0.0.0    ${common_mask_err}
+    192.168.1.1    100.0.0.0    ${common_mask_err}
+    192.168.1.1    127.0.0.0    ${common_mask_err}
+    192.168.1.1    129.0.0.0    ${common_mask_err}
+    192.168.1.1    193.0.0.0    ${common_mask_err}
+    192.168.1.1    223.0.0.0    ${common_mask_err}
+    192.168.1.1    251.0.0.0    ${common_mask_err}
+
+LanConfig_MASK_test_37
+    [Documentation]    子网掩码输入框第二段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
+    [Template]    验证LAN口IP和MASK
+    192.168.1.1    255.100.0.0    ${common_mask_err}
+    192.168.1.1    255.191.0.0    ${common_mask_err}
+    192.168.1.1    255.249.0.0    ${common_mask_err}
+    192.168.1.1    255.133.0.0    ${common_mask_err}
+    192.168.1.1    255.280.0.0    ${common_mask_err}
+
+LanConfig_MASK_test_38
+    [Documentation]    子网掩码输入框第三段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
+    [Template]    验证LAN口IP和MASK
+    192.168.1.1    255.255.101.0    ${common_mask_err}
+    192.168.1.1    255.255.193.0    ${common_mask_err}
+    192.168.1.1    255.255.247.0    ${common_mask_err}
+    192.168.1.1    255.255.132.0    ${common_mask_err}
+    192.168.1.1    255.255.281.0    ${common_mask_err}
+
+LanConfig_MASK_test_39
+    [Documentation]    子网掩码输入框第四段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
+    [Template]    验证LAN口IP和MASK
+    192.168.1.1    255.255.255.99    ${common_mask_err}
+    192.168.1.1    255.255.255.100    ${common_mask_err}
+    192.168.1.1    255.255.255.200    ${common_mask_err}
+    192.168.1.1    255.255.255.111    ${common_mask_err}
+    192.168.1.1    255.255.255.199    ${common_mask_err}
+
+LanConfig_MASK_test_40
+    [Documentation]    子网掩码输入框存在非法字符，提示发现n个非法字符
+    [Template]    验证LAN口IP和MASK
+    192.168.1.1    255.255.255.*    ${common_mask_err}
+    192.168.1.1    25&.255.255.0    ${common_mask_err}
+    192.168.1.1    255.25#.255.0    ${common_mask_err}
+    192.168.1.1    255.255.25@.0    ${common_mask_err}
+    192.168.1.1    255.255.255.0'    ${common_mask_err}
+    192.168.1.1    255.255.255.0"    ${common_mask_err}
+    192.168.1.1    255.255.25\\.0    ${common_mask_err}
+    192.168.1.1    255.255.25/.0    ${common_mask_err}
+    192.168.1.1    255.255.25‘.0    ${common_mask_err}
+    192.168.1.1    255.255.255.0“    ${common_mask_err}
+    192.168.1.1    255.255.255.0、    ${common_mask_err}
+
+LanConfig_MASK_test_41
+    [Documentation]    子网掩码第一段、第二段、第三段、第四段均不能为空
+    [Template]    验证LAN口IP和MASK
+    192.168.1.1    .255.255.0    ${common_mask_err}
+    192.168.1.1    255. 255.0    ${common_mask_err}
+    192.168.1.1    255.255. .0    ${common_mask_err}
+    192.168.1.1    255.255.255.    ${common_mask_err}
+
+LanConfig_MASK_test_42
+    [Documentation]    子网掩码输入0.0.0.0，255.255.255.255，提示子网掩码不合法
+    [Template]    验证LAN口IP和MASK
+    192.168.1.1    0.0.0.0    ${common_mask_err}
+    192.168.1.1    255.255.255.255    ${common_mask_err}
+
+LanConfig_MASK_test_43
+    [Documentation]    子网掩码地址第四段不等于0或255时，第一段、第二段、第三段均等于255
+    [Template]    验证LAN口IP和MASK
+    192.168.1.1    255.255.252.128    ${common_mask_err}
+    192.168.1.1    255.252.255.192    ${common_mask_err}
+    192.168.1.1    254.252.128.224    ${common_mask_err}
+    192.168.1.1    254.255.255.240    ${common_mask_err}
+
+LanConfig_MASK_test_44
+    [Documentation]    子网掩码地址第三段不等于0或255时，第一段、第二段均等于255，第四段等于0
+    [Template]    验证LAN口IP和MASK
+    192.168.1.1    255.252.128.0    ${common_mask_err}
+    192.168.1.1    192.254.192.0    ${common_mask_err}
+    192.168.1.1    255.128.224.0    ${common_mask_err}
+    192.168.1.1    255.248.240.0    ${common_mask_err}
+
+LanConfig_MASK_test_45
+    [Documentation]    子网掩码地址第二段不等于0或255时，第一段等于255，第三段等于第四段等于0
+    [Template]    验证LAN口IP和MASK
+    192.168.1.1    254.252.0.0    ${common_mask_err}
+    192.168.1.1    252.128.0.0    ${common_mask_err}
+    192.168.1.1    248.192.0.0    ${common_mask_err}
+    192.168.1.1    192.224.0.0    ${common_mask_err}
+
+LanConfig_MASK_test_46
+    [Documentation]    子网掩码第一段不等于0或255时，第一段、第二段、第三段均等于0
+    [Template]    验证LAN口IP和MASK
+    192.168.1.1    254.252.0.128    ${common_mask_err}
+    192.168.1.1    252.192.128.0    ${common_mask_err}
+    192.168.1.1    248.224.192.0    ${common_mask_err}
+    192.168.1.1    192.224.248.240    ${common_mask_err}
+
+LanConfig_IPMASK_test_47
+    [Documentation]    输入正确的LAN口IP，正确的LAN口子网掩码，点击“保存生效”按钮，保存生效并重启成功。
+    [Template]    验证IP和MASK是否保存成功
+    10.0.0.4    255.0.0.0
+    192.168.1.5    255.255.255.128
+    192.168.1.8    255.255.240.0
+    129.43.1.8    255.224.0.0
+    192.168.1.1    255.255.255.0
 
 *** Keywords ***
 验证路由器LAN口IP和MASK
@@ -27,3 +391,27 @@ Resource          keyword.txt
 验证LAN口MAC最大输入长度
     [Arguments]    ${mac}    ${max_len}
     验证输入框最大输入长度    id=lan_mac    ${mac}    ${max_len}
+
+验证LAN口IP和MASK
+    [Arguments]    ${ip}    ${mac}    ${message}
+    设置LAN口IP和MASK    ${ip}    ${mac}
+    显示消息    ${message}
+
+验证IP和MASK是否保存成功
+    [Arguments]    ${ip}    ${mask}
+    Choose Ok On Next Confirmation
+    设置LAN口IP和MASK    ${ip}    ${mask}
+    提示重启路由器
+    Open Browser    http://${login_user}:${login_passwd}@${ip}/index.htm    ${browser}
+    Sleep    5
+    转到内网配置页面
+    ${ipVal}    Get Value    id=lan_ip
+    Should Be Equal    ${ipVal}    ${ip}
+    ${maskVal}    Get Value    id=lan_mask
+    Should Be Equal    ${maskVal}    ${mask}
+
+提示重启路由器
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_reboot_tip}
+    Sleep    40s
+    关闭浏览器
