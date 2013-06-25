@@ -1,0 +1,304 @@
+*** Settings ***
+Suite Setup       Run Keywords    打开浏览器    AND    转到系统时间管理页面
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+Library           String
+
+*** Test Cases ***
+SysTimeManger_ManualSet_Year_test_1
+    [Documentation]    年：输入框不能为空
+    验证手动设置时间    ${common_year_err}    year=${EMPTY}
+
+SysTimeManger_ManualSet_Year_test_2
+    [Documentation]    年：输入超过4个字符后，无法输入
+    验证年输入框最大输入长度    20135666666666666    4
+
+SysTimeManger_ManualSet_Year_test_3
+    [Documentation]    年：超出2008~2035的范围
+    [Template]    验证手动设置时间
+    ${common_year_err}    year=2007
+    ${common_year_err}    year=2036
+
+SysTimeManger_ManualSet_Year_test_4
+    [Documentation]    年：只能为正整数
+    [Template]    验证手动设置时间
+    ${common_year_err}    year=1.1
+    ${common_year_err}    year=-1
+    ${common_year_err}    year=a
+    ${common_year_err}    year=.
+    ${common_year_err}    year=‘
+    ${common_year_err}    year=“
+    ${common_year_err}    year=&
+    ${common_year_err}    year='
+    ${common_year_err}    year="
+    ${common_year_err}    year=\\
+    ${common_year_err}    year=203、
+
+SysTimeManger_ManualSet_Month_test_5
+    [Documentation]    月：输入框不能为空
+    验证手动设置时间    ${common_mon_err}    month=${EMPTY}
+
+SysTimeManger_ManualSet_Month_test_6
+    [Documentation]    月：输入超过2个字符后，无法输入
+    验证月输入框最大长度    1243435    2
+
+SysTimeManger_ManualSet_Month_test_7
+    [Documentation]    月：超出1~12的范围
+    [Template]    验证手动设置时间
+    ${common_mon_err}    month=0
+    ${common_mon_err}    month=13
+
+SysTimeManger_ManualSet_Month_test_8
+    [Documentation]    月：只能为正整数
+    [Template]    验证手动设置时间
+    ${common_mon_err}    month=1.1
+    ${common_mon_err}    month=-1
+    ${common_mon_err}    month=a
+    ${common_mon_err}    month=我
+    ${common_mon_err}    month='
+    ${common_mon_err}    month="
+    ${common_mon_err}    month=、
+    ${common_mon_err}    month=$
+    ${common_mon_err}    month=.1
+    ${common_mon_err}    month=^
+
+SysTimeManger_ManualSet_Day_test_9
+    [Documentation]    日：输入框不能为空
+    验证手动设置时间    ${common_int_number_err}    day=${EMPTY}
+
+SysTimeManger_ManualSet_Day_test_10
+    [Documentation]    日：输入超过2个字符后，无法输入
+    验证日输入框最大长度    207877    2
+
+SysTimeManger_ManualSet_Day_test_11
+    [Documentation]    日：当“月”为｛1,3,5,7,8,10,12｝时，超出1~31的范围
+    [Template]    验证手动设置时间
+    ${common_day31_err}    month=1    day=0
+    ${common_day31_err}    month=1    day=32
+    ${common_day31_err}    month=3    day=0
+    ${common_day31_err}    month=3    day=32
+    ${common_day31_err}    month=5    day=0
+    ${common_day31_err}    month=5    day=32
+    ${common_day31_err}    month=7    day=0
+    ${common_day31_err}    month=7    day=32
+    ${common_day31_err}    month=8    day=0
+    ${common_day31_err}    month=8    day=32
+    ${common_day31_err}    month=10    day=0
+    ${common_day31_err}    month=10    day=32
+    ${common_day31_err}    month=12    day=0
+    ${common_day31_err}    month=12    day=32
+
+SysTimeManger_ManualSet_Day_test_12
+    [Documentation]    日：只能为正整数
+    [Template]    验证手动设置时间
+    ${common_int_number_err}    day=.1
+    ${common_int_number_err}    day=\'
+    ${common_int_number_err}    day=\"
+    ${common_int_number_err}    day=\\
+    ${common_int_number_err}    day=@
+    ${common_int_number_err}    day=%
+    ${common_int_number_err}    day=\“
+    ${common_int_number_err}    day= 1
+
+SysTimeManger_ManualSet_Day_test_13
+    [Documentation]    日：当“月”为｛｛4,6,9,11｝时，超出1~30的范围
+    [Template]    验证手动设置时间
+    ${common_day30_err}    month=4    day=0
+    ${common_day30_err}    month=4    day=31
+    ${common_day30_err}    month=6    day=0
+    ${common_day30_err}    month=6    day=31
+    ${common_day30_err}    month=9    day=0
+    ${common_day30_err}    month=9    day=31
+    ${common_day30_err}    month=11    day=0
+    ${common_day30_err}    month=11    day=31
+
+SysTimeManger_ManualSet_Day_test_14
+    [Documentation]    日：当“年”不为“闰年”时，2月超出1~28的范围
+    [Template]    验证手动设置时间
+    ${common_day28_err}    year=2009    month=2    day=0
+    ${common_day28_err}    year=2009    month=2    day=29
+    ${common_day28_err}    year=2011    month=2    day=0
+    ${common_day28_err}    year=2011    month=2    day=29
+    ${common_day28_err}    year=2013    month=2    day=0
+    ${common_day28_err}    year=2013    month=2    day=29
+    ${common_day28_err}    year=2021    month=2    day=0
+    ${common_day28_err}    year=2021    month=2    day=29
+
+SysTimeManger_ManualSet_Day_test_15
+    [Documentation]    日：当“年”为“闰年”时，2月超出1~29的范围
+    [Template]    验证手动设置时间
+    ${common_day29_err}    year=2008    month=2    day=0
+    ${common_day29_err}    year=2008    month=2    day=30
+    ${common_day29_err}    year=2012    month=2    day=0
+    ${common_day29_err}    year=2012    month=2    day=30
+    ${common_day29_err}    year=2016    month=2    day=0
+    ${common_day29_err}    year=2016    month=2    day=30
+    ${common_day29_err}    year=2020    month=2    day=0
+    ${common_day29_err}    year=2020    month=2    day=30
+
+SysTimeManger_ManualSet_Sec_test_16
+    [Documentation]    秒：超出0~59的范围
+    [Template]    验证手动设置时间
+    ${common_min_sec_err}    minute=-1
+    ${common_min_sec_err}    minute=60
+
+SysTimeManger_ManualSet_Sec_test_17
+    [Documentation]    秒：输入超过2个字符后，无法输入
+    验证秒输入框最大长度    34454    2
+
+SysTimeManger_ManualSet_Sec_test_18
+    [Documentation]    秒：只能为正整数
+    [Template]    验证手动设置时间
+    ${common_min_sec_err}    minute=1。
+    ${common_min_sec_err}    minute=-1
+    ${common_min_sec_err}    minute=a
+    ${common_min_sec_err}    minute=我
+    ${common_min_sec_err}    minute=\'
+    ${common_min_sec_err}    minute=\"
+    ${common_min_sec_err}    minute=;
+    ${common_min_sec_err}    minute=$
+    ${common_min_sec_err}    minute=\‘
+    ${common_min_sec_err}    minute=\”
+    ${common_min_sec_err}    minute=\、
+
+SysTimeManger_ManualSet_Sec_test_19
+    [Documentation]    秒：输入框不能为空
+    验证手动设置时间    ${common_min_sec_err}    minute=${EMPTY}
+
+SysTimeManger_ManualSet_Min_test_20
+    [Documentation]    分：只能为正整数
+    [Template]    验证手动设置时间
+    ${common_min_sec_err}    second=我
+    ${common_min_sec_err}    second=\“
+    ${common_min_sec_err}    second=1.
+    ${common_min_sec_err}    second=-1
+    ${common_min_sec_err}    second=a
+    ${common_min_sec_err}    second=\’
+    ${common_min_sec_err}    second=\、
+    ${common_min_sec_err}    second=&
+    ${common_min_sec_err}    second=\'
+    ${common_min_sec_err}    second=\"
+
+SysTimeManger_ManualSet_Min_test_21
+    [Documentation]    分：超出0~59的范围
+    [Template]    验证手动设置时间
+    ${common_min_sec_err}    second=-1
+    ${common_min_sec_err}    second=60
+
+SysTimeManger_ManualSet_Min_test_22
+    [Documentation]    分：输入超过2个字符后，无法输入
+    验证分输入框最大长度    43444    2
+
+SysTimeManger_ManualSet_Min_test_23
+    [Documentation]    分：输入框不能为空
+    验证手动设置时间    ${common_min_sec_err}    second=${EMPTY}
+
+SysTimeManger_ManualSet_Hour_test_24
+    [Documentation]    时：只能为正整数
+    [Template]    验证手动设置时间
+    ${common_hour_err}    hour=我
+    ${common_hour_err}    hour=\"
+    ${common_hour_err}    hour=1.
+    ${common_hour_err}    hour=-1
+    ${common_hour_err}    hour=a
+    ${common_hour_err}    hour=\'
+    ${common_hour_err}    hour=\"
+    ${common_hour_err}    hour=\、
+    ${common_hour_err}    hour=#
+    ${common_hour_err}    hour=\”
+    ${common_hour_err}    hour=\’
+
+SysTimeManger_ManualSet_Hour_test_25
+    [Documentation]    时：超出0~23的范围
+    [Template]    验证手动设置时间
+    ${common_hour_err}    hour=-1
+    ${common_hour_err}    hour=24
+
+SysTimeManger_ManualSet_Hour_test_26
+    [Documentation]    时：输入超过2个字符后，无法输入
+    验证时输入框最大长度    1243444    2
+
+SysTimeManger_ManualSet_Hour_test_27
+    [Documentation]    时：输入框不能为空
+    验证手动设置时间    ${common_hour_err}    hour=${EMPTY}
+
+SysTimeManger_ManualSet_Save_test_28
+    [Documentation]    输入正确的日期和时间，保存生效
+    ${Time}    验证手动设置时间    ${common_unlock_save}    month=02
+    验证手动设置时间是否保存成功    month=02
+    ${Time}    验证手动设置时间    ${common_unlock_save}    month=11
+    验证手动设置时间是否保存成功    month=11
+
+SysTimeManger_ManualSet_Refresh_test_32
+    [Documentation]    每隔4秒，日期、时间自动刷新
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="sys_time";$.load("sys_time")
+    ${showTime1}    get Text    xpath=//span[@class="df_context"]
+    ${sec1}    Get Substring    ${showTime1}    -2
+    Sleep    4
+    ${showTime2}    get Text    xpath=//span[@class="df_context"]
+    ${sec2}    Get Substring    ${showTime2}    -2
+    Should Not Be Equal    ${sec1}    ${sec2}
+
+SysTimeManger_ManualSet_Refresh_test_33
+    [Documentation]    点击“刷新”按钮，日期、时间更新
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="sys_time";$.load("sys_time")
+    ${showTime1}    get Text    xpath=//span[@class="df_context"]
+    ${sec1}    Get Substring    ${showTime1}    -2
+    Click Element    id=refresh_sys_time
+    ${showTime2}    get Text    xpath=//span[@class="df_context"]
+    ${sec2}    Get Substring    ${showTime2}    -2
+    Should Not Be Equal    ${sec1}    ${sec2}
+
+*** Keywords ***
+验证手动设置时间
+    [Arguments]    ${message}    ${year}=2013    ${month}=11    ${day}=20    ${hour}=10    ${second}=40
+    ...    ${minute}=20
+    手动设置系统时间    ${year}    ${month}    ${day}    ${hour}    ${second}    ${minute}
+    显示消息    ${message}
+
+转到系统时间管理页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="sys_time";$.load("sys_time")
+    Click Element    id=time_type_hand
+
+手动设置系统时间
+    [Arguments]    ${year}=2013    ${month}=11    ${day}=20    ${hour}=10    ${second}=40    ${minute}=20
+    Input Text    id=time_date    ${year}
+    Input Text    id=time_date2    ${month}
+    Input Text    id=time_date3    ${day}
+    Input Text    id=time_time    ${hour}
+    Input Text    id=time_time2    ${second}
+    Input Text    id=time_time3    ${minute}
+    Click Element    id=save_sys_time
+
+验证年输入框最大输入长度
+    [Arguments]    ${year}    ${max_len}
+    验证输入框最大输入长度    id=time_date    ${year}    ${max_len}
+
+验证月输入框最大长度
+    [Arguments]    ${month}    ${max_len}
+    验证输入框最大输入长度    id=time_date2    ${month}    ${max_len}
+
+验证日输入框最大长度
+    [Arguments]    ${day}    ${max_len}
+    验证输入框最大输入长度    id=time_date3    ${day}    ${max_len}
+
+验证时输入框最大长度
+    [Arguments]    ${hour}    ${max_len}
+    验证输入框最大输入长度    id=time_time    ${hour}    ${max_len}
+
+验证分输入框最大长度
+    [Arguments]    ${min}    ${max_len}
+    验证输入框最大输入长度    id=time_time2    ${min}    ${max_len}
+
+验证秒输入框最大长度
+    [Arguments]    ${sec}    ${max_len}
+    验证输入框最大输入长度    id=time_time3    ${sec}    ${max_len}
+
+验证手动设置时间是否保存成功
+    [Arguments]    ${month}=11    ${day}=20    ${hour}=10    ${second}=40    ${minute}=20    ${year}=2013
+    ${nowtime}    get Text    xpath=//span[@class="df_context"]
+    ${nowMonth}    Get Substring    ${nowtime}    0    2
+    Should Be Equal    ${nowMonth}    ${month}

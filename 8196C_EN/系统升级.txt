@@ -1,0 +1,62 @@
+*** Settings ***
+Suite Setup       Run Keywords    打开浏览器    AND    转到系统升级页面
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+Library           OperatingSystem
+
+*** Test Cases ***
+SysUpdate_NomalFile_test_1
+    [Documentation]    选择正确系统升级文件进行系统升级，跳转到重启倒计时页面，倒计时完成后自动跳转至WEB默认页面
+    升级成功    nomal.bin
+
+SysUpdate_BiggerFile_test_2
+    [Documentation]    选择内容超大（1G）的系统升级文件，不能进行系统升级，并提示
+    升级不成功    bigger.bin
+
+SysUpdate_EmptyFile_test_3
+    [Documentation]    选择一个升级文件，该文件内容为空，不能进行系统升级，并提示
+    升级不成功	    empty.bin
+
+SysUpdate_OtherFile_test_4
+    [Documentation]    不是由该设备导出的系统升级文件格式，不能进行系统升级，并提示
+    升级不成功	    other.uuid
+
+SysUpdate_NotChooseFile_test_5
+    [Documentation]    未选择系统升级文件时，不能进行系统升级，并提示
+    Click Element    id=update_set
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_update_err}
+
+SysUpdate_NewerFile_test_6
+    [Documentation]    能够成功的从“上一版本”升级到“当前版本”
+    升级成功    older.bin
+    升级成功    nomal.bin
+
+SysUpdate_OlderFile_test_7
+    [Documentation]    能够成功的从“当前版本”升级到“上一版本”
+    升级成功    nomal.bin
+    升级成功    older.bin
+
+*** Keywords ***
+转到系统升级页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="update";$.load("update")
+
+升级不成功
+    [Arguments]    ${path}
+    Execute Javascript    document.getElementById('updata_file').disabled=false
+    Choose File    name=text_common    ${CURDIR}\\${path}
+    Execute Javascript    document.getElementById('updata_file').disabled=true
+    Click Element    id=update_set
+    Sleep    5
+    Page Should Contain Element    id=lock_bg
+
+升级成功
+    [Arguments]    ${path}
+    Execute Javascript    document.getElementById('updata_file').disabled=false
+    Choose File    name=text_common    ${CURDIR}\\${path}
+    Execute Javascript    document.getElementById('updata_file').disabled=true
+    Click Element    id=update_set
+    Sleep    40
+    Page Should Not Contain Element    id=menu_layer
+    Wait Until Keyword Succeeds    15    5    Page Should Contain Element    id=menu_layer
