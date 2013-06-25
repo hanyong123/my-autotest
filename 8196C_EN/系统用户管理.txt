@@ -35,7 +35,6 @@ UserManager_oldPwd_test_7
     使旧密码框可以输入
     设置旧密码新用户名新密码    ${common_password_err}    netcore    netcore    netcore    netcore
     关闭浏览器
-    Comment     Choose Cancel On Next Confirmation
     Comment    Open Browser    http://netcore:netcore@192.168.1.1/index.htm    ${browser}
     Comment    ${sta}    Run Keyword And Return Status    Wait Until Page Contains Element    id=p_menu_status    10
     Comment    ${statStr}    Convert To String    ${sta}
@@ -117,7 +116,7 @@ UserManager_ConfirmPwd_test_21
 
 UserManager_ConfirmPwd_test_22
     [Documentation]    确认密码：和新密码不同，提示两次输入密码不同
-    设置旧密码新用户名新密码    ${common_password_err}     guest    jishan    guest    jishan
+    设置旧密码新用户名新密码    ${common_password_err}    guest    jishan    guest    jishan
 
 UserManager_ConfirmPwd_test_23
     [Documentation]    确认密码框：内容隐藏显示

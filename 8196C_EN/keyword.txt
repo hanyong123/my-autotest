@@ -158,7 +158,7 @@ Library           String
 
 设置DHCP服务器保留地址
     [Arguments]    ${des}    ${ip}    ${mac}
-    Input Text    id=descrip    ${des}
+    Input Text    id=reserve_des    ${des}
     Input Text    id=reserve_ip    ${ip}
     Input Text    id=reserve_mac    ${mac}
     Click Button    id=add_reservation
