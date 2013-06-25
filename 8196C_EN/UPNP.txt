@@ -1,1 +1,40 @@
+*** Settings ***
+Suite Setup       Run Keywords    打开浏览器    AND    转到UPNP设置页面
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
 *** Test Cases ***
+UPNP_test_1
+    [Documentation]    enable设置成功
+    设置UPNP参数    enable=0
+    Sleep    20
+    设置UPNP参数
+    显示消息    ${common_unlock_save}
+    Sleep    5
+    验证enable按钮生效
+    Sleep    5
+    验证disable按钮失效
+
+UPNP_test_2
+    [Documentation]    disable设置成功
+    设置UPNP参数
+    Sleep    20
+    设置UPNP参数    enable=0
+    显示消息    ${common_unlock_save}
+    Sleep    5
+    验证disable按钮生效
+    Sleep    5
+    验证enable按钮失效
+
+*** Keywords ***
+验证enable按钮生效
+    Checkbox Should Be Selected    id=upnp_enable_on
+
+验证disable按钮生效
+    Checkbox Should Be Selected    id=upnp_enable_off
+
+验证enable按钮失效
+    Checkbox Should Not Be Selected    id=upnp_enable_on
+
+验证disable按钮失效
+    Checkbox Should Not Be Selected    id=upnp_enable_off

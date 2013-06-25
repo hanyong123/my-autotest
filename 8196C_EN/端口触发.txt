@@ -357,7 +357,7 @@ PortTri_DelItem_test_33
     \    设置端口触发参数    ${None}    ${i}    TCP    ${i}    ${EMPTY}
     \    ...    TCP    ${i}    ${EMPTY}
     \    run keyword if    '${i}'=='${${item_num}+1}'    显示消息    ${common_item_err}
-    \    run keyword if    '${i}'=='${${item_num}+2}'    Exit For Loop	\	\
+    \    run keyword if    '${i}'=='${${item_num}+2}'    Exit For Loop    \    ${EMPTY}
     \    run keyword if    '${i}'!='${${item_num}+1}'    显示消息    ${common_unlock_save}
     \    sleep    2s
 

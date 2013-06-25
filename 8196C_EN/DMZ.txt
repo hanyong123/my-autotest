@@ -1,1 +1,127 @@
+*** Settings ***
+Suite Setup       Run Keywords    打开浏览器    AND    转到DMZ设置页面
+Suite Teardown    关闭浏览器
+Test Setup        等待时间
+Resource          keyword.txt
+
 *** Test Cases ***
+DMZ_IP_test_1
+    [Documentation]    主机IP地址输入框超过15个字符后，无法输入
+    [Template]
+    Click Element    id=dmz_enable_on
+    验证IP最大输入长度    1234567890123456    15
+
+DMZ_IP_test_2
+    [Documentation]    主机IP地址输入框：小数点>3，提示IP长度不正确
+    [Template]    验证DMZ主机IP地址
+    10.0.0.1.    ${common_ip_addr_err}
+
+DMZ_IP_test_3
+    [Documentation]    主机IP地址输入框：小数点<3，提示IP长度不正确
+    [Template]    验证DMZ主机IP地址
+    10.0.01    ${common_ip_addr_err}
+
+DMZ_IP_test_4
+    [Documentation]    主机IP地址不能为空
+    [Template]    验证DMZ主机IP地址
+    ${EMPTY}    ${common_ip_addr_err}
+
+DMZ_IP_test_5
+    [Documentation]    主机IP地址输入框第一段IP值超出范围，提示只能在0~255之间
+    [Template]    验证DMZ主机IP地址
+    -1.0.0.2    ${common_ip_addr_err}
+    256.0.0.1    ${common_ip_addr_err}
+
+DMZ_IP_test_6
+    [Documentation]    主机IP地址输入框第二段IP值超出范围，提示只能在0~255之间
+    [Template]    验证DMZ主机IP地址
+    10.-1.0.10    ${common_ip_addr_err}
+    10.256.0.10    ${common_ip_addr_err}
+
+DMZ_IP_test_7
+    [Documentation]    主机IP地址输入框第三段IP值超出范围，提示只能在0~255之间
+    [Template]    验证DMZ主机IP地址
+    10.0.-1.10    ${common_ip_addr_err}
+    10.0.256.10    ${common_ip_addr_err}
+
+DMZ_IP_test_8
+    [Documentation]    主机IP地址输入框第四段IP值超出范围，提示只能在0~255之间
+    [Template]    验证DMZ主机IP地址
+    10.0.0.-1    ${common_ip_addr_err}
+    10.0.0.256    ${common_ip_addr_err}
+
+DMZ_IP_test_9
+    [Documentation]    主机IP地址输入框存在非法字符，提示发现n个非法字符
+    [Template]    验证DMZ主机IP地址
+    192,168;1:s    ${common_ip_addr_err}
+
+DMZ_IP_test_10
+    [Documentation]    主机IP地址第一段、第二段、第三段、第四段均不能为空
+    [Template]    验证DMZ主机IP地址
+    .168.1.10    ${common_ip_addr_err}
+    192..1.10    ${common_ip_addr_err}
+    192.168..10    ${common_ip_addr_err}
+    192.168.1.    ${common_ip_addr_err}
+
+DMZ_IP_test_11
+    [Documentation]    主机IP地址输入0.0.0.0，提示IP不能为全0
+    [Template]    验证DMZ主机IP地址
+    0.0.0.0    ${common_ip_addr_err}
+
+DMZ_IP_test_12
+    [Documentation]    主机IP地址不为组播地址或保留地址：223 < n1 < 255
+    [Template]
+    验证DMZ主机IP地址    224.0.0.1    ${common_ip_addr_err}
+    验证DMZ主机IP地址    255.0.0.1    ${common_ip_addr_err}
+    验证DMZ主机IP地址    254.0.0.1    ${common_ip_addr_err}
+    验证DMZ主机IP地址    223.0.0.1    ${common_unlock_save}
+    验证IP地址保存成功    223.0.0.1
+
+DMZ_IP_test_13
+    [Documentation]    主机IP地址不为回环地址：n1 = 127
+    [Template]    验证DMZ主机IP地址
+    127.0.0.1    ${common_ip_addr_err}
+
+DMZ_IP_test_14
+    [Documentation]    主机IP地址不为保留地址：n1=0
+    [Template]    验证DMZ主机IP地址
+    0.168.1.10    ${common_ip_addr_err}
+
+DMZ_IP_test_15
+    [Documentation]    成功设置主机IP地址
+    [Template]
+    验证DMZ主机IP地址    223.0.0.1    ${common_unlock_save}
+    验证IP地址保存成功    223.0.0.1
+
+DMZ_IP_test_16
+    [Documentation]    验证disable按钮保存成功
+    [Template]
+    验证DMZ主机IP地址    10.0.0.95    ${common_unlock_save}
+    Sleep    1
+    验证IP输入框为disable    0    ${common_unlock_save}
+
+*** Keywords ***
+验证DMZ主机IP地址
+    [Arguments]    ${ip}    ${message}
+    设置DMZ参数    host_ip=${ip}
+    显示消息    ${message}
+
+验证IP最大输入长度
+    [Arguments]    ${name}    ${max_len}
+    验证输入框最大输入长度    id=dmz_ip    ${name}    ${max_len}
+
+验证IP地址保存成功
+    [Arguments]    ${ip}
+    Element Should Be Enabled    id=dmz_ip
+    ${i}    Get Value    id=dmz_ip
+    Should Be Equal    ${i}    ${ip}
+
+验证IP输入框为disable
+    [Arguments]    ${wenable}    ${message}
+    设置DMZ参数    enable=${wenable}
+    ${s}    set variable    ${wenable}
+    显示消息    ${message}
+    Element Should Be Disabled    id=dmz_ip
+
+等待时间
+    Sleep    5

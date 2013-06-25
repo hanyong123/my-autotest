@@ -1,18 +1,19 @@
 *** Settings ***
 Suite Setup       Run Keywords    打开浏览器    AND    转到DNS过滤页面
 Suite Teardown    关闭浏览器
+Test Setup        等待时间
 Resource          keyword.txt
 
 *** Test Cases ***
 DNSFilter_NAME_test_1
     [Documentation]    规则名称允许为空，为空时能够保存成功；规则列表中展示出的该条规则的规则名为空
-    删除DNS过滤列表里所有条目显示成功消息message
-    验证DNS过滤规则名保存成功    ${EMPTY}    baidu.com    ${common_unlock_add}
-    DNS过滤列表第row行第col列是string    1    2    ${EMPTY}
+    删除列表里所有条目显示成功消息message
+    验证规则名    ${EMPTY}    ${common_unlock_add}
+    列表第row行第col列是string    1    2    ${EMPTY}
 
 DNSFilter_NAME_test_2
     [Documentation]    规则名称输入数据带有 '"\或空格 ，提示“ 不能含有特殊字符 \ '"\和空格 ”
-    [Template]    验证DNS过滤规则名
+    [Template]    验证规则名
     aa'aa    ${common_string_err}
     aa"aa    ${common_string_err}
     aa\\aa    ${common_string_err}
@@ -20,14 +21,14 @@ DNSFilter_NAME_test_2
 
 DNSFilter_NAME_test_3
     [Documentation]    规则名长度最大31个字符，超过31字符无法输入
-    [Template]    验证DNS过滤规则名最大输入长度
-    1111111111222222222233333333334我    31
+    [Template]    验证最大输入长度
+    dns_des    1111111111222222222233333333334我    31
 
 DNSFilter_NAME_test_4
     [Documentation]    规则名输入30个字符，再输入一个中文，导致超过31个字符，提示“规则名过长，已经自动截断”。
-    删除DNS过滤列表里所有条目显示成功消息message
-    验证DNS过滤规则名第31个字符输入中文自动截断    111111111122222222223333333333我    baidu.com    ${common_unlock_add}
-    DNS过滤列表第row行第col列是string    1    2    111111111122222222223333333333
+    删除列表里所有条目显示成功消息message
+    验证规则名    111111111122222222223333333333我    ${common_unlock_add}
+    列表第row行第col列是string    1    2    111111111122222222223333333333
 
 DNSFilter_DOMAIN_test_40
     [Documentation]    域名输入数据带有 '"\或空格 ，提示“ 不能含有特殊字符 \ '"\和空格 ”
@@ -44,8 +45,8 @@ DNSFilter_DOMAIN_test_41
 
 DNSFilter_DOMAIN_test_42
     [Documentation]    域名长度最大31个字符，超过31字符无法输入
-    [Template]    验证DNS过滤域名最大输入长度
-    1111111111222222222233333333334我    31
+    [Template]    验证最大输入长度
+    dns_key    1111111111222222222233333333334我    31
 
 DNSFilter_DOMAIN_test_43
     [Documentation]    域名中含有不在ascii码0~255范围中的字符时（例如中文、韩文），提示“不能含有无法识别的字符集”
@@ -55,53 +56,159 @@ DNSFilter_DOMAIN_test_43
 
 DNSFilter_ADD_test_57
     [Documentation]    成功添加一条DNS过滤条目，自动刷新后存在
-    删除DNS过滤列表里所有条目显示成功消息message
+    删除列表里所有条目显示成功消息message
     @{ADDLIST1}    Create List    xpath=(//input[@id='dns_day'])[2]    xpath=(//input[@id='dns_day'])[4]    xpath=(//input[@id='dns_day'])[6]
-    添加DNS过滤条目    ${common_unlock_add}    baidu.com    wdes=abc    wrule=0    wday_locator=@{ADDLIST1}    wstart_time=02:00
-    ...    wend_time=06:00
-    验证IP过滤列表中某一行中每一列的值    1    abcd    Permit    192.168.1.85\n/192.168.1.85    192.168.1.100\n/192.168.1.100    TCP
-    ...    100-1000    Mon Wed Fri    09:00-17:00
-    Comment    #第二条条目
-    Comment    Sleep    3
-    Comment    @{LIST}    Create List    xpath=(//input[@id='ip_day'])[1]
-    Comment    添加IP过滤条目    ${common_unlock_add}    wdes=0000    wshost=host    wsip=192.168.1.0    wdhost=host
-    ...    wdip=192.168.2.255    wprotcol=TCP    wstart_port=2    wend_port=20    wday_locator=@{LIST}    wstart_time=09:00
-    ...    wend_time=17:00
-    Comment    验证IP过滤列表中某一行中每一列的值    1    0000    Permit    192.168.1.0\n/192.168.1.0    192.168.2.255\n/192.168.2.255
-    ...    TCP    2-20    Sun    09:00-17:00
-    Comment    #添加数据的模板
-    Comment    @{ADDLIST1}    Create List    xpath=(//input[@id='ip_day'])[2]    xpath=(//input[@id='ip_day'])[4]    xpath=(//input[@id='ip_day'])[6]
-    Comment    添加DNS过滤条目    ${common_unlock_add}    baidu.com    wdes=    wrule=    wday_locator=@{ADDLIST1}
-    ...    wstart_time=    wend_time=    wallday_locator=
+    添加DNS过滤条目    wdes=abc    wrule=0    wdns_key=baidu.com    wday_locator=@{ADDLIST1}    wstart_time=02:00    wend_time=06:00
+    ...    wmessage=${common_unlock_add}
+    验证列表中某一行每一列的值    1    abc    Deny    baidu.com    Mon Wed Fri    02:00-06:00
+    @{ADDLIST2}    Create List    xpath=(//input[@id='dns_day'])[1]
+    添加DNS过滤条目    wdes=123    wrule=1    wdns_key=sina.com.cn    wday_locator=@{ADDLIST2}    wallday_locator=dns_time    wmessage=${common_unlock_add}
+    验证列表中某一行每一列的值    1    123    Permit    sina.com.cn    Sun    ALL
+    验证列表中某一行每一列的值    2    abc    Deny    baidu.com    Mon Wed Fri    02:00-06:00
+    @{ADDLIST3}    Create List
+    添加DNS过滤条目    wdns_key=ifeng.com    wmessage=${common_unlock_add}
+    验证列表中某一行每一列的值    1    ${EMPTY}    Deny    ifeng.com    ALL    ALL
+    验证列表中某一行每一列的值    2    123    Permit    sina.com.cn    Sun    ALL
+    验证列表中某一行每一列的值    3    abc    Deny    baidu.com    Mon Wed Fri    02:00-06:00
+    Comment    添加DNS过滤条目    wdes=    wrule=    wdns_key=    wday_locator=    wstart_time=
+    ...    wend_time=    wallday_locator=    wmessage=
 
 DNSFilter_ADD_test_58
     [Documentation]    DNS过滤条目总数超过256条，不能再添加新的条目，提示DNS过滤条目已满
+    删除列表里所有条目显示成功消息message
+    : FOR    ${i}    IN RANGE    1    10
+    \    ${dnskey}    Catenate    SEPARATOR=    ${i}    baidu.com
+    \    Run Keyword If    '${i}'!='9'    验证DNS过滤域名    ${dnskey}    ${common_unlock_add}
+    \    Run Keyword If    '${i}'=='9'    验证DNS过滤域名    ${dnskey}    ${common_item_err}
+    列表第row行第col列是string    1    4    8baidu.com
 
 DNSFilter_ADD_test_59
-    [Documentation]    添加一条条目，内容和已添加条目中的一条条目存在以下内容的全部重复：｛被过滤的域名、生效主机、生效时间｝，提示条目已存在，添加失败。
+    [Documentation]    添加一条条目，内容和已添加条目中的一条条目存在以下内容的全部重复：｛被过滤的域名、
+    ...    生效主机、生效时间｝，提示条目已存在，添加失败。
+    删除列表里所有条目显示成功消息message
+    @{ADDLIST1}    Create List    xpath=(//input[@id='dns_day'])[2]    xpath=(//input[@id='dns_day'])[4]    xpath=(//input[@id='dns_day'])[6]
+    添加DNS过滤条目    wdes=abc    wrule=0    wdns_key=baidu.com    wday_locator=@{ADDLIST1}    wstart_time=02:00    wend_time=06:00
+    ...    wmessage=${common_unlock_add}
+    验证列表中某一行每一列的值    1    abc    Deny    baidu.com    Mon Wed Fri    02:00-06:00
+    关闭浏览器重新进入DNS协议过滤页面
+    @{ADDLIST1}    Create List    xpath=(//input[@id='dns_day'])[2]    xpath=(//input[@id='dns_day'])[4]    xpath=(//input[@id='dns_day'])[6]
+    添加DNS过滤条目    wdes=abc    wrule=0    wdns_key=baidu.com    wday_locator=@{ADDLIST1}    wstart_time=02:00    wend_time=06:00
+    ...    wmessage=${common_add_item_err}
+    关闭浏览器重新进入DNS协议过滤页面
+    @{ADDLIST3}    Create List
+    添加DNS过滤条目    wdns_key=ifeng.com    wmessage=${common_unlock_add}
+    验证列表中某一行每一列的值    1    ${EMPTY}    Deny    ifeng.com    ALL    ALL
+    @{ADDLIST3}    Create List
+    添加DNS过滤条目    wdns_key=ifeng.com    wmessage=${common_add_item_err}
+    Comment    添加DNS过滤条目    wdes=    wrule=    wdns_key=    wday_locator=    wstart_time=
+    ...    wend_time=    wallday_locator=    wmessage=
 
 DNSFilter_MODIFY_test_61
     [Documentation]    成功修改一条条目，自动刷新后改变
+    删除列表里所有条目显示成功消息message
+    @{ADD1}    Create List    xpath=(//input[@id='dns_day'])[2]    xpath=(//input[@id='dns_day'])[4]    xpath=(//input[@id='dns_day'])[6]
+    添加DNS过滤条目    wdes=abc    wrule=0    wdns_key=baidu.com    wday_locator=@{ADD1}    wstart_time=02:00    wend_time=06:00
+    ...    wmessage=${common_unlock_add}
+    验证列表中某一行每一列的值    1    abc    Deny    baidu.com    Mon Wed Fri    02:00-06:00
+    @{MODIFY1}    Create List    xpath=(//input[@id='dns_day'])[1]
+    修改第{row}行DNS过滤条目    1    wdes=123    wrule=1    wdns_key=google.com    wday_locator=@{MODIFY1}    wstart_time=12:00
+    ...    wend_time=13:00    pwday_locator=@{ADD1}    wmessage=${common_unlock_add}
+    验证列表中某一行每一列的值    1    123    Permit    google.com    Sun    12:00-13:00
+    Comment    修改第{row}行DNS过滤条目    1    wdes=    wrule=    wdns_key=    wday_locator=
+    ...    wstart_time=    wend_time=    wallday_locator=    pwday_locator=    wallday_locator=    wmessage=
 
 DNSFilter_MODIFY_test_63
     [Documentation]    修改一条条目，内容和已添加条目中的一条条目存在以下内容的全部重复：｛被过滤的域名、
     ...    生效主机、生效时间｝，提示条目已存在，添加失败。
+    删除列表里所有条目显示成功消息message
+    @{ADD1}    Create List    xpath=(//input[@id='dns_day'])[2]    xpath=(//input[@id='dns_day'])[4]    xpath=(//input[@id='dns_day'])[6]
+    添加DNS过滤条目    wdes=abc    wrule=0    wdns_key=baidu.com    wday_locator=@{ADD1}    wstart_time=02:00    wend_time=06:00
+    ...    wmessage=${common_unlock_add}
+    关闭浏览器重新进入DNS协议过滤页面
+    @{ADD2}    Create List
+    添加DNS过滤条目    wdns_key=google.com    wmessage=${common_unlock_add}
+    @{MODIFY1}    Create List    xpath=(//input[@id='dns_day'])[2]    xpath=(//input[@id='dns_day'])[4]    xpath=(//input[@id='dns_day'])[6]
+    修改第{row}行DNS过滤条目    1    wrule=1    wdns_key=baidu.com    wday_locator=@{MODIFY1}    wstart_time=02:00    wend_time=06:00
+    ...    pwday_locator=@{ADD2}    pwallday_locator=dns_time    wmessage=${common_add_item_err}
+    验证列表中某一行每一列的值    2    abc    Deny    baidu.com    Mon Wed Fri    02:00-06:00
+    验证列表中某一行每一列的值    1    ${EMPTY}    Deny    google.com    ALL    ALL
+    Comment    修改第{row}行DNS过滤条目    1    wdes=    wrule=    wdns_key=    wday_locator=
+    ...    wstart_time=    wend_time=    wallday_locator=    pwday_locator=    wallday_locator=    wmessage=
 
 DNSFilter_DELETE_test_65
     [Documentation]    成功删除一条条目，自动刷新后不存在
+    删除列表里所有条目显示成功消息message
+    @{ADDLIST1}    Create List    xpath=(//input[@id='dns_day'])[2]    xpath=(//input[@id='dns_day'])[4]    xpath=(//input[@id='dns_day'])[6]
+    添加DNS过滤条目    wdes=abc    wrule=0    wdns_key=baidu.com    wday_locator=@{ADDLIST1}    wstart_time=02:00    wend_time=06:00
+    ...    wmessage=${common_unlock_add}
+    @{ADDLIST2}    Create List    xpath=(//input[@id='dns_day'])[1]
+    添加DNS过滤条目    wdes=123    wrule=1    wdns_key=sina.com.cn    wday_locator=@{ADDLIST2}    wallday_locator=dns_time    wmessage=${common_unlock_add}
+    删除DNS过滤列表里第${row}行显示成功消息${message}    2    ${common_unlock_delete}
+    验证列表中某一行每一列的值    1    123    Permit    sina.com.cn    Sun    ALL
 
 DNSFilter_DELETE_test_66
     [Documentation]    成功删除所有条目，自动刷新后不存在
+    删除列表里所有条目显示成功消息message
+    @{ADDLIST1}    Create List    xpath=(//input[@id='dns_day'])[2]    xpath=(//input[@id='dns_day'])[4]    xpath=(//input[@id='dns_day'])[6]
+    添加DNS过滤条目    wdes=abc    wrule=0    wdns_key=baidu.com    wday_locator=@{ADDLIST1}    wstart_time=02:00    wend_time=06:00
+    ...    wmessage=${common_unlock_add}
+    @{ADDLIST2}    Create List    xpath=(//input[@id='dns_day'])[1]
+    添加DNS过滤条目    wdes=123    wrule=1    wdns_key=sina.com.cn    wday_locator=@{ADDLIST2}    wallday_locator=dns_time    wmessage=${common_unlock_add}
+    删除列表里所有条目显示成功消息message
 
-DNSFilter_DayandTime_test_105
+DNSFilter_Day_test_105
+    [Documentation]    验证day的单个按钮
+    [Template]    验证day或time的单个checkbox
+    xpath=(//input[@id='dns_day'])[1]    ${common_unlock_add}    Sun
+    xpath=(//input[@id='dns_day'])[2]    ${common_unlock_add}    Mon
+    xpath=(//input[@id='dns_day'])[3]    ${common_unlock_add}    Tue
+    xpath=(//input[@id='dns_day'])[4]    ${common_unlock_add}    Wed
+    xpath=(//input[@id='dns_day'])[5]    ${common_unlock_add}    Thu
+    xpath=(//input[@id='dns_day'])[6]    ${common_unlock_add}    Fri
+    xpath=(//input[@id='dns_day'])[7]    ${common_unlock_add}    Sat
+    xpath=(//input[@id='dns_day'])[8]    ${common_unlock_add}    ALL
 
-DNSFilter_DayandTime_test_106
+DNSFilter_Day_test_106
+    [Documentation]    验证day的多个按钮
+    删除列表里所有条目显示成功消息message
+    @{LISTADD1}    Create List    xpath=(//input[@id='dns_day'])[1]    xpath=(//input[@id='dns_day'])[2]
+    时间验证    wday_locator=@{LISTADD1}    wmessage=${common_unlock_add}
+    列表第row行第col列是string    1    5    Sun Mon
 
 DNSFilter_DAY_test_107
+    [Documentation]    验证day的默认值
+    删除列表里所有条目显示成功消息message
+    时间验证    wmessage=${common_unlock_add}
+    列表第row行第col列是string    1    5    ALL
 
 DNSFilter_TIME_test_108
+    [Documentation]    验证time的单个按钮
+    [Template]    验证day或time的单个checkbox
+    baidu.com    xpath=(//input[@id='dns_time'])    ${common_unlock_add}    ALL
 
-DNSFilter_EndTime_test_108
+DNSFilter_TIME_test_109
+    [Documentation]    验证time的默认值
+    删除列表里所有条目显示成功消息message
+    时间验证    wmessage=${common_unlock_add}
+    列表第row行第col列是string    1    6    ALL
+
+DNSFilter_Time_test_200
+    [Documentation]    验证time的起始框和结束框
+    删除列表里所有条目显示成功消息message
+    时间验证    wstart_time=00:00    wend_time=06:00    wmessage=${common_unlock_add}
+    列表第row行第col列是string    1    6    00:00-06:00
+    时间验证    wstart_time=12:00    wend_time=15:00    wmessage=${common_unlock_add}
+    列表第row行第col列是string    1    6    12:00-15:00
+    时间验证    wstart_time=23:00    wend_time=23:59    wmessage=${common_unlock_add}
+    列表第row行第col列是string    1    6    23:00-23:59
+    时间验证    wstart_time=09:00    wend_time=15:00    wmessage=${common_unlock_add}
+    列表第row行第col列是string    1    6    09:00-15:00
+
+DNSFilter_EndTime_test_201
+    [Documentation]    选择起始框，不选择结束框
+    [Template]    验证选择time的起始时间不选择结束时间的情况
+    06:00    ${common_end_time_err}
+    23:00    ${common_end_time_err}
 
 *** Keywords ***
 转到DNS过滤页面
@@ -120,31 +227,24 @@ DNSFilter_EndTime_test_108
     : FOR    ${i}    IN    @{day_locator}
     \    ${ri}    process_special_charators    ${i}
     \    Run Keyword If    '${ri}'!='${None}'    Click Element    ${i}
+    Sleep    2
     Select From List By Label    id=start    ${start_time}
+    Sleep    2
     Select From List By Label    id=end    ${end_time}
+    Sleep    2
     Run Keyword If    '${allday_locator}'!='${None}'    Click Element    ${allday_locator}
     Click Element    id=add_dns_filter
 
-验证DNS过滤规则名
+验证规则名
     [Arguments]    ${name}    ${message}
-    设置DNS过滤    des=${name}
+    设置DNS过滤    des=${name}    dns_key=ifcon.com
     显示消息    ${message}
 
-验证DNS过滤规则名最大输入长度
-    [Arguments]    ${name}    ${max_len}
-    验证输入框最大输入长度    id=dns_des    ${name}    ${max_len}
+验证最大输入长度
+    [Arguments]    ${wid}    ${name}    ${max_len}
+    验证输入框最大输入长度    id=${wid}    ${name}    ${max_len}
 
-验证DNS过滤规则名第31个字符输入中文自动截断
-    [Arguments]    ${name}    ${dnskey}    ${message}
-    设置DNS过滤    des=${name}    dns_key=${dnskey}
-    显示消息    ${message}
-
-验证DNS过滤规则名保存成功
-    [Arguments]    ${name}    ${dnskey}    ${message}
-    设置DNS过滤    des=${name}    dns_key=${dnskey}
-    显示消息    ${message}
-
-删除DNS过滤列表里所有条目显示成功消息message
+删除列表里所有条目显示成功消息message
     Click Element    id=del_dns_filter_all
     Choose Ok On Next Confirmation
     ${message}    Confirm Action
@@ -152,7 +252,7 @@ DNSFilter_EndTime_test_108
     Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
     Wait Until Keyword Succeeds    5    1    弹出对话框消失
 
-DNS过滤列表第row行第col列是string
+列表第row行第col列是string
     [Arguments]    ${row}    ${col}    ${string}
     ${row}    Evaluate    int(${row})+1
     ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    ${col}
@@ -163,33 +263,99 @@ DNS过滤列表第row行第col列是string
     设置DNS过滤    dns_key=${name}
     显示消息    ${message}
 
-验证DNS过滤域名最大输入长度
-    [Arguments]    ${name}    ${max_len}
-    验证输入框最大输入长度    id=dns_key    ${name}    ${max_len}
-
 添加DNS过滤条目
-    [Arguments]    ${wmessage}    ${wdns_key}    ${wdes}=${None}    ${wrule}=0    ${wday_locator}=${None}    ${wstart_time}=00:00
-    ...    ${wend_time}=00:00    ${wallday_locator}=${None}
+    [Arguments]    ${wdes}=${None}    ${wrule}=0    ${wdns_key}=${None}    ${wday_locator}=${None}    ${wstart_time}=00:00    ${wend_time}=00:00
+    ...    ${wallday_locator}=${None}    ${wmessage}=${None}
     设置DNS过滤    des=${wdes}    rule=${wrule}    dns_key=${wdns_key}    day_locator=${wday_locator}    start_time=${wstart_time}    end_time=${wend_time}
     ...    allday_locator=${wallday_locator}
     显示消息    ${wmessage}
     Sleep    5
 
-验证DNS过滤列表中某一行每一列的值
+验证列表中某一行每一列的值
+    [Arguments]    ${row}    ${desc2}    ${rule3}    ${dns_key4}    ${day5}    ${time6}
     ${row}    Evaluate    int(${row})+1
     ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    2
     Should Be Equal    ${v}    ${desc2}
     ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    3
     Should Be Equal    ${v}    ${rule3}
     ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    4
-    Should Be Equal    ${v}    ${sip4}
+    Should Be Equal    ${v}    ${dns_key4}
     ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    5
-    Should Be Equal    ${v}    ${dip5}
+    Should Be Equal    ${v}    ${day5}
     ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    6
-    Should Be Equal    ${v}    ${protool6}
-    ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    7
-    Should Be Equal    ${v}    ${port7}
-    ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    8
-    Should Be Equal    ${v}    ${day8}
-    ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    9
-    Should Be Equal    ${v}    ${time9}
+    Should Be Equal    ${v}    ${time6}
+
+修改第{row}行DNS过滤条目
+    [Arguments]    ${row}    ${wdes}=${None}    ${wrule}=0    ${wdns_key}=${None}    ${wday_locator}=${None}    ${wstart_time}=00:00
+    ...    ${wend_time}=00:00    ${wallday_locator}=${None}    ${pwday_locator}=${None}    ${pwallday_locator}=${None}    ${wmessage}=${None}
+    Click Element    xpath=(//div[@id='${${row}-1}'])[1]
+    取消添加时选择的时间(修改条目)    ${pwday_locator}    ${pwallday_locator}
+    设置DNS过滤    des=${wdes}    rule=${wrule}    dns_key=${wdns_key}    day_locator=${wday_locator}    start_time=${wstart_time}    end_time=${wend_time}
+    ...    allday_locator=${wallday_locator}
+    显示消息    ${wmessage}
+    Sleep    5
+
+取消添加时选择的时间(修改条目)
+    [Arguments]    ${pwday_locator}=${None}    ${pwallday_locator}=${None}
+    @{pday_locator}    Get Variable Value    ${pwday_locator}
+    ${p_locator}    Set Variable    @{pday_locator}
+    ${k}    Get Length    ${pday_locator}
+    取消添加时选择的默认时间（修改条目）    locator=@{pday_locator}
+    @{pday_locator}    Set Variable If    '${k}'!='0'    ${p_locator}
+    : FOR    ${i}    IN    @{pday_locator}
+    \    ${ri}    process_special_charators    ${i}
+    \    Run Keyword If    '${ri}'!='${None}'    Click Element    ${i}
+    ${rpwallday_locator}    process_special_charators    ${pwallday_locator}
+    Run Keyword If    '${rpwallday_locator}'!='${None}'    Click Element    ${pwallday_locator}
+
+取消添加时选择的默认时间（修改条目）
+    [Arguments]    ${locator}=${None}
+    @{list}    Get Variable Value    ${locator}
+    ${x}    Get Length    ${list}
+    ${stringday}    Set Variable If    '${x}'=='0'    xpath=(//input[@id='dns_day'])[8]
+    ${rstringday}    process_special_charators    ${stringday}
+    Run Keyword If    '${rstringday}'!='${None}'    Click Element    ${stringday}
+
+关闭浏览器重新进入DNS协议过滤页面
+    关闭浏览器
+    打开浏览器
+    转到DNS过滤页面
+
+删除DNS过滤列表里第${row}行显示成功消息${message}
+    [Arguments]    ${row}    ${message}
+    Click Element    xpath=(//div[@id='${${row}-1}'])[2]
+    ${message2}    Confirm Action
+    Should Be Equal    ${message2}    ${common_del_one_tip}
+    显示消息    ${message}
+
+验证day或time的单个checkbox
+    [Arguments]    ${dns_key}    ${day}    ${message}    ${eday}
+    删除列表里所有条目显示成功消息message
+    ${rdns_key}    process_special_charators    ${dns_key}
+    Run Keyword If    '${rdns_key}'!='${None}'    Input text    id=dns_key    baidu3.com
+    ${rday}    process_special_charators    ${day}
+    Run Keyword If    '${rday}'!='${None}'    Click Element    ${day}
+    Click Element    id=add_dns_filter
+    显示消息    ${message}
+    ${ip_time}    Set Variable    xpath=(//input[@id='dns_time'])
+    ${rip_time}    process_special_charators    ${ip_time}
+    Sleep    3
+    Run Keyword if    '${rday}'!='${rip_time}'    列表第row行第col列是string    1    5    ${eday}
+    Run Keyword if    '${rday}'=='${rip_time}'    列表第row行第col列是string    1    6    ALL
+
+验证选择time的起始时间不选择结束时间的情况
+    [Arguments]    ${start_time}    ${message}
+    删除列表里所有条目显示成功消息message
+    Input text    id=dns_key    baidu2.com
+    Select From List By Label    id=start    ${start_time}
+    Click Element    id=add_dns_filter
+    显示消息    ${message}
+
+时间验证
+    [Arguments]    ${wday_locator}=${None}    ${wstart_time}=00:00    ${wend_time}=00:00    ${wallday_locator}=${None}    ${wmessage}=${None}
+    删除列表里所有条目显示成功消息message
+    设置DNS过滤    dns_key=ifcon.com    day_locator=${wday_locator}    start_time=${wstart_time}    end_time=${wend_time}    allday_locator=${wallday_locator}
+    显示消息    ${wmessage}
+
+等待时间
+    Sleep    5

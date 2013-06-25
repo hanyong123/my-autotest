@@ -1,10 +1,416 @@
 *** Settings ***
-Suite Setup       打开浏览器
+Suite Setup       Run Keywords    打开浏览器    AND    转到MAC过滤页面
 Suite Teardown    关闭浏览器
+Test Setup        等待时间
 Resource          keyword.txt
 
+*** Variables ***
+@{maclist}        00-00-00-00-00-01    00-00-00-00-00-02    00-00-00-00-00-03    00-00-00-00-00-04    00-00-00-00-00-05    00-00-00-00-00-06    00-00-00-00-00-07
+...               00-00-00-00-00-08    00-00-00-00-00-09    00-00-00-00-00-10    00-00-00-00-00-11    00-00-00-00-00-12    00-00-00-00-00-13    00-00-00-00-00-14
+...               00-00-00-00-00-15    00-00-00-00-00-16    00-00-00-00-00-17
+
 *** Test Cases ***
-try
-    转到MAC过滤页面
-    @{l}    Create List    id=mac_day    xpath=(//input[@id='mac_day'])[2]
-    设置MAC过滤    mac=00-00-00-00-00-0a    day_locator=@{l}
+MACFilter_NAME_test_1
+    [Documentation]    规则名称允许为空，为空时能够保存成功；规则列表中展示出的该条规则的规则名为空
+    验证规则名    ${EMPTY}    ${common_unlock_add}
+    列表第row行第col列是string    1    2    ${EMPTY}
+
+MACFilter_NAME_test_2
+    [Documentation]    规则名称输入数据带有 '"\或空格 ，提示“ 不能含有特殊字符 \ '"\和空格 ”
+    [Template]    验证规则名
+    aa'aa    ${common_string_err}
+    aa"aa    ${common_string_err}
+    aa\\aa    ${common_string_err}
+    aa aa    ${common_string_err}
+
+MACFilter_NAME_test_3
+    [Documentation]    规则名长度最大31个字符，超过31字符无法输入
+    [Template]    验证最大输入长度
+    mac_describe    1111111111222222222233333333334我    31
+
+MACFilter_NAME_test_4
+    [Documentation]    规则名输入30个字符，再输入一个中文，导致超过31个字符，提示“规则名过长，已经自动截断”。
+    验证规则名    111111111122222222223333333333我    ${common_unlock_add}
+    列表第row行第col列是string    1    2    111111111122222222223333333333
+
+MACFilter_MACAddress_test_5
+    [Documentation]    MAC配置输入框不能为空
+    [Template]    验证MAC地址
+    ${EMPTY}    ${common_mac_addr_err}
+
+MACFilter_MACAddress_test_6
+    [Documentation]    MAC配置输入框超出17个字符后无法输入
+    [Template]    验证最大输入长度
+    mac_filter    123456789012345678    17
+
+MACFilter_MACAddress_test_7
+    [Documentation]    MAC配置输入框长度不满17个字符，提示格式错误
+    [Template]    验证MAC地址
+    02-00-00-00-00-0    ${common_mac_addr_err}
+
+MACFilter_MACAddress_test_8
+    [Documentation]    MAC地址的分隔符不全为-时，提示格式错误
+    [Template]    验证MAC地址
+    06-02-08-08-08:08    ${common_mac_addr_err}
+    06-02-08-08:08-08    ${common_mac_addr_err}
+    06-02-08:08-08-08    ${common_mac_addr_err}
+    06-02:08-08-08-08    ${common_mac_addr_err}
+    06:02-08-08-08-08    ${common_mac_addr_err}
+
+MACFilter_MACAddress_test_9
+    [Documentation]    MAC地址的分隔符不全为:时，提示格式错误
+    [Template]    验证MAC地址
+    06:02:08:08:08-08    ${common_mac_addr_err}
+    06:02:08:08-08:08    ${common_mac_addr_err}
+    06:02:08-08:08:08    ${common_mac_addr_err}
+    06:02-08:08:08:08    ${common_mac_addr_err}
+    06-02:08:08:08:08    ${common_mac_addr_err}
+
+MACFilter_MACAddress_test_10
+    [Documentation]    MAC地址的分隔符个数不等于5，提示错误
+    [Template]    验证MAC地址
+    06-02-08-08-08    ${common_mac_addr_err}
+    06-02-08-08--08-    ${common_mac_addr_err}
+
+MACFilter_MACAddress_test_11
+    [Documentation]    MAC地址的内容超出00~FF的范围时，提示格式错误
+    [Template]    验证MAC地址
+    G0-02-08-08-08-08    ${common_mac_addr_err}
+    GG-02-08-08-08-08    ${common_mac_addr_err}
+    gg-02-08-08-08-08    ${common_mac_addr_err}
+    0g-02-08-08-08-08    ${common_mac_addr_err}
+    06-kk-08-08-08-08    ${common_mac_addr_err}
+    06-02-rr-08-08-08    ${common_mac_addr_err}
+    06-02-08-HH-08-08    ${common_mac_addr_err}
+    06-02-08-08-PP-08    ${common_mac_addr_err}
+    06-02-08-08-08-LL    ${common_mac_addr_err}
+
+MACFilter_MACAddress_test_12
+    [Documentation]    MAC地址中的内容有不属于｛0-9，A-F，a-f｝范围的，提示格式错误
+    [Template]    验证MAC地址
+    08-02-08-08-08-0G    ${common_mac_addr_err}
+    08-02-08-08-0G-08    ${common_mac_addr_err}
+    08-02-08-0G-08-08    ${common_mac_addr_err}
+    08-02-0G-08-08-08    ${common_mac_addr_err}
+    08-0G-08-08-08-08    ${common_mac_addr_err}
+    0G-02-08-08-08-08    ${common_mac_addr_err}
+    0X-0Y-0Z-08-08-08    ${common_mac_addr_err}
+    0x-0y-0z-08-08-08    ${common_mac_addr_err}
+    8 - 8-08-08-08-08    ${common_mac_addr_err}
+    8\-\8-08-08-08-08    ${common_mac_addr_err}
+    8"-"8-08-08-08-08    ${common_mac_addr_err}
+    8'-'8-08-08-08-08    ${common_mac_addr_err}
+
+MACFilter_MACAddress_test_13
+    [Documentation]    MAC配置输入框以xx-xx-xx-xx-xx-xx格式输入MAC地址，xx不能为空
+    [Template]    验证MAC地址
+    08-02-08-08-08-    ${common_mac_addr_err}
+    08-02-08-08--08    ${common_mac_addr_err}
+    08-02-08--08-08    ${common_mac_addr_err}
+    08-02--08-08-08    ${common_mac_addr_err}
+    08--08-08-08-08    ${common_mac_addr_err}
+    -08-08-08-08-08    ${common_mac_addr_err}
+
+MACFilter_MACAddress_test_14
+    [Documentation]    MAC配置输入框以xx-xx-xx-xx-xx-xx格式输入MAC地址，xx不能大于2字节
+    [Template]    验证MAC地址
+    08-02-08-08-08-F    ${common_mac_addr_err}
+    08-02-08-08-F-08    ${common_mac_addr_err}
+    08-02-08-F-08-08    ${common_mac_addr_err}
+    08-02-F-08-08-08    ${common_mac_addr_err}
+    08-F-08-08-08-08    ${common_mac_addr_err}
+    F-08-08-08-08-08    ${common_mac_addr_err}
+    08-02-08-08-0AF-08    ${common_mac_addr_err}
+    08-02-08-0AF-08-08    ${common_mac_addr_err}
+    08-02-0AF-08-08-08    ${common_mac_addr_err}
+    08-0AF-08-08-08-08    ${common_mac_addr_err}
+    0AF-08-08-08-08-08    ${common_mac_addr_err}
+
+MACFilter_MACAddress_test_15
+    [Documentation]    MAC地址为全0时 00-00-00-00-00-00，提示格式错误
+    [Template]    验证MAC地址
+    00-00-00-00-00-00    ${common_mac_addr_err}
+
+MACFilter_MACAddress_test_16
+    [Documentation]    MAC地址为全F时 FF-FF-FF-FF-FF-FF，提示格式错误
+    [Template]    验证MAC地址
+    FF-FF-FF-FF-FF-FF    ${common_mac_addr_err}
+    ff-ff-ff-ff-ff-ff    ${common_mac_addr_err}
+
+MACFilter_MACAddress_test_17
+    [Documentation]    MAC地址为组播地址时 xn-xx-xx-xx-xx-xx（n属于[1,3,5,7,9,B,D,F]），提示格式错误
+    [Template]    验证MAC地址
+    F1-08-08-08-08-08    ${common_mac_addr_err}
+    F3-08-08-08-08-08    ${common_mac_addr_err}
+    F5-08-08-08-08-08    ${common_mac_addr_err}
+    F7-08-08-08-08-08    ${common_mac_addr_err}
+    F9-08-08-08-08-08    ${common_mac_addr_err}
+    FB-08-08-08-08-08    ${common_mac_addr_err}
+    FD-08-08-08-08-08    ${common_mac_addr_err}
+    FF-08-08-08-08-08    ${common_mac_addr_err}
+    Fb-08-08-08-08-08    ${common_mac_addr_err}
+    Fd-08-08-08-08-08    ${common_mac_addr_err}
+    Ff-08-08-08-08-08    ${common_mac_addr_err}
+
+MACFilter_ADD_test_31
+    [Documentation]    成功添加一条MAC地址过滤条目，自动刷新后存在
+    删除所有条目显示成功消息message
+    #添加条目
+    @{ADD1}    Create List    xpath=(//input[@id='mac_day'])[2]    xpath=(//input[@id='mac_day'])[4]
+    添加条目    wdes=12345    wrule=1    wmac=02-03-04-05-06-07    wday_locator=@{ADD1}    wstart_time=06:00    wend_time=12:00
+    ...    wmessage=${common_unlock_add}
+    验证列表中某一行每一列的值    1    12345    Permit    02:03:04:05:06:07    Mon Wed    06:00-12:00
+    #添加条目
+    添加条目    wmac=0a-03-04-05-06-0d    wmessage=${common_unlock_add}
+    验证列表中某一行每一列的值    1    ${EMPTY}    Permit    0a:03:04:05:06:0d    ALL    ALL
+    #填写数据的模板
+    Comment    @{ADD1}    Create List    xpath=(//input[@id='mac_day'])[2]    xpath=(//input[@id='mac_day'])[4]
+    Comment    添加条目    wdes=    wrule=    wmac=    wday_locator=@{ADD1}    wstart_time=
+    ...    wend_time=    wallday_locator=    wmessage=
+
+MACFilter_ADD_test_32
+    [Documentation]    MAC地址过滤条目总数超过256条，不能再添加新的条目，提示MAC地址过滤条目已满
+    删除所有条目显示成功消息message
+    : FOR    ${i}    IN RANGE    0    16
+    \    Run Keyword If    '${i}'!='16'    验证MAC地址    @{maclist}[${i}]    ${common_unlock_add}
+    \    Run Keyword If    '${i}'=='16'    验证MAC地址    @{maclist}[${i}]    ${common_item_err}
+    列表第row行第col列是string    1    4    00:00:00:00:00:16
+
+MACFilter_ADD_test_33
+    [Documentation]    添加一条条目，内容和已添加条目中的一条条目存在以下内容的全部重复：｛被过滤的MAC地址、
+    ...    生效时间｝，提示条目已存在，添加失败。
+    删除所有条目显示成功消息message
+    @{ADD1}    Create List    xpath=(//input[@id='mac_day'])[2]    xpath=(//input[@id='mac_day'])[4]
+    添加条目    wdes=12345    wrule=1    wmac=02-03-04-05-06-07    wday_locator=@{ADD1}    wstart_time=06:00    wend_time=12:00
+    ...    wmessage=${common_unlock_add}
+    #再次添加条目
+    添加条目    wdes=12345    wrule=1    wmac=02-03-04-05-06-07    wday_locator=@{ADD1}    wstart_time=11:00    wend_time=13:00
+    ...    wmessage=${common_add_item_err}
+    #填写数据的模板
+    Comment    @{ADD1}    Create List    xpath=(//input[@id='mac_day'])[2]    xpath=(//input[@id='mac_day'])[4]
+    Comment    添加条目    wdes=    wrule=    wmac=    wday_locator=@{ADD1}    wstart_time=
+    ...    wend_time=    wallday_locator=    wmessage=
+
+MACFilter_MODIFY_test_35
+    [Documentation]    成功修改一条条目，自动刷新后改变
+    删除所有条目显示成功消息message
+    @{ADD1}    Create List    xpath=(//input[@id='mac_day'])[2]    xpath=(//input[@id='mac_day'])[4]
+    添加条目    wdes=12345    wrule=1    wmac=02-03-04-05-06-07    wday_locator=@{ADD1}    wstart_time=06:00    wend_time=12:00
+    ...    wmessage=${common_unlock_add}
+    @{MODIFY1}    Create List    xpath=(//input[@id='mac_day'])[1]
+    修改第{row}行条目    1    wdes=abc    wrule=0    wmac=0a-00-00-00-00-02    wday_locator=@{MODIFY1}    wstart_time=22:00
+    ...    wend_time=23:00    pwday_locator=@{ADD1}    wmessage=${common_unlock_add}
+    验证列表中某一行每一列的值    1    abc    Deny    0a:00:00:00:00:02    Sun    22:00-23:00
+    Comment    修改第{row}行条目    1    wdes=12345    wrule=1    wmac=02-03-04-05-06-07    wday_locator=@{ADD1}
+    ...    wstart_time=06:00    wend_time=12:00    pwday_locator=    pwallday_locator=    wmessage=${common_unlock_add}
+
+MACFilter_MODIFY_test_37
+    [Documentation]    修改一条条目，内容和已添加条目中的一条条目存在以下内容的全部重复：｛被过滤的MAC地址、
+    ...    生效时间｝，提示条目已存在，添加失败。
+    删除所有条目显示成功消息message
+    #添加条目
+    @{ADD1}    Create List    xpath=(//input[@id='mac_day'])[2]    xpath=(//input[@id='mac_day'])[4]
+    添加条目    wdes=12345    wrule=1    wmac=02-03-04-05-06-07    wday_locator=@{ADD1}    wstart_time=06:00    wend_time=12:00
+    ...    wmessage=${common_unlock_add}
+    @{ADD2}    Create List
+    添加条目    wmac=0a-03-04-05-06-0d    wmessage=${common_unlock_add}
+    修改第{row}行条目    1    wdes=12345    wrule=1    wmac=02-03-04-05-06-07    wday_locator=@{ADD1}    wstart_time=06:00
+    ...    wend_time=12:00    pwday_locator=@{ADD2}    wmessage=${common_add_item_err}
+    验证列表中某一行每一列的值    2    12345    Permit    02:03:04:05:06:07    Mon Wed    06:00-12:00
+    验证列表中某一行每一列的值    1    ${EMPTY}    Permit    0a:03:04:05:06:0d    ALL    ALL
+
+MACFilter_DELETE_test_38
+    [Documentation]    成功删除一条条目，自动刷新后不存在
+    删除所有条目显示成功消息message
+    #添加条目
+    @{ADD1}    Create List    xpath=(//input[@id='mac_day'])[2]    xpath=(//input[@id='mac_day'])[4]
+    添加条目    wdes=12345    wrule=1    wmac=02-03-04-05-06-07    wday_locator=@{ADD1}    wstart_time=06:00    wend_time=12:00
+    ...    wmessage=${common_unlock_add}
+    添加条目    wmac=0a-03-04-05-06-0d    wmessage=${common_unlock_add}
+    删除列表里第${row}行显示成功消息${message}    2    ${common_unlock_delete}
+    验证列表中某一行每一列的值    1    ${EMPTY}    Permit    0a:03:04:05:06:0d    ALL    ALL
+
+MACFilter_DELETE_test_39
+    [Documentation]    成功删除所有条目，自动刷新后不存在
+    删除所有条目显示成功消息message
+    #添加条目
+    @{ADD1}    Create List    xpath=(//input[@id='mac_day'])[2]    xpath=(//input[@id='mac_day'])[4]
+    添加条目    wdes=12345    wrule=1    wmac=02-03-04-05-06-07    wday_locator=@{ADD1}    wstart_time=06:00    wend_time=12:00
+    ...    wmessage=${common_unlock_add}
+    添加条目    wmac=0a-03-04-05-06-0d    wmessage=${common_unlock_add}
+    删除所有条目显示成功消息message
+
+MACFilter_DAY_test_61
+    [Documentation]    验证day的单个按钮
+    [Template]    验证day或者time的单个checkbox
+    xpath=(//input[@id='mac_day'])[1]    ${common_unlock_add}    Sun
+    xpath=(//input[@id='mac_day'])[2]    ${common_unlock_add}    Mon
+    xpath=(//input[@id='mac_day'])[3]    ${common_unlock_add}    Tue
+    xpath=(//input[@id='mac_day'])[4]    ${common_unlock_add}    Wed
+    xpath=(//input[@id='mac_day'])[5]    ${common_unlock_add}    Thu
+    xpath=(//input[@id='mac_day'])[6]    ${common_unlock_add}    Fri
+    xpath=(//input[@id='mac_day'])[7]    ${common_unlock_add}    Sat
+    xpath=(//input[@id='mac_day'])[8]    ${common_unlock_add}    ALL
+
+MACFilter_DAY_test_62
+    [Documentation]    验证day的多个按钮
+    @{ADD1}    Create List    xpath=(//input[@id='mac_day'])[2]    xpath=(//input[@id='mac_day'])[4]
+    验证时间    wday_locator=@{ADD1}    message=${common_unlock_add}
+    列表第row行第col列是string    1    5    Mon Wed
+
+MACFilter_DAY_test_63
+    [Documentation]    验证day的默认值
+    验证时间    message=${common_unlock_add}
+    列表第row行第col列是string    1    5    ALL
+
+MACFilter_TIME_test_64
+    [Documentation]    验证time的单个按钮
+    [Template]    验证day或者time的单个checkbox
+    xpath=(//input[@id='mac_time'])    ${common_unlock_add}    ALL
+
+MACFilter_TIME_test_65
+    [Documentation]    验证time的默认值
+    验证时间    message=${common_unlock_add}
+    列表第row行第col列是string    1    6    ALL
+
+MACFilter_TIME_test_66
+    [Documentation]    验证time的起始框和结束框
+    验证时间    wstart_time=00:00    wend_time=23:59    message=${common_unlock_add}
+    列表第row行第col列是string    1    6    00:00-23:59
+    验证时间    wstart_time=06:00    wend_time=23:59    message=${common_unlock_add}
+    列表第row行第col列是string    1    6    06:00-23:59
+    验证时间    wstart_time=23:30    wend_time=23:59    message=${common_unlock_add}
+    列表第row行第col列是string    1    6    23:30-23:59
+    验证时间    wstart_time=00:00    wend_time=00:00    message=${common_unlock_add}
+    列表第row行第col列是string    1    6    ALL
+    验证时间    wstart_time=06:00    wend_time=12:00    message=${common_unlock_add}
+    列表第row行第col列是string    1    6    06:00-12:00
+    验证时间    wstart_time=06:00    wend_time=23:59    message=${common_unlock_add}
+    列表第row行第col列是string    1    6    06:00-23:59
+
+MACFilter_ETIME_test_67
+    [Documentation]    选择起始框，不选择结束框
+    [Template]    验证time选择起始时间不选择结束时间的情况
+    06:30    ${common_end_time_err}
+    15:00    ${common_end_time_err}
+
+*** Keywords ***
+删除所有条目显示成功消息message
+    Click Element    id=del_mac_filter_all
+    Choose Ok On Next Confirmation
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+
+验证规则名
+    [Arguments]    ${name}    ${message}
+    删除所有条目显示成功消息message
+    设置MAC过滤    des=${name}    mac=0a-01-02-03-04-05
+    显示消息    ${message}
+
+列表第row行第col列是string
+    [Arguments]    ${row}    ${col}    ${string}
+    ${row}    Evaluate    int(${row})+1
+    ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    ${col}
+    Should Be Equal    ${v}    ${string}
+
+验证最大输入长度
+    [Arguments]    ${id}    ${name}    ${max_len}
+    验证输入框最大输入长度    ${id}    ${name}    ${max_len}
+
+验证MAC地址
+    [Arguments]    ${wmac}    ${message}
+    设置MAC过滤    mac=${wmac}
+    显示消息    ${message}
+
+添加条目
+    [Arguments]    ${wdes}=${None}    ${wrule}=1    ${wmac}=${None}    ${wday_locator}=${None}    ${wstart_time}=00:00    ${wend_time}=00:00
+    ...    ${wallday_locator}=${None}    ${wmessage}=${None}
+    设置MAC过滤    des=${wdes}    rule=${wrule}    mac=${wmac}    day_locator=${wday_locator}    start_time=${wstart_time}    end_time=${wend_time}
+    ...    allday_locator=${wallday_locator}
+    显示消息    ${wmessage}
+    Sleep    3
+
+验证列表中某一行每一列的值
+    [Arguments]    ${row}    ${desc2}    ${rule3}    ${mac4}    ${day5}    ${time6}
+    ${row}    Evaluate    int(${row})+1
+    ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    2
+    Should Be Equal    ${v}    ${desc2}
+    ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    3
+    Should Be Equal    ${v}    ${rule3}
+    ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    4
+    Should Be Equal    ${v}    ${mac4}
+    ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    5
+    Should Be Equal    ${v}    ${day5}
+    ${v}    Get Table Cell    xpath=//table[@class="df_tab"]    ${row}    6
+    Should Be Equal    ${v}    ${time6}
+
+修改第{row}行条目
+    [Arguments]    ${row}    ${wdes}=${None}    ${wrule}=1    ${wmac}=${None}    ${wday_locator}=${None}    ${wstart_time}=00:00
+    ...    ${wend_time}=00:00    ${wallday_locator}=${None}    ${pwday_locator}=${None}    ${pwallday_locator}=${None}    ${wmessage}=${None}
+    Click Element    xpath=(//div[@id='${${row}-1}'])[1]
+    取消添加时选择的时间(修改条目)    ${pwday_locator}    ${pwallday_locator}
+    设置MAC过滤    des=${wdes}    rule=${wrule}    mac=${wmac}    day_locator=${wday_locator}    start_time=${wstart_time}    end_time=${wend_time}
+    ...    allday_locator=${wallday_locator}
+    显示消息    ${wmessage}
+    Sleep    5
+
+取消添加时选择的时间(修改条目)
+    [Arguments]    ${pwday_locator}=${None}    ${pwallday_locator}=${None}
+    @{pday_locator}    Get Variable Value    ${pwday_locator}
+    ${p_locator}    Set Variable    @{pday_locator}
+    ${k}    Get Length    ${pday_locator}
+    取消添加时选择的默认时间（修改条目）    locator=@{pday_locator}
+    @{pday_locator}    Set Variable If    '${k}'!='0'    ${p_locator}
+    : FOR    ${i}    IN    @{pday_locator}
+    \    ${ri}    process_special_charators    ${i}
+    \    Run Keyword If    '${ri}'!='${None}'    Click Element    ${i}
+    ${rpwallday_locator}    process_special_charators    ${pwallday_locator}
+    Run Keyword If    '${rpwallday_locator}'!='${None}'    Click Element    ${pwallday_locator}
+
+取消添加时选择的默认时间（修改条目）
+    [Arguments]    ${locator}=${None}
+    @{list}    Get Variable Value    ${locator}
+    ${x}    Get Length    ${list}
+    ${stringday}    Set Variable If    '${x}'=='0'    xpath=(//input[@id='mac_day'])[8]
+    ${rstringday}    process_special_charators    ${stringday}
+    Run Keyword If    '${rstringday}'!='${None}'    Click Element    ${stringday}
+
+删除列表里第${row}行显示成功消息${message}
+    [Arguments]    ${row}    ${message}
+    Click Element    xpath=(//div[@id='${${row}-1}'])[2]
+    ${message2}    Confirm Action
+    Should Be Equal    ${message2}    ${common_del_one_tip}
+    显示消息    ${message}
+
+验证day或者time的单个checkbox
+    [Arguments]    ${day}    ${message}    ${eday}
+    删除所有条目显示成功消息message
+    Input text    id=mac_filter    0a-02-0c-02-02-02
+    ${rday}    process_special_charators    ${day}
+    Run Keyword If    '${rday}'!='${None}'    Click Element    ${day}
+    Click Element    id=add_mac_filter
+    显示消息    ${message}
+    ${ip_time}    Set Variable    xpath=(//input[@id='mac_time'])
+    ${rip_time}    process_special_charators    ${ip_time}
+    Sleep    3
+    Run Keyword if    '${rday}'!='${rip_time}'    列表第row行第col列是string    1    5    ${eday}
+    Run Keyword if    '${rday}'=='${rip_time}'    列表第row行第col列是string    1    6    ALL
+
+验证时间
+    [Arguments]    ${wday_locator}=${None}    ${wstart_time}=00:00    ${wend_time}=00:00    ${wallday_locator}=${None}    ${message}=${None}
+    删除所有条目显示成功消息message
+    设置MAC过滤    mac=0a-01-02-03-04-05    day_locator=${wday_locator}    start_time=${wstart_time}    end_time=${wend_time}    allday_locator=${wallday_locator}
+    显示消息    ${message}
+
+验证time选择起始时间不选择结束时间的情况
+    [Arguments]    ${start_time}    ${message}
+    删除所有条目显示成功消息message
+    Input text    id=mac_filter    02-03-0a-05-06-02
+    Select From List By Label    id=start    ${start_time}
+    Click Element    id=add_mac_filter
+    显示消息    ${message}
+
+等待时间
+    Sleep    5
