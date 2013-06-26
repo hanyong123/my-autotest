@@ -531,7 +531,7 @@ UnifiPPPOE_dns_test_81
 
 验证Unifi-PPPOE静态接入
     [Arguments]    ${ip}    ${mask}    ${message}
-    设置Unifi-PPPoE参数    han    969090    connection_type=1    ip_addr=${ip}    mask=${mask}
+    设置Unifi-PPPoE参数    han    969090    connection_type=1    ip_addr=${ip}    mask=${mask}    connectMode=1
     显示消息    ${message}
     ${rmessage}    process_special_charators    ${message}
     Run Keyword If    '${rmessage}'=='${common_unlock_save}'    Sleep    15
