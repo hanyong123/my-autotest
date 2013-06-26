@@ -407,7 +407,7 @@ WAN口IP是${ip}
 
 设置Russia-PPPoE参数
     [Arguments]    ${user}=${None}    ${password}=${None}    ${mac}=${None}    ${mtu}=${None}    ${serverName}=${None}    ${acName}=${None}
-    ...    ${dns1}=${None}    ${dns2}=${None}    ${connectMode}=${None}    ${timeout}=5    ${connection_type}=0    ${ip_addr}=${None}
+    ...    ${dns1}=${None}    ${dns2}=${None}    ${connectMode}=1    ${timeout}=5    ${connection_type}=0    ${ip_addr}=${None}
     ...    ${mask}=${None}
     [Documentation]    ${connectMode} 1:auto \ 2:time_requrie 3:manual
     Wait Until Keyword Succeeds    5    1    Element Should Be Visible    id=pppoe_username
@@ -449,7 +449,7 @@ WAN口IP是${ip}
 
 设置Unifi-PPPoE参数
     [Arguments]    ${user}=${None}    ${password}=${None}    ${mac}=${None}    ${mtu}=${None}    ${serverName}=${None}    ${acName}=${None}
-    ...    ${dns1}=${None}    ${dns2}=${None}    ${connectMode}=${None}    ${timeout}=5    ${connection_type}=0    ${ip_addr}=${None}
+    ...    ${dns1}=${None}    ${dns2}=${None}    ${connectMode}=1    ${timeout}=5    ${connection_type}=0    ${ip_addr}=${None}
     ...    ${mask}=${None}
     [Documentation]    ${connectMode} 1:auto \ 2:time_requrie 3:manual
     Wait Until Keyword Succeeds    5    1    Element Should Be Visible    id=pppoe_username
