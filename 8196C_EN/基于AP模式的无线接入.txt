@@ -146,6 +146,7 @@ Wireless_Region_test_35
     ...
     ...    *频道绑定为向下绑定时，无线频道频道可选项为：Auto，channel 1-channel 9*
     验证区域设置    IC    1    0    @{channel1-9}
+    sleep    2s
 
 Wireless_Region_test_36
     [Documentation]    *在802.11b+g+n模式下，设置区域为IC，频道带宽为40Mhz时*
@@ -187,6 +188,7 @@ Wireless_Region_test_47
     ...
     ...    *频道绑定为向下绑定时，无线频道频道可选项为：Auto，channel 1-channel 9*
     验证区域设置    MKK    1    0    @{channel1-9}
+    sleep    2s
 
 Wireless_Region_test_48
     [Documentation]    *在802.11b+g+n模式下，设置区域为MKK，频道带宽为40Mhz时*
@@ -743,6 +745,7 @@ Wireless_PasswdWPA_test_129
     click element    id=save_wl_base
     sleep    5s
     List selection should be    id=channel    Channel ${i}
+    sleep    2s
 
 验证WEP加密
     [Arguments]    ${key_size}    ${key_mode}    ${passwd}    ${message}
