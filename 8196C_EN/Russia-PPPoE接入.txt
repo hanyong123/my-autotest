@@ -531,7 +531,7 @@ RussiaPPPOE_dns_test_81
 
 验证Russia-PPPOE静态接入
     [Arguments]    ${ip}    ${mask}    ${message}
-    设置Russia-PPPoE参数    han    969090    connection_type=1    ip_addr=${ip}    mask=${mask}
+    设置Russia-PPPoE参数    han    969090    connection_type=1    ip_addr=${ip}    mask=${mask}    connectMode=1
     显示消息    ${message}
     ${rmessage}    process_special_charators    ${message}
     Run Keyword If    '${rmessage}'=='${common_unlock_save}'    Sleep    15
@@ -550,7 +550,7 @@ RussiaPPPOE_dns_test_81
 
 验证RussiaPPPOE服务名
     [Arguments]    ${name}    ${message}
-    设置Russia-PPPoE参数    hany    969090    serverName=${name}
+    设置Russia-PPPoE参数    hany    969090    serverName=${name}    connectMode=1
     显示消息    ${message}
 
 验证RussiaPPPOE服务名最大输入长度
