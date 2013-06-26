@@ -72,6 +72,7 @@ Wireless_RadioBand_test_10
     Element Should Not Be Visible    channel_width_40
     Element Should Not Be Visible    channel_bind_down
     Element Should Not Be Visible    channel_bind_up
+    sleep    5s
 
 Wireless_RadioBand_test_11
     [Documentation]    *选择无线标准为802.11g+n时，无线配置页面显示“频道带宽（20Mhz/40Mhz）”和“频道绑定（向上绑定/向下绑定）”；*
@@ -158,6 +159,7 @@ Wireless_Region_test_37
     ...
     ...    *无线频道频道可选项为：Auto，channel 1-channel 13*
     验证区域设置    EU    0    \    @{channel1-13}
+    sleep    5s
 
 Wireless_Region_test_38
     [Documentation]    *在802.11b+g+n模式下，设置区域为EU（ETSI），频道带宽为40Mhz时*
@@ -229,11 +231,6 @@ Wireless_PasswdWEPMaxLen_test_67
     ...    *密钥长度最大为5,超过5个字符无法输入*
     验证WEP加密的长度    1    1    fdsafdsafdsafdfa    5
 
-Try
-    验证WEP加密提示信息    1    2    ${common_after_map_b}
-    \    //div[@id='content_layer']/div[3]/div[2]/div[8]/span
-    \    //div[@id='content_layer']/div[3]/div[2]/div[9]/span
-
 Wireless_PasswdWEPINFO_test_66
     [Documentation]    *在AP模式下，选择WEP加密，密钥长度为64 bits，格式为ASCII时*
     ...
@@ -284,8 +281,8 @@ Wireless_PasswdWEP_test_77
     [Documentation]    *在AP模式下，选择WEP加密，密钥长度为64 bits，格式为HEX时*
     ...    *输入含有不在十六进制范围中的字符时（例如中文、韩文）的密钥，有”请输入10位十六进制字符：(A-F，a-f，0-9)“提示*
     [Template]    验证WEP加密
-    1    0    中文字符耶一二三四五    ${common_az09_string_err}
-    1    0    당신은날사당신은날사    ${common_az09_string_err}
+    1    0    中文字符耶一二三四五    ${common_string_hex_err}
+    1    0    당신은날사당신은날사    ${common_string_hex_err}
 
 Wireless_PasswdWEPINFO_test_78
     [Documentation]    *在AP模式下，选择WEP加密，密钥长度为128 bits，格式为ASCII时*
@@ -749,7 +746,7 @@ Wireless_PasswdWPA_test_129
     Run Keyword If    '${key_size}'=='1'    Click Element    id=key_size_64
     Run Keyword If    '${key_size}'=='2'    Click Element    id=key_size_128
     Run Keyword If    '${key_mode}'=='0'    Click Element    id=key_mode_wep_hex
-    Run Keyword If    '${key_mode} '=='1'    Click Element    id=key_mode_wep_asc
+    Run Keyword If    '${key_mode}'=='1'    Click Element    id=key_mode_wep_asc
     验证输入框最大输入长度    id=key_wep    ${passwd}    ${maxLen}
 
 验证WEP加密提示信息
@@ -758,7 +755,7 @@ Wireless_PasswdWPA_test_129
     Run Keyword If    '${key_size}'=='1'    Click Element    id=key_size_64
     Run Keyword If    '${key_size}'=='2'    Click Element    id=key_size_128
     Run Keyword If    '${key_mode}'=='0'    Click Element    id=key_mode_wep_hex
-    Run Keyword If    '${key_mode} '=='1'    Click Element    id=key_mode_wep_asc
+    Run Keyword If    '${key_mode}'=='1'    Click Element    id=key_mode_wep_asc
     ${val1}    get text    //div[@id='content_layer']/div[3]/div[2]/div[8]/span
     Should Be Equal    ${val1}    ${string}
 
@@ -768,8 +765,8 @@ Wireless_PasswdWPA_test_129
     Run Keyword If    '${key_type}'=='1'    Click Element    id=key_type_t
     Run Keyword If    '${key_type}'=='2'    Click Element    id=key_type_a
     Run Keyword If    '${key_type}'=='3'    Click Element    id=key_type_ta
-    Run Keyword If    ' ${key_mode}'=='0'    Click Element    id=key_mode_wpa_hex
-    Run Keyword If    ' ${key_mode}'=='1'    Click Element    id=key_mode_wpa_asc
+    Run Keyword If    '${key_mode}'=='0'    Click Element    id=key_mode_wpa_hex
+    Run Keyword If    '${key_mode}'=='1'    Click Element    id=key_mode_wpa_asc
     ${val1}    get text    //div[@id='content_layer']/div[3]/div[2]/div[9]/span
     Should Be Equal    ${val1}    ${string}
 
@@ -779,8 +776,8 @@ Wireless_PasswdWPA_test_129
     Run Keyword If    '${key_type}'=='1'    Click Element    id=key_type_t
     Run Keyword If    '${key_type}'=='2'    Click Element    id=key_type_a
     Run Keyword If    '${key_type}'=='3'    Click Element    id=key_type_ta
-    Run Keyword If    ' ${key_mode}'=='0'    Click Element    id=key_mode_wpa_hex
-    Run Keyword If    ' ${key_mode}'=='1'    Click Element    id=key_mode_wpa_asc
+    Run Keyword If    '${key_mode}'=='0'    Click Element    id=key_mode_wpa_hex
+    Run Keyword If    '${key_mode}'=='1'    Click Element    id=key_mode_wpa_asc
     验证输入框最大输入长度    id=key_wpa    ${passwd}    ${maxLen}
 
 验证WPA/WPA2-PSK加密
