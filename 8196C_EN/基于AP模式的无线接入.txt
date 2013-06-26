@@ -72,6 +72,7 @@ Wireless_RadioBand_test_10
     Element Should Not Be Visible    channel_width_40
     Element Should Not Be Visible    channel_bind_down
     Element Should Not Be Visible    channel_bind_up
+    sleep    5s
 
 Wireless_RadioBand_test_11
     [Documentation]    *选择无线标准为802.11g+n时，无线配置页面显示“频道带宽（20Mhz/40Mhz）”和“频道绑定（向上绑定/向下绑定）”；*
@@ -152,12 +153,14 @@ Wireless_Region_test_36
     ...    *频道绑定为向上绑定时，无线频道频道可选项为：Auto，channel 5-channel 11
     ...    *
     验证区域设置    IC    1    1    @{channel5-11}
+    sleep    2s
 
 Wireless_Region_test_37
     [Documentation]    *在802.11b+g+n模式下，设置区域为EU（ETSI），频道带宽为20Mhz时*
     ...
     ...    *无线频道频道可选项为：Auto，channel 1-channel 13*
     验证区域设置    EU    0    \    @{channel1-13}
+    sleep    2s
 
 Wireless_Region_test_38
     [Documentation]    *在802.11b+g+n模式下，设置区域为EU（ETSI），频道带宽为40Mhz时*
@@ -170,6 +173,7 @@ Wireless_Region_test_39
     ...    *频道绑定为向上绑定时，无线频道频道可选项为：Auto，channel 5-channel 13
     ...    *
     验证区域设置    EU    1    1    @{channel5-13}
+    sleep    2s
 
 Wireless_Region_test_46
     [Documentation]    *在802.11b+g+n模式下，设置区域为MKK，频道带宽为20Mhz时*
@@ -189,6 +193,7 @@ Wireless_Region_test_48
     ...
     ...    *频道绑定为向上绑定时，无线频道频道可选项为：Auto，channel 5-channel 13*
     验证区域设置    MKK    1    1    @{channel5-13}
+    sleep    2s
 
 Wireless_PasswdWEP_test_68
     [Documentation]    *在AP模式下，选择WEP加密，密钥长度为64 bits，格式为ASCII时，密钥为空时*
@@ -228,11 +233,6 @@ Wireless_PasswdWEPMaxLen_test_67
     ...
     ...    *密钥长度最大为5,超过5个字符无法输入*
     验证WEP加密的长度    1    1    fdsafdsafdsafdfa    5
-
-Try
-    验证WEP加密提示信息    1    2    ${common_after_map_b}
-    \    //div[@id='content_layer']/div[3]/div[2]/div[8]/span
-    \    //div[@id='content_layer']/div[3]/div[2]/div[9]/span
 
 Wireless_PasswdWEPINFO_test_66
     [Documentation]    *在AP模式下，选择WEP加密，密钥长度为64 bits，格式为ASCII时*
@@ -284,8 +284,8 @@ Wireless_PasswdWEP_test_77
     [Documentation]    *在AP模式下，选择WEP加密，密钥长度为64 bits，格式为HEX时*
     ...    *输入含有不在十六进制范围中的字符时（例如中文、韩文）的密钥，有”请输入10位十六进制字符：(A-F，a-f，0-9)“提示*
     [Template]    验证WEP加密
-    1    0    中文字符耶一二三四五    ${common_az09_string_err}
-    1    0    당신은날사당신은날사    ${common_az09_string_err}
+    1    0    中文字符耶一二三四五    ${common_string_hex_err}
+    1    0    당신은날사당신은날사    ${common_string_hex_err}
 
 Wireless_PasswdWEPINFO_test_78
     [Documentation]    *在AP模式下，选择WEP加密，密钥长度为128 bits，格式为ASCII时*
@@ -414,6 +414,293 @@ Wireless_PasswdWPA_test_96
     2    1    ${EMPTY}    ${common_after_map_f}
 
 Wireless_PasswdWPA_test_97
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为AES，格式为ASCII时*
+    ...
+    ...    *输入低于8位字符的密钥，有”请输入任意8-63位ASCII字符：(A-Z，a-z，0-9）“提示
+    ...    *
+    [Template]    验证WPA/WPA2-PSK加密
+    2    1    1234567    ${common_after_map_f}
+
+Wireless_PasswdWPA_test_98
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为AES，格式为ASCII时*
+    ...
+    ...    *输入有字符中含有 '"\和空格的密钥，提示“ 不能含有特殊字符 \ '"\和空格”
+    ...    *
+    [Template]    验证WPA/WPA2-PSK加密
+    2    1    1234567\\    ${common_string_err}
+    2    1    1234567'    ${common_string_err}
+    2    1    1234567"    ${common_string_err}
+    2    1    12345 67    ${common_string_err}
+    2    1    ${SPACE*8}    ${common_string_err}
+
+Wireless_PasswdWPA_test_99
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为AES，格式为ASCII时*
+    ...
+    ...    *输入含有不在ascii码0~255范围中的字符时（例如中文、韩文）的密钥,有”请输入任意8-63位ASCII字符：(A-Z，a-z，0-9）“提示
+    ...    *
+    [Template]    验证WPA/WPA2-PSK加密
+    2    1    8个中文字符欧耶    ${common_string_null}
+    2    1    당신은날사당신은    ${common_string_null}
+
+Wireless_PasswdWPAINFO_test_100
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP，格式为ASCII时*
+    ...
+    ...    *页面有”（请输入任意8-63位ASCII字符：(A-Z，a-z，0-9)）“提示
+    ...    *
+    验证WPA/WPA2-PSK加密提示信息    1    1    ${common_after_map_f}
+
+Wireless_PasswdWPAMaxLen_test_101
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP，格式为ASCII时*
+    ...
+    ...    *密钥长度最大为63，超过63个字符无法输入
+    ...    *
+    验证WPA/WPA2-PSK加密的长度    1    1    1234567890123456789012345678901234567890123456789012345678901234567890    63
+
+Wireless_PasswdWPA_test_102
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP，格式为ASCII时*
+    ...
+    ...    *密钥为空时，有”请输入任意8-63位ASCII字符：(A-Z，a-z，0-9）“提示
+    ...    *
+    [Template]    验证WPA/WPA2-PSK加密
+    1    1    ${EMPTY}    ${common_after_map_f}
+
+Wireless_PasswdWPA_test_103
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP，格式为ASCII时*
+    ...
+    ...    *输入低于8位字符的密钥，有”请输入任意8-63位ASCII字符：(A-Z，a-z，0-9）“提示
+    ...    *
+    [Template]    验证WPA/WPA2-PSK加密
+    1    1    1234567    ${common_after_map_f}
+
+Wireless_PasswdWPA_test_104
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP，格式为ASCII时*
+    ...
+    ...    *输入有字符中含有 '"\和空格的密钥，提示“ 不能含有特殊字符 \ '"\和空格”
+    ...    *
+    [Template]    验证WPA/WPA2-PSK加密
+    1    1    1234567\\    ${common_string_err}
+    1    1    1234567'    ${common_string_err}
+    1    1    1234567"    ${common_string_err}
+    1    1    12345 67    ${common_string_err}
+    1    1    ${SPACE*8}    ${common_string_err}
+
+Wireless_PasswdWPA_test_105
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP，格式为ASCII时*
+    ...
+    ...    *输入含有不在ascii码0~255范围中的字符时（例如中文、韩文）的密钥*
+    ...
+    ...    *有”请输入任意8-63位ASCII字符：(A-Z，a-z，0-9）“提示
+    ...    *
+    [Template]    验证WPA/WPA2-PSK加密
+    1    1    8个中文字符欧耶    ${common_string_null}
+    1    1    당신은날사당신은    ${common_string_null}
+
+Wireless_PasswdWPAINFO_test_106
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP&AES，格式为ASCII时*
+    ...
+    ...    *页面有”（请输入任意8-63位ASCII字符：(A-Z，a-z，0-9)）“提示
+    ...    *
+    验证WPA/WPA2-PSK加密提示信息    3    1    ${common_after_map_f}
+
+Wireless_PasswdWPAMaxLen_test_107
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP&AES，格式为ASCII时*
+    ...
+    ...    *密钥长度最大为63，超过63个字符无法输入
+    ...    *
+    验证WPA/WPA2-PSK加密的长度    3    1    1234567890123456789012345678901234567890123456789012345678901234567890    63
+
+Wireless_PasswdWPA_test_108
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP&AES，格式为ASCII时*
+    ...
+    ...    *密钥为空时，有”请输入任意8-63位ASCII字符：(A-Z，a-z，0-9）“提示
+    ...    *
+    [Template]    验证WPA/WPA2-PSK加密
+    3    1    ${EMPTY}    ${common_after_map_f}
+
+Wireless_PasswdWPA_test_109
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP&AES，格式为ASCII时*
+    ...
+    ...    *输入低于8位字符的密钥，有”请输入任意8-63位ASCII字符：(A-Z，a-z，0-9）“提示
+    ...    *
+    [Template]    验证WPA/WPA2-PSK加密
+    3    1    1234567    ${common_after_map_f}
+
+Wireless_PasswdWPA_test_110
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP&AES，格式为ASCII时*
+    ...
+    ...    *输入有字符中含有 '"\和空格的密钥，提示“ 不能含有特殊字符 \ '"\和空格”
+    ...    *
+    [Template]    验证WPA/WPA2-PSK加密
+    3    1    1234567\\    ${common_string_err}
+    3    1    1234567'    ${common_string_err}
+    3    1    1234567"    ${common_string_err}
+    3    1    12345 67    ${common_string_err}
+    3    1    ${SPACE*8}    ${common_string_err}
+
+Wireless_PasswdWPA_test_111
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP&AES，格式为ASCII时*
+    ...
+    ...    *输入含有不在ascii码0~255范围中的字符时（例如中文、韩文）的密钥*
+    ...
+    ...    *有”请输入任意8-63位ASCII字符：(A-Z，a-z，0-9）“提示
+    ...    *
+    [Template]    验证WPA/WPA2-PSK加密
+    3    1    8个中文字符欧耶    ${common_string_null}
+    3    1    당신은날사당신은    ${common_string_null}
+
+Wireless_PasswdWPAINFO_test_112
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为AES，格式为HEX时*
+    ...
+    ...    *页面有”（请输入64位十六进制字符：(A-F，a-f，0-9)）“提示
+    ...    *
+    验证WPA/WPA2-PSK加密提示信息    2    0    ${common_after_map_e}
+
+Wireless_PasswdWPAMaxLen_test_113
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为AES，格式为HEX时*
+    ...
+    ...    *密钥长度最大为64，超过64个字符无法输入
+    ...    *
+    验证WPA/WPA2-PSK加密的长度    2    0    1234567890123456789012345678901234567890123456789012345678901234567890    64
+
+Wireless_PasswdWPA_test_114
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为AES，格式为HEX时*
+    ...
+    ...    *密钥为空时，有”请输入64位十六进制字符：(A-F，a-f，0-9)“提示
+    ...    *
+    [Template]    验证WPA/WPA2-PSK加密
+    2    0    ${EMPTY}    ${common_after_map_e}
+
+Wireless_PasswdWPA_test_115
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为AES，格式为HEX时*
+    ...
+    ...    *输入低于64位字符的密钥，有”请输入64位十六进制字符：(A-F，a-f，0-9)“提示
+    ...    *
+    [Template]    验证WPA/WPA2-PSK加密
+    2    0    1234567    ${common_after_map_e}
+
+Wireless_PasswdWPA_test_116
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为AES，格式为HEX时*
+    ...
+    ...    *输入有字符中含有 '"\\和空格的密钥，提示“ 不能含有特殊字符 \ '"\\和空格”
+    ...    *
+    [Template]    验证WPA/WPA2-PSK加密
+    2    0    \\123456789012345678901234567890123456789012345678901234567890123    ${common_string_hex_err}
+    2    0    '123456789012345678901234567890123456789012345678901234567890123    ${common_string_hex_err}
+    2    0    "123456789012345678901234567890123456789012345678901234567890123    ${common_string_hex_err}
+    2    0    1234 56789012345678901234567890123456789012345678901234567890123    ${common_string_hex_err}
+    2    0    ${SPACE*64}    ${common_string_hex_err}
+
+Wireless_PasswdWPA_test_117
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为AES，格式为HEX时*
+    ...
+    ...    *输入含有不在十六进制范围中的字符时（例如中文、韩文）的密钥，有”请输入64位十六进制字符：(A-F，a-f，0-9)“提示
+    ...    *
+    [Template]    验证WPA/WPA2-PSK加密
+    2    0    123456789012345678901234567890123456789012345678901234567890123h    ${common_string_hex_err}
+    2    0    中123456789012345678901234567890123456789012345678901234567890123    ${common_string_hex_err}
+    2    0    당123456789012345678901234567890123456789012345678901234567890123    ${common_string_hex_err}
+
+Wireless_PasswdWPAINFO_test_118
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP，格式为HEX时*
+    ...    *页面有”（请输入64位十六进制字符：(A-F，a-f，0-9)）“提示
+    ...    *
+    验证WPA/WPA2-PSK加密提示信息    1    0    ${common_after_map_e}
+
+Wireless_PasswdWPAMaxLen_test_119
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP，格式为HEX时*
+    ...
+    ...    *密钥长度最大为64，超过64个字符无法输入
+    ...    *
+    验证WPA/WPA2-PSK加密的长度    1    0    1234567890123456789012345678901234567890123456789012345678901234567890    64
+
+Wireless_PasswdWPA_test_120
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP，格式为HEX时*
+    ...
+    ...    *密钥为空时，有”请输入64位十六进制字符：(A-F，a-f，0-9)“提示
+    ...    *
+    [Template]    验证WPA/WPA2-PSK加密
+    1    0    ${EMPTY}    ${common_after_map_e}
+
+Wireless_PasswdWPA_test_121
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP，格式为HEX时*
+    ...
+    ...    *输入低于64位字符的密钥，有”请输入64位十六进制字符：(A-F，a-f，0-9)“提示
+    ...    *
+    [Template]    验证WPA/WPA2-PSK加密
+    1    0    1234567    ${common_after_map_e}
+
+Wireless_PasswdWPA_test_122
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP，格式为HEX时*
+    ...
+    ...    *输入有字符中含有 '"\和空格的密钥，提示“ 不能含有特殊字符 \ '"\和空格”
+    ...    *
+    [Template]    验证WPA/WPA2-PSK加密
+    1    0    \\123456789012345678901234567890123456789012345678901234567890123    ${common_string_hex_err}
+    1    0    '123456789012345678901234567890123456789012345678901234567890123    ${common_string_hex_err}
+    1    0    "123456789012345678901234567890123456789012345678901234567890123    ${common_string_hex_err}
+    1    0    1234 56789012345678901234567890123456789012345678901234567890123    ${common_string_hex_err}
+    1    0    ${SPACE*64}    ${common_string_hex_err}
+
+Wireless_PasswdWPA_test_123
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP，格式为HEX时*
+    ...
+    ...    *输入含有不在十六进制范围中的字符时（例如中文、韩文）的密钥，有”请输入64位十六进制字符：(A-F，a-f，0-9)“提示
+    ...    *
+    [Template]    验证WPA/WPA2-PSK加密
+    1    0    h123456789012345678901234567890123456789012345678901234567890123    ${common_string_hex_err}
+    1    0    中123456789012345678901234567890123456789012345678901234567890123    ${common_string_hex_err}
+    1    0    당123456789012345678901234567890123456789012345678901234567890123    ${common_string_hex_err}
+
+Wireless_PasswdWPAINFO_test_124
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP&AES，格式为HEX时*
+    ...
+    ...    *页面有”（请输入64位十六进制字符：(A-F，a-f，0-9)）“提示
+    ...    *
+    验证WPA/WPA2-PSK加密提示信息    3    0    ${common_after_map_e}
+
+Wireless_PasswdWPAMaxLen_test_125
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP&AES，格式为HEX时*
+    ...
+    ...    *密钥长度最大为64，超过64个字符无法输入
+    ...    *
+    验证WPA/WPA2-PSK加密的长度    3    0    1234567890123456789012345678901234567890123456789012345678901234567890    64
+
+Wireless_PasswdWPA_test_126
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP&AES，格式为HEX时*
+    ...
+    ...    *密钥为空时，有”请输入64位十六进制字符：(A-F，a-f，0-9)“提示
+    ...    *
+    [Template]    验证WPA/WPA2-PSK加密
+    3    0    ${EMPTY}    ${common_after_map_e}
+
+Wireless_PasswdWPA_test_127
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP&AES，格式为HEX时*
+    ...
+    ...    *输入低于64位字符的密钥，有”请输入64位十六进制字符：(A-F，a-f，0-9)“提示*
+    [Template]    验证WPA/WPA2-PSK加密
+    3    0    1234567    ${common_after_map_e}
+
+Wireless_PasswdWPA_test_128
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP&AES，格式为HEX时*
+    ...
+    ...    *输入有字符中含有 '"\和空格的密钥，提示“ 不能含有特殊字符 \ '"\和空格”
+    ...    *
+    [Template]    验证WPA/WPA2-PSK加密
+    3    0    \\123456789012345678901234567890123456789012345678901234567890123    ${common_string_hex_err}
+    3    0    '123456789012345678901234567890123456789012345678901234567890123    ${common_string_hex_err}
+    3    0    "123456789012345678901234567890123456789012345678901234567890123    ${common_string_hex_err}
+    3    0    1234 56789012345678901234567890123456789012345678901234567890123    ${common_string_hex_err}
+    3    0    ${SPACE*64}    ${common_string_hex_err}
+
+Wireless_PasswdWPA_test_129
+    [Documentation]    *在AP模式下，认证方式选择WPA/WPA2-PSK，加密类型为TKIP&AES，格式为HEX时*
+    ...
+    ...    *输入含有不在十六进制范围中的字符时（例如中文、韩文）的密钥，有”请输入64位十六进制字符：(A-F，a-f，0-9)“提示
+    ...    *
+    [Template]    验证WPA/WPA2-PSK加密
+    3    0    h123456789012345678901234567890123456789012345678901234567890123    ${common_string_hex_err}
+    3    0    中123456789012345678901234567890123456789012345678901234567890123    ${common_string_hex_err}
+    3    0    당123456789012345678901234567890123456789012345678901234567890123    ${common_string_hex_err}
 
 *** Keywords ***
 验证无线状态开关
@@ -468,7 +755,7 @@ Wireless_PasswdWPA_test_97
     Run Keyword If    '${key_size}'=='1'    Click Element    id=key_size_64
     Run Keyword If    '${key_size}'=='2'    Click Element    id=key_size_128
     Run Keyword If    '${key_mode}'=='0'    Click Element    id=key_mode_wep_hex
-    Run Keyword If    '${key_mode} '=='1'    Click Element    id=key_mode_wep_asc
+    Run Keyword If    '${key_mode}'=='1'    Click Element    id=key_mode_wep_asc
     验证输入框最大输入长度    id=key_wep    ${passwd}    ${maxLen}
 
 验证WEP加密提示信息
@@ -477,7 +764,7 @@ Wireless_PasswdWPA_test_97
     Run Keyword If    '${key_size}'=='1'    Click Element    id=key_size_64
     Run Keyword If    '${key_size}'=='2'    Click Element    id=key_size_128
     Run Keyword If    '${key_mode}'=='0'    Click Element    id=key_mode_wep_hex
-    Run Keyword If    '${key_mode} '=='1'    Click Element    id=key_mode_wep_asc
+    Run Keyword If    '${key_mode}'=='1'    Click Element    id=key_mode_wep_asc
     ${val1}    get text    //div[@id='content_layer']/div[3]/div[2]/div[8]/span
     Should Be Equal    ${val1}    ${string}
 
@@ -487,8 +774,8 @@ Wireless_PasswdWPA_test_97
     Run Keyword If    '${key_type}'=='1'    Click Element    id=key_type_t
     Run Keyword If    '${key_type}'=='2'    Click Element    id=key_type_a
     Run Keyword If    '${key_type}'=='3'    Click Element    id=key_type_ta
-    Run Keyword If    ' ${key_mode}'=='0'    Click Element    id=key_mode_wpa_hex
-    Run Keyword If    ' ${key_mode}'=='1'    Click Element    id=key_mode_wpa_asc
+    Run Keyword If    '${key_mode}'=='0'    Click Element    id=key_mode_wpa_hex
+    Run Keyword If    '${key_mode}'=='1'    Click Element    id=key_mode_wpa_asc
     ${val1}    get text    //div[@id='content_layer']/div[3]/div[2]/div[9]/span
     Should Be Equal    ${val1}    ${string}
 
@@ -498,8 +785,8 @@ Wireless_PasswdWPA_test_97
     Run Keyword If    '${key_type}'=='1'    Click Element    id=key_type_t
     Run Keyword If    '${key_type}'=='2'    Click Element    id=key_type_a
     Run Keyword If    '${key_type}'=='3'    Click Element    id=key_type_ta
-    Run Keyword If    ' ${key_mode}'=='0'    Click Element    id=key_mode_wpa_hex
-    Run Keyword If    ' ${key_mode}'=='1'    Click Element    id=key_mode_wpa_asc
+    Run Keyword If    '${key_mode}'=='0'    Click Element    id=key_mode_wpa_hex
+    Run Keyword If    '${key_mode}'=='1'    Click Element    id=key_mode_wpa_asc
     验证输入框最大输入长度    id=key_wpa    ${passwd}    ${maxLen}
 
 验证WPA/WPA2-PSK加密
