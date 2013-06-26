@@ -203,73 +203,6 @@ PortTri_TotalItem_test_28
     [Documentation]    *端口触发条目总数超过10条，不能再添加新的条目，提示端口触发条目已满*
     验证条目总数    16
 
-PortTri_SameItem_test_29_1
-    [Documentation]    *验证触发协议为TCP的触发端口重复*
-    [Setup]    删除所有端口触发条目并显示成功消息
-    [Template]    验证触发端口重复
-    TCP    200    500    2345    ${common_unlock_save}
-    TCP    200    \    1234    ${common_port_occupy_err}
-    TCP    190    200    1234    ${common_port_occupy_err}
-    TCP    190    300    1234    ${common_port_occupy_err}
-    TCP    210    300    1234    ${common_port_occupy_err}
-    TCP    300    1000    1234    ${common_port_occupy_err}
-    TCP    500    1000    1234    ${common_port_occupy_err}
-    TCP    190    1000    1234    ${common_port_occupy_err}
-
-PortTri_SameItem_test_29_2
-    [Documentation]    *验证触发协议为UDP的触发端口重复*
-    [Setup]    删除所有端口触发条目并显示成功消息
-    [Template]    验证触发端口重复
-    UDP    200    500    2345    ${common_unlock_save}
-    UDP    200    \    1234    ${common_port_occupy_err}
-    UDP    190    200    1234    ${common_port_occupy_err}
-    UDP    190    300    1234    ${common_port_occupy_err}
-    UDP    210    300    1234    ${common_port_occupy_err}
-    UDP    300    1000    1234    ${common_port_occupy_err}
-    UDP    500    1000    1234    ${common_port_occupy_err}
-    UDP    190    1000    1234    ${common_port_occupy_err}
-    [Teardown]
-
-PortTri_SameItem_test_29_3
-    [Documentation]    *验证转发协议为TCP的转发端口重复*
-    [Setup]    删除所有端口触发条目并显示成功消息
-    [Template]    验证转发端口重复
-    2000    TCP    200    500    ${common_unlock_save}
-    2001    TCP    200    \    ${common_port_occupy_err}
-    2001    TCP    190    200    ${common_port_occupy_err}
-    2001    TCP    190    300    ${common_port_occupy_err}
-    2001    TCP    210    300    ${common_port_occupy_err}
-    2001    TCP    300    1000    ${common_port_occupy_err}
-    2001    TCP    500    1000    ${common_port_occupy_err}
-    2001    TCP    190    1000    ${common_port_occupy_err}
-
-PortTri_SameItem_test_29_4
-    [Documentation]    *验证转发协议为UDP的转发端口重复*
-    [Setup]    删除所有端口触发条目并显示成功消息
-    [Template]    验证转发端口重复
-    2000    UDP    200    500    ${common_unlock_save}    #成功保存一个条目
-    2001    UDP    200    \    ${common_port_occupy_err}
-    2001    UDP    190    200    ${common_port_occupy_err}
-    2001    UDP    190    300    ${common_port_occupy_err}
-    2001    UDP    210    300    ${common_port_occupy_err}
-    2001    UDP    300    1000    ${common_port_occupy_err}
-    2001    UDP    500    1000    ${common_port_occupy_err}
-    2001    UDP    190    1000    ${common_port_occupy_err}
-
-PortTri_SameItem_test_29_5
-    [Documentation]    *成功保存触发端口相同但是协议不同的条目*
-    [Setup]    删除所有端口触发条目并显示成功消息
-    [Template]    验证触发端口重复
-    TCP    200    500    2345    ${common_unlock_save}
-    UDP    200    500    1234    ${common_unlock_save}
-
-PortTri_SameItem_test_29_6
-    [Documentation]    *成功保存转发端口相同但是协议不同的条目*
-    [Setup]    删除所有端口触发条目并显示成功消息
-    [Template]    验证转发端口重复
-    2000    UDP    200    500    ${common_unlock_save}
-    2001    TCP    200    500    ${common_unlock_save}
-
 PortTri_ModifiItem_test_30
     [Documentation]    *成功修改一条条目，自动刷新后改变*
     [Setup]    删除所有端口触发条目并显示成功消息
@@ -306,6 +239,58 @@ PortTri_DelItem_test_33
     [Setup]    删除所有端口触发条目并显示成功消息
     保存两个条目
     删除端口触发表里第${row}行显示成功消息${message}    2    ${common_unlock_delete}
+
+PortTri_SameItem_test_29
+    [Documentation]    *添加一条条目，内容和已添加条目中的一条条目存在以下内容的全部重复：｛协议、触发端口、转发端口｝，提示条目已存在，添加失败。
+    ...    *
+    #*验证触发协议为TCP的触发端口重复*
+    删除所有端口触发条目并显示成功消息
+    验证触发端口重复    TCP    200    500    2345    ${common_unlock_save}
+    验证触发端口重复    TCP    200    \    1234    ${common_port_occupy_err}
+    验证触发端口重复    TCP    190    200    1234    ${common_port_occupy_err}
+    验证触发端口重复    TCP    190    300    1234    ${common_port_occupy_err}
+    验证触发端口重复    TCP    210    300    1234    ${common_port_occupy_err}
+    验证触发端口重复    TCP    300    1000    1234    ${common_port_occupy_err}
+    验证触发端口重复    TCP    500    1000    1234    ${common_port_occupy_err}
+    验证触发端口重复    TCP    190    1000    1234    ${common_port_occupy_err}
+    #*验证触发协议为UDP的触发端口重复*
+    删除所有端口触发条目并显示成功消息
+    验证触发端口重复    UDP    200    500    2345    ${common_unlock_save}
+    验证触发端口重复    UDP    200    \    1234    ${common_port_occupy_err}
+    验证触发端口重复    UDP    190    200    1234    ${common_port_occupy_err}
+    验证触发端口重复    UDP    190    300    1234    ${common_port_occupy_err}
+    验证触发端口重复    UDP    210    300    1234    ${common_port_occupy_err}
+    验证触发端口重复    UDP    300    1000    1234    ${common_port_occupy_err}
+    验证触发端口重复    UDP    500    1000    1234    ${common_port_occupy_err}
+    验证触发端口重复    UDP    190    1000    1234    ${common_port_occupy_err}
+    #*验证转发协议为TCP的转发端口重复*
+    删除所有端口触发条目并显示成功消息
+    验证转发端口重复    2000    TCP    200    500    ${common_unlock_save}
+    验证转发端口重复    2001    TCP    200    \    ${common_port_occupy_err}
+    验证转发端口重复    2001    TCP    190    200    ${common_port_occupy_err}
+    验证转发端口重复    2001    TCP    190    300    ${common_port_occupy_err}
+    验证转发端口重复    2001    TCP    210    300    ${common_port_occupy_err}
+    验证转发端口重复    2001    TCP    300    1000    ${common_port_occupy_err}
+    验证转发端口重复    2001    TCP    500    1000    ${common_port_occupy_err}
+    验证转发端口重复    2001    TCP    190    1000    ${common_port_occupy_err}
+    #*验证转发协议为UDP的转发端口重复*
+    删除所有端口触发条目并显示成功消息
+    验证转发端口重复    2000    UDP    200    500    ${common_unlock_save}
+    验证转发端口重复    2001    UDP    200    \    ${common_port_occupy_err}
+    验证转发端口重复    2001    UDP    190    200    ${common_port_occupy_err}
+    验证转发端口重复    2001    UDP    190    300    ${common_port_occupy_err}
+    验证转发端口重复    2001    UDP    210    300    ${common_port_occupy_err}
+    验证转发端口重复    2001    UDP    300    1000    ${common_port_occupy_err}
+    验证转发端口重复    2001    UDP    500    1000    ${common_port_occupy_err}
+    验证转发端口重复    2001    UDP    190    1000    ${common_port_occupy_err}
+    #*成功保存触发端口相同但是协议不同的条目*
+    删除所有端口触发条目并显示成功消息
+    验证触发端口重复    TCP    200    500    2345    ${common_unlock_save}
+    验证触发端口重复    UDP    200    500    1234    ${common_unlock_save}
+    #*成功保存转发端口相同但是协议不同的条目*
+    删除所有端口触发条目并显示成功消息
+    验证转发端口重复    2000    UDP    200    500    ${common_unlock_save}
+    验证转发端口重复    2001    TCP    200    500    ${common_unlock_save}
 
 *** Keywords ***
 验证规则名

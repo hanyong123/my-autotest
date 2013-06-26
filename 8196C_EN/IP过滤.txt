@@ -269,86 +269,6 @@ IPandProtocal_DIP_test_39
     [Template]    验证目的主机segment结束IP地址
     192.168.1.102    192.168.1.25    ${common_cmp_ip_err}
 
-IPandProtocal_SIP_hosts_test_40_1
-    [Documentation]    源IP地址输入框超过15个字符后，无法输入
-    [Template]    验证源主机hostsIP地址最大输入长度
-    1234567890123456    15
-
-IPandProtocal_SIP_hosts_test_41_1
-    [Documentation]    源IP地址输入框：小数点>3，提示IP长度不正确
-    [Template]    验证源主机hostsIP地址
-    10.0.0.1.    ${common_ip_addr_err}
-
-IPandProtocal_SIP_hosts_test_42_1
-    [Documentation]    源IP地址输入框：小数点<3，提示IP长度不正确
-    [Template]    验证源主机hostsIP地址
-    10.0.01    ${common_ip_addr_err}
-
-IPandProtocal_SIP_hosts_test_43_1
-    [Documentation]    源IP地址不能为空
-    [Template]    验证源主机hostsIP地址
-    ${EMPTY}    ${common_ip_addr_err}
-
-IPandProtocal_SIP_hosts_test_44_1
-    [Documentation]    源IP地址输入框第一段IP值超出范围，提示只能在0~255之间
-    [Template]    验证源主机hostsIP地址
-    -1.0.0.2    ${common_ip_addr_err}
-    256.0.0.1    ${common_ip_addr_err}
-
-IPandProtocal_SIP_hosts_test_45_1
-    [Documentation]    源IP地址输入框第二段IP值超出范围，提示只能在0~255之间
-    [Template]    验证源主机hostsIP地址
-    10.-1.0.10    ${common_ip_addr_err}
-    10.256.0.10    ${common_ip_addr_err}
-
-IPandProtocal_SIP_hosts_test_46_1
-    [Documentation]    源IP地址输入框第三段IP值超出范围，提示只能在0~255之间
-    [Template]    验证源主机hostsIP地址
-    10.0.-1.10    ${common_ip_addr_err}
-    10.0.256.10    ${common_ip_addr_err}
-
-IPandProtocal_SIP_hosts_test_47_1
-    [Documentation]    源IP地址输入框第四段IP值超出范围，提示只能在0~255之间
-    [Template]    验证源主机hostsIP地址
-    10.0.0.-1    ${common_ip_addr_err}
-    10.0.0.256    ${common_ip_addr_err}
-
-IPandProtocal_SIP_hosts_test_48_1
-    [Documentation]    源IP地址输入框存在非法字符，提示发现n个非法字符
-    [Template]    验证源主机hostsIP地址
-    192,168;1:s    ${common_ip_addr_err}
-
-IPandProtocal_SIP_hosts_test_49_1
-    [Documentation]    源IP地址第一段、第二段、第三段、第四段均不能为空
-    [Template]    验证源主机hostsIP地址
-    .168.1.10    ${common_ip_addr_err}
-    192..1.10    ${common_ip_addr_err}
-    192.168..10    ${common_ip_addr_err}
-    192.168.1.    ${common_ip_addr_err}
-
-IPandProtocal_SIP_hosts_test_50_1
-    [Documentation]    源IP地址输入0.0.0.0，提示IP不能为全0
-    [Template]    验证源主机hostsIP地址
-    0.0.0.0    ${common_ip_addr_err}
-
-IPandProtocal_SIP_hosts_test_51_1
-    [Documentation]    源IP地址不为组播地址或保留地址：223 < n1 < 255
-    删除列表里所有条目显示成功消息message
-    验证源主机hostsIP地址    224.0.0.1    ${common_ip_addr_err}
-    验证源主机hostsIP地址    240.0.0.1    ${common_ip_addr_err}
-    验证源主机hostsIP地址    223.0.0.1    ${common_unlock_add}
-    列表里含有${string}    223.0.0.1\n/223.0.0.1
-
-IPandProtocal_SIP_hosts_test_52_1
-    [Documentation]    源IP地址不为回环地址：n1 = 127
-    [Template]    验证源主机hostsIP地址
-    127.0.0.1    ${common_ip_addr_err}
-
-IPandProtocal_SIP_hosts_test_53_1
-    [Documentation]    源IP地址不为保留地址：n1=0
-    [Template]    验证源主机hostsIP地址
-    0.168.1.10    ${common_ip_addr_err}
-
 IPandProtocal_SMASK_test_54
     [Documentation]    本地网段：子网掩码输入框超过15个字符后，无法输入
     [Template]    验证源MASK地址最大输入长度
@@ -937,256 +857,6 @@ IPandProtocal_DIP_segmentstart_test_21_3
     [Template]    验证目的主机segment起始IP地址
     0.168.1.10    ${common_ip_addr_err}
 
-IPandProtocal_DIP_segmentend_test_21_4
-    [Documentation]    目的IP地址不为保留地址：n1=0
-    [Template]    验证目的主机segment结束IP地址
-    192.168.1.95    0.168.1.10    ${common_ip_addr_err}
-
-IPandProtocal_SIP_subnet_test_40_2
-    [Documentation]    源IP地址输入框超过15个字符后，无法输入
-    [Template]    验证目的主机subnetIP地址最大输入长度
-    1234567890123456    15
-
-IPandProtocal_SIP_segmentstart_test_40_3
-    [Documentation]    源IP地址输入框超过15个字符后，无法输入
-    [Template]    验证目的主机segmentstart地址最大输入长度
-    1234567890123456    15
-
-IPandProtocal_SIP_segmentend_test_40_4
-    [Documentation]    源IP地址输入框超过15个字符后，无法输入
-    [Template]    验证目的主机segmentend地址最大输入长度
-    1234567890123456    15
-
-IPandProtocal_SIP_subnet_test_41_2
-    [Documentation]    源IP地址输入框：小数点>3，提示IP长度不正确
-    [Template]    验证源主机subnetIP地址
-    10.0.0.1.    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentstart_test_41_3
-    [Documentation]    源IP地址输入框：小数点>3，提示IP长度不正确
-    [Template]    验证源主机segment起始IP地址
-    10.0.0.1.    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentend_test_41_4
-    [Documentation]    源IP地址输入框：小数点>3，提示IP长度不正确
-    [Template]    验证源主机segment结束IP地址
-    10.0.0.102    10.0.0.1.    ${common_ip_addr_err}
-
-IPandProtocal_SIP_subnet_test_42_2
-    [Documentation]    源IP地址输入框：小数点<3，提示IP长度不正确
-    [Template]    验证源主机subnetIP地址
-    10.0.01    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentstart_test_42_3
-    [Documentation]    源IP地址输入框：小数点<3，提示IP长度不正确
-    [Template]    验证源主机segment起始IP地址
-    10.0.01    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentend_test_42_4
-    [Documentation]    源IP地址输入框：小数点<3，提示IP长度不正确
-    [Template]    验证源主机segment结束IP地址
-    10.0.0.102    10.0.01    ${common_ip_addr_err}
-
-IPandProtocal_SIP_subnet_test_43_2
-    [Documentation]    源IP地址不能为空
-    [Template]    验证源主机subnetIP地址
-    ${EMPTY}    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentstart_test_43_3
-    [Documentation]    源IP地址不能为空
-    [Template]    验证源主机segment起始IP地址
-    ${EMPTY}    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentend_test_43_4
-    [Documentation]    源IP地址不能为空
-    [Template]    验证源主机segment结束IP地址
-    10.0.0.102    ${EMPTY}    ${common_ip_addr_err}
-
-IPandProtocal_SIP_subnet_test_44_2
-    [Documentation]    源IP地址输入框第一段IP值超出范围，提示只能在0~255之间
-    [Template]    验证源主机subnetIP地址
-    -1.0.0.2    ${common_ip_addr_err}
-    256.0.0.1    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentstart_test_44_3
-    [Documentation]    源IP地址输入框第一段IP值超出范围，提示只能在0~255之间
-    [Template]    验证源主机segment起始IP地址
-    -1.0.0.2    ${common_ip_addr_err}
-    256.0.0.1    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentend_test_44_4
-    [Documentation]    源IP地址输入框第一段IP值超出范围，提示只能在0~255之间
-    [Template]    验证源主机segment结束IP地址
-    10.0.0.102    -1.0.0.2    ${common_ip_addr_err}
-    10.0.0.102    256.0.0.1    ${common_ip_addr_err}
-
-IPandProtocal_SIP_subnet_test_45_2
-    [Template]    验证源主机subnetIP地址
-    10.-1.0.10    ${common_ip_addr_err}
-    10.256.0.10    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentstart_test_45_3
-    [Documentation]    源IP地址输入框第二段IP值超出范围，提示只能在0~255之间
-    [Template]    验证源主机segment起始IP地址
-    10.-1.0.10    ${common_ip_addr_err}
-    10.256.0.10    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentend_test_45_4
-    [Documentation]    源IP地址输入框第二段IP值超出范围，提示只能在0~255之间
-    [Template]    验证源主机segment结束IP地址
-    10.0.0.102    10.-1.0.10    ${common_ip_addr_err}
-    10.0.0.102    10.256.0.10    ${common_ip_addr_err}
-
-IPandProtocal_SIP_subnet_test_46_2
-    [Documentation]    源IP地址输入框第三段IP值超出范围，提示只能在0~255之间
-    [Template]    验证源主机subnetIP地址
-    10.0.-1.10    ${common_ip_addr_err}
-    10.0.256.10    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentstart_test_46_3
-    [Documentation]    源IP地址输入框第三段IP值超出范围，提示只能在0~255之间
-    [Template]    验证源主机segment起始IP地址
-    10.0.-1.10    ${common_ip_addr_err}
-    10.0.256.10    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentend_test_46_4
-    [Documentation]    源IP地址输入框第三段IP值超出范围，提示只能在0~255之间
-    [Template]    验证源主机segment结束IP地址
-    10.0.0.102    10.0.-1.10    ${common_ip_addr_err}
-    10.0.0.102    10.0.256.10    ${common_ip_addr_err}
-
-IPandProtocal_SIP_subnet_test_47_2
-    [Documentation]    源IP地址输入框第四段IP值超出范围，提示只能在0~255之间
-    [Template]    验证源主机subnetIP地址
-    10.0.0.-1    ${common_ip_addr_err}
-    10.0.0.256    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentstart_test_47_3
-    [Documentation]    源IP地址输入框第四段IP值超出范围，提示只能在0~255之间
-    [Template]    验证源主机segment起始IP地址
-    10.0.0.-1    ${common_ip_addr_err}
-    10.0.0.256    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentend_test_47_4
-    [Documentation]    源IP地址输入框第四段IP值超出范围，提示只能在0~255之间
-    [Template]    验证源主机segment结束IP地址
-    10.0.0.102    10.0.0.-1    ${common_ip_addr_err}
-    10.0.0.102    10.0.0.256    ${common_ip_addr_err}
-
-IPandProtocal_SIP_subnet_test_48_2
-    [Documentation]    源IP地址输入框存在非法字符，提示发现n个非法字符
-    [Template]    验证源主机subnetIP地址
-    192,168;1:s    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentstart_test_48_3
-    [Documentation]    源IP地址输入框存在非法字符，提示发现n个非法字符
-    [Template]    验证源主机segment起始IP地址
-    192,168;1:s    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentend_test_48_4
-    [Documentation]    源IP地址输入框存在非法字符，提示发现n个非法字符
-    [Template]    验证源主机segment结束IP地址
-    192.168.1.95    192,168;1:s    ${common_ip_addr_err}
-
-IPandProtocal_SIP_subnet_test_49_2
-    [Documentation]    源IP地址第一段、第二段、第三段、第四段均不能为空
-    [Template]    验证源主机subnetIP地址
-    .168.1.10    ${common_ip_addr_err}
-    192..1.10    ${common_ip_addr_err}
-    192.168..10    ${common_ip_addr_err}
-    192.168.1.    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentstart_test_49_3
-    [Documentation]    源IP地址第一段、第二段、第三段、第四段均不能为空
-    [Template]    验证源主机segment起始IP地址
-    .168.1.10    ${common_ip_addr_err}
-    192..1.10    ${common_ip_addr_err}
-    192.168..10    ${common_ip_addr_err}
-    192.168.1.    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentend_test_49_4
-    [Documentation]    源IP地址第一段、第二段、第三段、第四段均不能为空
-    [Template]    验证源主机segment结束IP地址
-    192.168.1.95    .168.1.10    ${common_ip_addr_err}
-    192.168.1.95    192..1.10    ${common_ip_addr_err}
-    192.168.1.95    192.168..10    ${common_ip_addr_err}
-    192.168.1.95    192.168.1.    ${common_ip_addr_err}
-
-IPandProtocal_SIP_subnet_test_50_2
-    [Documentation]    源IP地址输入0.0.0.0，提示IP不能为全0
-    [Template]    验证源主机subnetIP地址
-    0.0.0.0    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentstart_test_50_3
-    [Documentation]    源IP地址输入0.0.0.0，提示IP不能为全0
-    [Template]    验证源主机segment起始IP地址
-    0.0.0.0    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentend_test_50_4
-    [Documentation]    源IP地址输入0.0.0.0，提示IP不能为全0
-    [Template]    验证源主机segment结束IP地址
-    192.168.1.95    0.0.0.0    ${common_ip_addr_err}
-
-IPandProtocal_SIP_subnet_test_51_2
-    [Documentation]    源IP地址不为组播地址或保留地址：223 < n1 < 255
-    [Template]
-    删除列表里所有条目显示成功消息message
-    验证源主机subnetIP地址    224.0.0.1    ${common_ip_addr_err}
-    验证源主机subnetIP地址    255.0.0.1    ${common_ip_addr_err}
-    验证源主机subnetIP地址    254.0.0.1    ${common_ip_addr_err}
-    验证源主机子网地址    223.0.0.1    255.0.0.0    ${common_unlock_add}
-    列表里含有${string}    223.0.0.0\n/255.0.0.0
-
-IPandProtocal_SIP_segmentstart_test_51_3
-    [Documentation]    源IP地址不为组播地址或保留地址：223 < n1 < 255
-    [Template]
-    删除列表里所有条目显示成功消息message
-    验证源主机segment起始IP地址    224.0.0.1    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    255.0.0.1    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    254.0.0.1    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    223.0.0.1    223.0.0.100    ${common_unlock_add}
-    列表里含有${string}    223.0.0.1\n/223.0.0.100
-
-IPandProtocal_SIP_segmentend_test_51_4
-    [Documentation]    源IP地址不为组播地址或保留地址：223 < n1 < 255
-    [Template]
-    删除列表里所有条目显示成功消息message
-    验证源主机segment结束IP地址    192.168.1.95    224.0.0.1    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    192.168.1.95    255.0.0.1    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    192.168.1.95    254.0.0.1    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    223.0.0.1    223.0.0.100    ${common_unlock_add}
-    列表里含有${string}    223.0.0.1\n/223.0.0.100
-
-IPandProtocal_SIP_subnet_test_52_2
-    [Documentation]    源IP地址不为回环地址：n1 = 127
-    [Template]    验证源主机subnetIP地址
-    127.0.0.1    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentstart_test_52_3
-    [Documentation]    源IP地址不为回环地址：n1 = 127
-    [Template]    验证源主机segment起始IP地址
-    127.0.0.1    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentend_test_52_4
-    [Documentation]    源IP地址不为回环地址：n1 = 127
-    [Template]    验证源主机segment结束IP地址
-    126.0.0.100    127.0.0.1    ${common_ip_addr_err}
-
-IPandProtocal_SIP_subnet_test_53_2
-    [Documentation]    源IP地址不为保留地址：n1=0
-    [Template]    验证源主机subnetIP地址
-    0.168.1.10    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentstart_test_53_3
-    [Documentation]    源IP地址不为保留地址：n1=0
-    [Template]    验证源主机segment起始IP地址
-    0.168.1.10    ${common_ip_addr_err}
-
-IPandProtocal_SIP_segmentend_test_53_4
-    [Documentation]    源IP地址不为保留地址：n1=0
-    [Template]    验证源主机segment结束IP地址
-    192.168.1.95    0.168.1.10    ${common_ip_addr_err}
-
 IPandProtocal_DAY_test_130
     [Documentation]    验证day的单个按钮
     [Template]    验证day和time的单个checkbox
@@ -1240,6 +910,138 @@ IPandProtocal_ETIME_test_134
     [Template]    验证选择time的起始时间不选择结束时间的情况
     06:30    ${common_end_time_err}
     15:00    ${common_end_time_err}
+
+IPandProtocal_SIP_test_42
+    [Documentation]    *源IP地址输入框：小数点<3，提示IP长度不正确*
+    #源IP地址输入框：小数点<3，提示IP长度不正确
+    验证源主机hostsIP地址    10.0.01    ${common_ip_addr_err}
+    验证源主机subnetIP地址    10.0.01    ${common_ip_addr_err}
+    验证源主机segment起始IP地址    10.0.01    ${common_ip_addr_err}
+    验证源主机segment结束IP地址    10.0.0.102    10.0.01    ${common_ip_addr_err}
+
+IPandProtocal_SIP_test_43
+    [Documentation]    *源IP地址不能为空*
+    验证源主机hostsIP地址    ${EMPTY}    ${common_ip_addr_err}
+    验证源主机subnetIP地址    ${EMPTY}    ${common_ip_addr_err}
+    验证源主机segment起始IP地址    ${EMPTY}    ${common_ip_addr_err}
+    验证源主机segment结束IP地址    10.0.0.102    ${EMPTY}    ${common_ip_addr_err}
+
+IPandProtocal_SIP_test_44
+    [Documentation]    *源IP地址输入框第一段IP值超出范围，提示只能在0~255之间*
+    验证源主机hostsIP地址    -1.0.0.2    ${common_ip_addr_err}
+    验证源主机hostsIP地址    256.0.0.1    ${common_ip_addr_err}
+    验证源主机subnetIP地址    -1.0.0.2    ${common_ip_addr_err}
+    验证源主机subnetIP地址    256.0.0.1    ${common_ip_addr_err}
+    验证源主机segment起始IP地址    -1.0.0.2    ${common_ip_addr_err}
+    验证源主机segment起始IP地址    256.0.0.1    ${common_ip_addr_err}
+    验证源主机segment结束IP地址    10.0.0.102    -1.0.0.2    ${common_ip_addr_err}
+    验证源主机segment结束IP地址    10.0.0.102    256.0.0.1    ${common_ip_addr_err}
+
+IPandProtocal_SIP_test_45
+    [Documentation]    *源IP地址输入框第二段IP值超出范围，提示只能在0~255之间*
+    验证源主机hostsIP地址    10.-1.0.10    ${common_ip_addr_err}
+    验证源主机hostsIP地址    10.256.0.10    ${common_ip_addr_err}
+    验证源主机subnetIP地址    10.-1.0.10    ${common_ip_addr_err}
+    验证源主机subnetIP地址    10.256.0.10    ${common_ip_addr_err}
+    验证源主机segment起始IP地址    10.-1.0.10    ${common_ip_addr_err}
+    验证源主机segment起始IP地址    10.256.0.10    ${common_ip_addr_err}
+    验证源主机segment结束IP地址    10.0.0.102    10.-1.0.10    ${common_ip_addr_err}
+    验证源主机segment结束IP地址    10.0.0.102    10.256.0.10    ${common_ip_addr_err}
+
+IPandProtocal_SIP_test_46
+    [Documentation]    *源IP地址输入框第三段IP值超出范围，提示只能在0~255之间*
+    验证源主机hostsIP地址    10.0.-1.10    ${common_ip_addr_err}
+    验证源主机hostsIP地址    10.0.256.10    ${common_ip_addr_err}
+    验证源主机subnetIP地址    10.0.-1.10    ${common_ip_addr_err}
+    验证源主机subnetIP地址    10.0.256.10    ${common_ip_addr_err}
+    验证源主机segment起始IP地址    10.0.-1.10    ${common_ip_addr_err}
+    验证源主机segment起始IP地址    10.0.256.10    ${common_ip_addr_err}
+    验证源主机segment结束IP地址    10.0.0.102    10.0.-1.10    ${common_ip_addr_err}
+    验证源主机segment结束IP地址    10.0.0.102    10.0.256.10    ${common_ip_addr_err}
+
+IPandProtocal_SIP_test_47
+    [Documentation]    *源IP地址输入框第四段IP值超出范围，提示只能在0~255之间*
+    验证源主机hostsIP地址    10.0.0.-1    ${common_ip_addr_err}
+    验证源主机hostsIP地址    10.0.0.256    ${common_ip_addr_err}
+    验证源主机subnetIP地址    10.0.0.-1    ${common_ip_addr_err}
+    验证源主机subnetIP地址    10.0.0.256    ${common_ip_addr_err}
+    验证源主机segment起始IP地址    10.0.0.-1    ${common_ip_addr_err}
+    验证源主机segment起始IP地址    10.0.0.256    ${common_ip_addr_err}
+    验证源主机segment结束IP地址    10.0.0.102    10.0.0.-1    ${common_ip_addr_err}
+    验证源主机segment结束IP地址    10.0.0.102    10.0.0.256    ${common_ip_addr_err}
+
+IPandProtocal_SIP_test_48
+    [Documentation]    *源IP地址输入框存在非法字符，提示发现n个非法字符*
+    验证源主机hostsIP地址    192,168;1:s    ${common_ip_addr_err}
+    验证源主机subnetIP地址    192,168;1:s    ${common_ip_addr_err}
+    验证源主机segment起始IP地址    192,168;1:s    ${common_ip_addr_err}
+    验证源主机segment结束IP地址    192.168.1.95    192,168;1:s    ${common_ip_addr_err}
+
+IPandProtocal_SIP_test_49
+    [Documentation]    *源IP地址第一段、第二段、第三段、第四段均不能为空*
+    验证源主机hostsIP地址    .168.1.10    ${common_ip_addr_err}
+    验证源主机hostsIP地址    192..1.10    ${common_ip_addr_err}
+    验证源主机hostsIP地址    192.168..10    ${common_ip_addr_err}
+    验证源主机hostsIP地址    192.168.1.    ${common_ip_addr_err}
+    验证源主机subnetIP地址    .168.1.10    ${common_ip_addr_err}
+    验证源主机subnetIP地址    192..1.10    ${common_ip_addr_err}
+    验证源主机subnetIP地址    192.168..10    ${common_ip_addr_err}
+    验证源主机subnetIP地址    192.168.1.    ${common_ip_addr_err}
+    验证源主机segment起始IP地址    .168.1.10    ${common_ip_addr_err}
+    验证源主机segment起始IP地址    192..1.10    ${common_ip_addr_err}
+    验证源主机segment起始IP地址    192.168..10    ${common_ip_addr_err}
+    验证源主机segment起始IP地址    192.168.1.    ${common_ip_addr_err}
+    验证源主机segment结束IP地址    192.168.1.95    .168.1.10    ${common_ip_addr_err}
+    验证源主机segment结束IP地址    192.168.1.95    192..1.10    ${common_ip_addr_err}
+    验证源主机segment结束IP地址    192.168.1.95    192.168..10    ${common_ip_addr_err}
+    验证源主机segment结束IP地址    192.168.1.95    192.168.1.    ${common_ip_addr_err}
+
+IPandProtocal_SIP_test_50
+    [Documentation]    *源IP地址输入0.0.0.0，提示IP不能为全0*
+    验证源主机hostsIP地址    0.0.0.0    ${common_ip_addr_err}
+    验证源主机subnetIP地址    0.0.0.0    ${common_ip_addr_err}
+    验证源主机segment起始IP地址    0.0.0.0    ${common_ip_addr_err}
+    验证源主机segment结束IP地址    192.168.1.95    0.0.0.0    ${common_ip_addr_err}
+
+IPandProtocal_SIP_test_51
+    [Documentation]    *源IP地址不为组播地址或保留地址：223 < n1 < 255*
+    删除列表里所有条目显示成功消息message
+    验证源主机hostsIP地址    224.0.0.1    ${common_ip_addr_err}
+    验证源主机hostsIP地址    240.0.0.1    ${common_ip_addr_err}
+    验证源主机hostsIP地址    223.0.0.1    ${common_unlock_add}
+    列表里含有${string}    223.0.0.1\n/223.0.0.1
+    删除列表里所有条目显示成功消息message
+    验证源主机subnetIP地址    224.0.0.1    ${common_ip_addr_err}
+    验证源主机subnetIP地址    255.0.0.1    ${common_ip_addr_err}
+    验证源主机subnetIP地址    254.0.0.1    ${common_ip_addr_err}
+    验证源主机子网地址    223.0.0.1    255.0.0.0    ${common_unlock_add}
+    列表里含有${string}    223.0.0.0\n/255.0.0.0
+    删除列表里所有条目显示成功消息message
+    验证源主机segment起始IP地址    224.0.0.1    ${common_ip_addr_err}
+    验证源主机segment起始IP地址    255.0.0.1    ${common_ip_addr_err}
+    验证源主机segment起始IP地址    254.0.0.1    ${common_ip_addr_err}
+    验证源主机segment结束IP地址    223.0.0.1    223.0.0.100    ${common_unlock_add}
+    列表里含有${string}    223.0.0.1\n/223.0.0.100
+    删除列表里所有条目显示成功消息message
+    验证源主机segment结束IP地址    192.168.1.95    224.0.0.1    ${common_ip_addr_err}
+    验证源主机segment结束IP地址    192.168.1.95    255.0.0.1    ${common_ip_addr_err}
+    验证源主机segment结束IP地址    192.168.1.95    254.0.0.1    ${common_ip_addr_err}
+    验证源主机segment结束IP地址    223.0.0.1    223.0.0.100    ${common_unlock_add}
+    列表里含有${string}    223.0.0.1\n/223.0.0.100
+
+IPandProtocal_SIP_test_52
+    [Documentation]    *源IP地址不为回环地址：n1 = 127*
+    验证源主机hostsIP地址    127.0.0.1    ${common_ip_addr_err}
+    验证源主机subnetIP地址    127.0.0.1    ${common_ip_addr_err}
+    验证源主机segment起始IP地址    127.0.0.1    ${common_ip_addr_err}
+    验证源主机segment结束IP地址    126.0.0.100    127.0.0.1    ${common_ip_addr_err}
+
+IPandProtocal_SIP_test_53
+    [Documentation]    *源IP地址不为保留地址：n1=0*
+    验证源主机hostsIP地址    0.168.1.10    ${common_ip_addr_err}
+    验证源主机subnetIP地址    0.168.1.10    ${common_ip_addr_err}
+    验证源主机segment起始IP地址    0.168.1.10    ${common_ip_addr_err}
+    验证源主机segment结束IP地址    192.168.1.95    0.168.1.10    ${common_ip_addr_err}
 
 *** Keywords ***
 验证规则名
