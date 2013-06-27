@@ -1,11 +1,12 @@
 *** Settings ***
+Suite Setup       自动化测试初始化
 Resource          config.txt
 Library           HttpLibrary.HTTP
 Library           Selenium2Library
 Library           autoTestInit.py
 
-*** Test Cases ***
-autoTestInit
+*** Keywords ***
+自动化测试初始化
     Create HTTP Context    ${router_lan_ip}
     Set Basic Auth    ${login_user}    ${login_passwd}
     Run Keyword If    '${language}'=='us'    GET    /config/language_us.js
