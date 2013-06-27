@@ -772,14 +772,6 @@ IPandProtocal_ETIME_test_134
     06:30    ${common_end_time_err}
     15:00    ${common_end_time_err}
 
-IPandProtocal_SIP_test_42
-    [Documentation]    *源IP地址输入框：小数点<3，提示IP长度不正确*
-    #源IP地址输入框：小数点<3，提示IP长度不正确
-    验证源主机hostsIP地址    10.0.01    ${common_ip_addr_err}
-    验证源主机subnetIP地址    10.0.01    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    10.0.01    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    10.0.0.102    10.0.01    ${common_ip_addr_err}
-
 IPandProtocal_SIP_test_43
     [Documentation]    *源IP地址不能为空*
     验证源主机hostsIP地址    ${EMPTY}    ${common_ip_addr_err}
