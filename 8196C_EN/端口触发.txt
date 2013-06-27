@@ -292,6 +292,23 @@ PortTri_SameItem_test_29
     验证转发端口重复    2000    UDP    200    500    ${common_unlock_save}
     验证转发端口重复    2001    TCP    200    500    ${common_unlock_save}
 
+PortTri_TriPortAndForwardPortRange_test_43
+    [Documentation]    *触发端口范围长度（“结束端口号”减去“起始端口号”）不等于转发端口端口范围长度（“结束端口号”减去“起始端口号”）时，提示错误
+    ...    *
+    [Template]    验证触发端口与转发端口映射
+    12    13    50    456    ${common_port_len_err}
+    12    20    50    51    ${common_port_len_err}
+
+PortTri_TriPortAndForwardPortRange_test_44
+    [Documentation]    *当触发端口结束端口为空时，转发端口为一个范围长度时，允许保存；*
+    ...
+    ...    *当转发端口结束端口为空时，转发端口为一个范围长度时，提示错误
+    ...    *
+    [Setup]    删除所有端口触发条目并显示成功消息
+    [Template]    验证触发端口与转发端口映射
+    12    ${EMPTY}    50    456    ${common_unlock_save}
+    12    20    50    ${EMPTY}    ${common_port_len_err}
+
 *** Keywords ***
 验证规则名
     [Arguments]    ${rule}    ${message}
@@ -389,4 +406,10 @@ PortTri_SameItem_test_29
 删除端口触发表里第${row}行显示成功消息${message}
     [Arguments]    ${row}    ${message}
     Click Element    xpath=(//div[@id='${${row}-1}'])[2]
+    显示消息    ${message}
+
+验证触发端口与转发端口映射
+    [Arguments]    ${triport_start}    ${triport_end}    ${forwardPort_start}    ${forwardPort_end}    ${message}
+    设置端口触发参数    ${None}    rulename    TCP    ${triport_start}    ${triport_end}    TCP
+    ...    ${forwardPort_start}     ${forwardPort_end}
     显示消息    ${message}

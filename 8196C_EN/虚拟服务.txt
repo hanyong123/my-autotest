@@ -292,6 +292,64 @@ VirtualServers_MODIFY_test_46
     验证列表中某一行每一列的值    2    abcd    192.168.1.30    TCP    1000-1200    400-600
     验证列表中某一行每一列的值    1    ${EMPTY}    192.168.1.40    UDP    1-10    1-10
 
+VirtualServers_InternalSPortMaxlen_test_68
+    [Documentation]    *内部端口起始端口超过5个字符后，无法输入*
+    [Template]    验证最大输入长度
+    vir_inport_start    67890021    5
+
+VirtualServers_InternalEPortMaxlen_test_69
+    [Documentation]    *内部端口结束端口超过5个字符后，无法输入*
+    [Template]    验证最大输入长度
+    vir_inport_end    12121212121    5
+
+VirtualServers_ExternalSPortMaxLen_test_70
+    [Documentation]    *外部端口起始端口超过5个字符后，无法输入*
+    [Template]    验证最大输入长度
+    vir_outport_start    1234566    5
+
+VirtualServers_ExternalEPortMaxLen_test_71
+    [Documentation]    *外部端口结束端口超过5个字符后，无法输入*
+    [Template]    验证最大输入长度
+    vir_outport_end    1232142143    5
+
+VirtualServers_InternalPortandExternalPortRange_test_72
+    [Documentation]    *内部端口范围长度（”结束端口号“减去起”始端口号“）不等于外部端口范围长度（”结束端口号“减去起”始端口号“）时，提示错误*
+    [Template]    验证端口
+    12    12    13    14    ${common_port_len_err}
+    13    14    12    12    ${common_port_len_err}
+
+VirtualServers_InternalSPort_test_64
+    [Documentation]    *内部起始端口不能为空*
+    [Template]    验证端口
+    12    12    ${EMPTY}    13    ${common_port_err}
+
+VirtualServers_InternalEPort_test_65
+    [Documentation]    *内部结束端口可以为空，起始端口不为空，结束端口为空时，表示内部端口为起始值*
+    删除所有条目显示成功消息message
+    验证端口    1234    1234    12    ${EMPTY}    ${common_unlock_save}
+    列表第row行第col列是string    1    6    12-12
+
+VirtualServers_ExternalSPort_test_66
+    [Documentation]    *外部端口起始端口不能为空*
+    [Template]
+    删除所有条目显示成功消息message
+    验证端口    ${EMPTY}    12    13    13    ${common_port_err}
+
+VirtualServers_ExternalEPort_test_67
+    [Documentation]    *外部端口结束端口可以为空；当起始端口不为空，而结束端口为空时，表示外部端口为起始端口的值。*
+    删除所有条目显示成功消息message
+    验证端口    1234    \    12    12    ${common_unlock_save}
+    列表第row行第col列是string    1    5    1234-1234
+
+VirtualServers_InternalPortandExternalPortRange_test_73
+    [Documentation]    *当内部端口结束端口为空时，外部端口为一个范围长度时，允许保存；*
+    ...
+    ...    *当外部端口结束端口为空时，内部端口为一个范围长度时，提示错误*
+    [Setup]    删除所有条目显示成功消息message
+    [Template]    验证端口
+    100    120    200    ${EMPTY}    ${common_unlock_save}
+    100    ${EMPTY}    300    301    ${common_port_len_err}
+
 *** Keywords ***
 验证规则名
     [Arguments]    ${name}    ${message}
