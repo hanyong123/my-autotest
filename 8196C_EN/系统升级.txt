@@ -29,7 +29,8 @@ SysUpdate_NotChooseFile_test_5
     Execute Javascript    document.getElementById('updata_file').disabled=true
     Click Element    id=update_set
     Sleep    5
-    Page Should Contain Element    id=lock_bg
+    ${string}    Get Text    xpath=//div[@class="df_lock_load"]
+    Should Contain    ${string}    ${common_update_faild}
     关闭浏览器
 
 升级成功
