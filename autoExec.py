@@ -8,7 +8,17 @@ import os
 import subprocess
 import re
 import codecs
+import sys
 
+def _fix_run_path():
+    _prog_cur_path = os.getcwd()
+    _prog_run_path = os.path.dirname(sys.argv[0])
+    if not _prog_run_path:
+        return
+    if _prog_cur_path != _prog_run_path:
+        os.chdir(_prog_run_path)
+    return
+    
 def parse_config_file(filename):
     f = open(filename,'r')
     config = {}
@@ -20,6 +30,7 @@ def parse_config_file(filename):
     return config
 
 if __name__ == '__main__':
+    _fix_run_path() 
     bowser = 'firefox'
     login_user = 'guest'
     login_passwd = 'guest'

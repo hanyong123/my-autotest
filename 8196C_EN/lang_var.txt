@@ -1,0 +1,307 @@
+*** Variables ***
+${common_all}           ALL
+${common_wan_lan_err}           IP address conflict with WAN! Please change router's LAN IP address.
+${common_channel}           Channel
+${common_after_map_a}           (Please enter 10 hexadecimal characters (any combination of a-f, A-F, 0-9.))
+${common_after_map_b}           (Please enter 5 ASCII characters (any combination of a-z, A-Z, 0-9.))
+${common_after_map_c}           (Please enter 26 hexadecimal characters (any combination of a-f, A-F, 0-9.))
+${common_after_map_d}           (Please enter 13 ASCII characters (any combination of a-z, A-Z, 0-9.))
+${common_after_map_e}           (Please enter 64 hexadecimal characters (any combination of a-f, A-F, 0-9.))
+${common_after_map_f}           (Please enter 8-63 ASCII characters (any combination of a-z, A-Z, 0-9.))
+${common_after_map_g}           seconds(60-86400)
+${common_auto_type}           Auto
+${common_welcome_title}           Welcome-netis Wireless N Router
+${common_advanced_title}           netis Wireless N Router
+${common_DDNS_ERR_FAILED}           Failed
+${common_bound}           Bound
+${common_unbound}           Unbound
+${common_bind}           Bind
+${common_timeout_err}           Operation Failed. Please try again.
+${common_use_tip}           Time
+${common_restoring}           Restoring settings...
+${common_defaulting}           Resetting...
+${common_rebooting}           Restarting...
+${common_days}           Days
+${common_hours}           Hours
+${common_minutes}           Minutes
+${common_seconds}           Seconds
+${common_search}           Searching...
+${common_wel_key_err}           Please input 8~63 characters (except special characters 【'\"\\】).
+${common_wel_sele_lan}           Select Language
+${common_wel_tips}           Quick Setup
+${common_wel_inter_tip}           Internet Connection Type
+${common_wel_wirel_tip}           Wireless Setup
+${common_wel_pwd_tip}           (Please enter 8-63 characters.) 
+${common_wel_status_label}           Security :
+${common_wel_static_tip}           If your ISP provides fixed IP Address info, please select the Static IP option.
+${common_wel_dhcp_tip}           If your ISP releases auto IP Address with DHCP server, please select the DHCP option.
+${common_wel_pppoe_tip}           If your ISP provides PPPoE(ADSL) connection, please select the PPPoE option.
+${common_bind_all}           Bind All
+${common_advance}           Advanced
+${common_text_after}           Packets/s
+${common_wps_off}           Disable WPS
+${common_wps_on}           Enable WPS
+${common_def_pin}           Restore PIN
+${common_new_pin}           Gen New PIN
+${common_info}           Info
+${common_connect}           Connect
+${common_disconnect}           Disconnect
+${common_connected}           Connected
+${common_disconnected}           Disconnected
+${common_refresh}           Refresh
+${common_open}           Add Device
+${common_link}           Connect
+${common_save_reboot}           Save & Reboot
+${common_add}           Add
+${common_del}           Delete
+${common_del_all}           Delete All
+${common_delAll}           Delete All
+${common_mod}           Modify
+${common_reboot}           Restart
+${common_back}           Back
+${common_save}           Save
+${common_keep_all}           Keep All
+${common_wakeup}           Wake Up
+${common_upgrade}           Upgrade
+${common_backup}           Backup
+${common_recover}           Restore
+${common_restore}           Restore
+${common_help_more_btn}           More...
+${common_ap_get}           AP Scan
+${common_auto_check}           Auto Detect
+${common_on}           Enable
+${common_off}           Disable
+${common_forbid_s}           Deny
+${common_allow_s}           Permit
+${common_df_mac}           Default MAC
+${common_clone_mac}           MAC Clone
+${common_start}           Start
+${common_end}           End
+${common_browse}           Browse
+${common_current}           MAC Address Clone
+${common_device}           Restore Default MAC
+${common_set_reserve}           Reserve
+${common_cancel_reserve}           Cancel
+${common_reserved}           Reserved
+${common_static}           Static
+${common_dynamic}           DHCP
+${common_yes}           Yes
+${common_no}           No
+${common_other}           Other
+${common_total}           Total
+${common_online}           Online
+${common_offline}           Offline
+${common_week_0}           Sun
+${common_week_1}           Mon
+${common_week_2}           Tue
+${common_week_3}           Wed
+${common_week_4}           Thu
+${common_week_5}           Fri
+${common_week_6}           Sat
+${common_everday}           Everyday
+${common_all_day}           All Day
+${common_check_all_label}           Select All
+${common_max_size_label_a}            Current 
+${common_max_size_label_b}           &nbsp;page 
+${common_size_label}           Items show in every single page
+${common_size_set_btn}           Apply
+${common_load_tip}           Upgrading now...
+${common_lock_save}           Saving...
+${common_lock_delete}           Deleting...
+${common_lock_add}           Adding...
+${common_unlock_save}           Saved Successfully!
+${common_unlock_delete}           Deleted Successfully!
+${common_unlock_add}           Added Successfully!
+${common_unlock_err}           Unidentified Return Value! Please try again.
+${common_unlock_error}           Operation Failed!
+${common_time_err}           Max Idle Time should be set to between 1 and 30 minutes.
+${common_dhcp_mtu_err}           MTU Size should be between 576 and 1500 bytes. Please try again.
+${common_pppoe_mtu_err}           MTU Size should be between 576 and 1492 bytes. Please try again.
+${common_static_mtu_err}           MTU Size should be between 576 and 1500 bytes. Please try again.
+${common_l2tp_mtu_err}           MTU Size should be between 576 and 1460 bytes. Please try again.
+${common_pptp_mtu_err}           MTU Size should be between 576 and 1420 bytes. Please try again.
+${common_beacon_err}           Beacon Interval value should be between 20 and 1000.
+${common_rts_err}           RTS Threshold value should be between 256 and 2347.
+${common_frag_err}           Fragmentation Threshold value should be between 256 and 2346.
+${common_cmp_port_err}           The End Port cannot be less than the Start Port. Please input again.
+${common_cmp_ip_err}           The End Address cannot be less than the Start Address. Please input again.
+${common_mask_err}           The Subnet Mask is invalid. Please input another one.
+${common_ip_err}           The IP Address is invalid. Please input another one.
+${common_key_time_err}           The Key Renewal period is between 60 and 86400 seconds. Please input again.
+${common_addr_err}           The DHCP address range should not be more than the maximum limit. Please input again.
+${common_lan_ip_err}           The DHCP address range should be set on the same network segment with the LAN IP Address. Please input again.
+${common_lan_addr_err}           The LAN IP address cannot be included in the DHCP address range. Please input again.
+${common_item_err}           No more items can be added.
+${common_ip_used_err}           The IP Address has been used for another item. Please try a new one.
+${common_qos_band_err}           The Bandwidth should be set to between 0 to 12799. Please input again.
+${common_qos_up_err}           The Restricted Uplink Bandwidth cannot be less than the Guaranteed Uplink Bandwidth. Please input again.
+${common_qos_down_err}           The Restricted Downlink Bandwidth cannot be less than the Guaranteed Downlink Bandwidth. Please input again.
+${common_key_len_err}           The Password/Key length should be:
+${common_ddns_start}           Connecting...
+${common_ddns_failed}           Authentication failed. Please check your account info and try again.
+${common_ddns_ok}           You're connected successfully! The Domain Name is:
+${common_oray_user_err}           Please input 5 to 16 characters, any combination of a-z, A-Z, 0-9, -(hyphen). All numbers or all -(hyphen) is not permitted.
+${common_oray_pass_err}           Please input 6 to 16 characters, any combination of a-z, A-Z, 0-9, special characters.
+${common_meibu_user_err}           Please input 1 to 26 characters, any combination of a-z, A-Z, 0-9. Chinese words or illegal characters are not permitted.
+${common_meibu_pass_err}           Please input no less than 4 characters, any combination of a-z, A-Z, 0-9.
+${common_end_time_err}           Wrong time format. Please try again.
+${common_reserved_keep}           Invalid operation! This address has already been reserved.
+${common_reserved_cancel}           Invalid operation! This address has not been reserved.
+${common_password_null}           Password cannot be null. Please input again.
+${common_password_ival}           Only letters or numbers can be used as a password. Please input again.
+${common_password_length_err}           The password should be less than 32 characters. Please input again.
+${common_password_err}           The new password you entered doesn't match. Please input again.
+${common_mtu_err}           Null key is not permitted. Please input the whole number again.
+${common_mtu_pppoe_null}           Null key is not permitted. Please input the whole number again.
+${common_pppoe_text_err}           Null key is not permitted! And no illegal characters like \\'“”‘’. 
+${common_mtu_ival}           MTU Size should be between 576 and [1] bytes. Please try again.
+${common_ip_addr_null}           The IP Address cannot be set as blank or 0.0.0.0. Please input again.
+${common_ip_addr_ival}           Invalid IP Address with illegal characters. Please input another one.
+${common_ip_addr_err}           Invalid IP Address! Please input another one.
+${common_mask_addr_err}           The Subnet Mask is invalid. Please input another one.
+${common_mac_addr_err}           The MAC Address is invalid. Please input another one.
+${common_gw_err}           The Default Gateway should be set on the same network segment with the WAN IP Address. Please input again.
+${common_gw_errs}           Invalid Default Gateway. Please input another one.
+${common_port_null}           Please input port address.
+${common_port_err}           The port should be set between 1 and 65535. Please input again. 
+${common_int_number_err}           Invalid number. Please input another one.
+${common_string_null}           Null key and unidentified characters are not permitted.
+${common_string_err}           No special characters '"\\ or spaces are permitted.
+${common_string_null_err}           No special characters '"\\ are permitted.
+${common_route_ip_err}           The IP address and Subnet Mask are not in the same network. Please input another one.
+${common_auto_disconnect_time_err}           Max Idle Time should be set to between 1 and 30 minutes.
+${common_dhcp_reserve_err}           The IP Address should be included in the DHCP Address range. Please input another one.
+${common_dhcp_reserve_lan_ip}           The IP Address cannot be the router's LAN IP Address. Please input another one. 
+${common_wireless_key_length}           The Password/Key length should be: [1].
+${common_wireless_key_hex_err}           The Password should be all hexadecimal characters.
+${common_qos_max_up_err}           The Restricted Uplink Bandwidth cannot be less than the Guaranteed Uplink Bandwidth. Please input again.
+${common_qos_max_down_err}           The Restricted Downlink Bandwidth cannot be less than the Guaranteed Downlink Bandwidth. Please input again.
+${common_qos_bandwidth_err}           The Bandwidth should be set to between 0 to 12799. Please input again.
+${common_az09_string_err}           Please input characters: a-z,A-Z,0-9.
+${common_string_url_err}           Please input characters: a-z,A-Z,0-9,-.
+${common_string_hex_err}           Please input characters: a-f,A-F,0-9.
+${common_wireless_key_length_info}           (Please input [1] characters (except special characters【\\ ' "】))
+${common_wireless_key_length_info1}           (Please input [1] hexadecimal characters (a-f,A-F,0-9))
+${common_Src_password_err}           The current password is not correct. Please input again.
+${common_save_only_need_reboot}           Now the setting is changed, and it will take effects only after reboot. You're recommended to finish the other settings first then reboot the router as the final step.
+${common_pin_number_err}           Please input 8 numbers for the PIN Code.
+${common_item_exist}           An item with same settings already exists. Please try another one.
+${common_rule_err}           No illegal characters and spaces.
+${common_domain_err}           Invalid Domain Name format. Please try another one.
+${common_dns_null_err}           Invalid DNS Server address. Please set at least one DNS Server.
+${common_segment_err}           The IP Address cannot be the Network Address. Please try another one.
+${common_Bcast_err}           The IP Address cannot be a broadcast address. Please try another one.
+${common_segment_len_err}           The IP address is not on the current network segment. Please try another one.
+${common_reserver_err}           The IP Address to be reserved is not in the DHCP Address range. Please try another one.
+${common_pass_err}           The password can be any combination of a-z, A-Z, 0-9, or special characters. Please try again.
+${common_year_err}           Wrong year format. Please input another one (2008~2035).
+${common_mon_err}           Wrong month format. Please input another one (1~12).
+${common_day31_err}           Wrong day format. Please input another one (1~31).
+${common_day30_err}           Wrong day format. Please input another one (1~30).
+${common_day29_err}           Wrong day format. Please input another one (1~29).
+${common_day28_err}           Wrong day format. Please input another one (1~28).
+${common_hour_err}           Wrong hour format. Please input another one (0~23).
+${common_min_sec_err}           Wrong minute or second format. Please input another one (0~59).
+${common_page_err}           Wrong page format. Please input another one (1~100).
+${common_DDNS_ERR_CLOSE}           Closed.
+${common_DDNS_ERR_CONNECTING}           Connecting...
+${common_DDNS_ERR_INUPT}           Please input both username and password.
+${common_DDNS_ERR_GET_NO_IP}           Failed to get the server address.
+${common_DDNS_ERR_SYSTEM}           System resource is limited.
+${common_DDNS_ERR_USER}           Username or password is invalid.
+${common_DDNS_ERR_OK}           Updated successfully .
+${common_DDNS_ERR_SERVER}           DDNS server error.
+${common_ST}           Standard Service,  
+${common_PR}           Professional Service,
+${common_del_tip}           Are you sure you want to delete all?
+${common_del_one_tip}           Are you sure you want to delete the selected item?
+${common_disconnect_tip}           Are you sure you want to disconnect the network?
+${common_connect_tip}           Are you sure you want to connect the network?
+${common_default_tip}           Are you sure you want to reset to factory defaults?
+${common_reboot_tip}           Are you sure you want to restart the router?
+${common_reboot_web_tip}           The router will restart after you change the port. Do you want to continue?
+${common_backup_tip}           Are you sure you want to restore the settings?
+${common_del_reserve_err}           Failed to cancel the address reservation rule.
+${common_ip_occupy_err}           IP Address already exists. Please try another one.
+${common_mac_occupy_err}           MAC Address already exists. Please try another one.
+${common_port_occupy_err}           Port already exists. Please try another one.
+${common_port_len_err}           The number range of ports should be the same. E.g, External Port range, 1-4; Internal Port range, 6-9.
+${common_update_err}           No upgrade file selected.
+${common_update_faild}           Firmware upgrade failed.
+${common_backup_err}           No backup file selected.
+${common_backup_faild}           Backup failed.
+${common_ip_len_err}           The IP address is not in the range. Please try another one.
+${common_add_item_err}           An item with same settings already exists.
+${common__default}           Invalid input.
+${wan_txt}           WAN
+${wan_mode_panel}           WAN Type
+${wan_access_mode_label}           WAN Type
+${wan_wire_r}           Wired Access
+${wan_wireless_r}           Wireless Access
+${wan_wireless_config_panel}           WISP Settings
+${wan_repeater_ssid_label}           SSID
+${wan_rp_sec_mode_label}           Authentication Type
+${wan_rp_sec_mode_options}           ['None','WEP','WPA-PSK','WPA2-PSK']
+${wan_wep_panel}           WEP
+${wan_rp_key_size_label}           Key Length
+${wan_rp_key_type_label}           Encryption Type
+${wan_rp_key_mode_wep_label}           Key Mode
+${wan_rp_key_mode_wpa_label}           Key Mode
+${wan_rp_key_wep_label}           Password
+${wan_rp_key_wpa_label}           Password
+${wan_64_r}           64bits
+${wan_128_r}           128bits
+${wan_hex_r}           HEX
+${wan_asc_r}           ASCII
+${wan_t_r}           TKIP
+${wan_a_r}           AES
+${wan_ta_r}           TKIP & AES
+${wan_wan_set_panel}           WAN Settings
+${wan_conntype_label}           WAN Connection Type
+${wan_conntype_options}           ['DHCP(Cable Modem)','Static IP','PPPoE','Russia PPPoE','Unifi PPPoE','PPTP/Russia PPTP','L2TP/Russia L2TP']
+${wan_conntype_after}           LAN 1 only for IPTV
+${wan_pppoe_username_label}           Username
+${wan_pppoe_pwd_label}           Password
+${wan_l2tp_username_label}           Username
+${wan_l2tp_pwd_label}           Password
+${wan_l2tp_server_label}           Server IP Address/ Name
+${wan_l2tp_type_label}           Connection Type
+${wan_l2tp_ip_label}           IP Address
+${wan_l2tp_mask_label}           Subnet Mask
+${wan_l2tp_gw_label}           Default Gateway
+${wan_pptp_username_label}           Username
+${wan_pptp_pwd_label}           Password
+${wan_pptp_server_label}           Server IP Address/ Name
+${wan_pptp_type_label}           Connection Type
+${wan_pptp_ip_label}           IP Address
+${wan_pptp_mask_label}           Subnet Mask
+${wan_pptp_gw_label}           Default Gateway
+${wan_pppoe_service_name_label}           Server Name
+${wan_pppoe_service_name_after}           (Optional)
+${wan_pppoe_ac_name_label}           PPPoE AC Name
+${wan_pppoe_ac_name_after}           (Optional)
+${wan_pppoe_mtu_label}           MTU Size
+${wan_pppoe_mtu_after}           (The default is 1480, do not change unless necessary.)
+${wan_dns_a_label}           Primary DNS
+${wan_dns_a_after}           (Optional)
+${wan_dns_b_label}           Secondary DNS
+${wan_dns_b_after}           (Optional)
+${wan_auto_r}           Connect Automatically
+${wan_hand_r}           Connect Manually
+${wan_dhcp_mtu_label}           MTU Size
+${wan_dhcp_mtu_after}           (The default is 1500, do not change unless necessary.)
+${wan_wan_ip_label}           WAN IP Address
+${wan_wan_mask_label}           Subnet Mask
+${wan_wan_gw_label}           Default Gateway
+${wan_mac_addr_label}           MAC Address
+${wan_static_mtu_label}           MTU Size
+${wan_static_mtu_after}           (The default is 1500, do not change unless necessary.)
+${wan_l2tp_mtu_label}           MTU Size
+${wan_l2tp_mtu_after}           (The default is 1460, do not change unless necessary.)
+${wan_pptp_mtu_label}           MTU Size
+${wan_pptp_mtu_after}           (The default is 1420, do not change unless necessary.)
+${wan_second_in_panel}           Secondary Connection
+${wan_second_in_type_label}           Connection Type
+${wan_dy_r}           Dynamic IP
+${wan_st_r}           Static IP
+${wan_ap_get_thead}           ['ID','Network Name','BSSID','Channel(Radio Band)','Radio Mode','Authentication Type','Signal Strength','Connect']
