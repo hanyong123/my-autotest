@@ -17,7 +17,8 @@ SysAcccess_WrongPwd_test_4
     [Documentation]    密码错误，无法进入路由器WEB页面
     输入网址
     输入用户名密码    ${login_user}    aaa
-    Wait Until Keyword Succeeds    15    5    Page Should Contain Element    id=errorTitleText
+    ${status1}    Run Keyword And Return Status    Wait For Active Window    需要验证    \    1
+    Run Keyword If    '${status1}'=='False'    Page Should Contain Element    id=errorTitleText
     关闭浏览器
 
 SysAcccess_AllRight_test_5
@@ -47,4 +48,4 @@ SysAcccess_ThreeTimes_test_6
     Send    {ENTER}
 
 输入网址
-    Open Browser    http:\\192.168.1.1
+    Open Browser    http://192.168.1.1
