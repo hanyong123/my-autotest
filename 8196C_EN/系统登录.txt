@@ -47,4 +47,4 @@ SysAcccess_ThreeTimes_test_6
     Send    {ENTER}
 
 输入网址
-    Open Browser    http:\\192.168.1.1
+    Open Browser    http://192.168.1.1
