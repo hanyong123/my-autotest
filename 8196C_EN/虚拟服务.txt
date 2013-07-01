@@ -1,4 +1,4 @@
-﻿*** Settings ***
+*** Settings ***
 Suite Setup       Run Keywords    打开浏览器    AND    转到虚拟服务配置页面
 Suite Teardown    关闭浏览器
 Test Setup        等待时间
@@ -93,10 +93,15 @@ VirtualServers_InternalIP_test_15
 VirtualServers_InternalIP_test_16
     [Documentation]    内网IP地址不为组播地址或保留地址：223 < n1 < 255
     删除所有条目显示成功消息message
+    Comment    修改LAN口IP    223.0.0.1    255.0.0.0
+    Comment    转到虚拟服务配置页面
     验证内网IP地址    224.0.0.1    ${common_ip_addr_err}
     验证内网IP地址    240.0.0.1    ${common_ip_addr_err}
-    验证内网IP地址    223.0.0.1    ${common_unlock_save}
-    列表第row行第col列是string    1    3    223.0.0.1
+    添加条目    wip=223.0.0.2    wvir_proto=TCP    s_external_port=1000    e_external_port=1200    s_internal_port=400    e_internal_port=600
+    ...    message=${common_unlock_save}
+    列表第row行第col列是string    1    3    223.0.0.2
+    Comment    修改LAN口IP    192.168.1.1    255.255.255.0
+    Comment    转到虚拟服务配置页面
 
 VirtualServers_InternalIP_test_17
     [Documentation]    内网IP地址不为回环地址：n1 = 127
@@ -441,4 +446,16 @@ VirtualServers_InternalPortandExternalPortRange_test_73
     Sleep    5
 
 等待时间
+    Sleep    5
+
+修改LAN口IP
+    [Arguments]    ${ip}    ${mask}
+    Choose Ok On Next Confirmation
+    转到内网配置页面
+    设置LAN口IP和MASK    ${ip}    ${mask}
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_reboot_tip}
+    Sleep    40s
+    关闭浏览器
+    Open Browser    http://${login_user}:${login_passwd}@${ip}/index.htm    ${browser}
     Sleep    5

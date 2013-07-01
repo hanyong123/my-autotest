@@ -184,7 +184,7 @@ DNSFilter_DAY_test_107
 DNSFilter_TIME_test_108
     [Documentation]    验证time的单个按钮
     [Template]    验证day或time的单个checkbox
-    baidu.com    xpath=(//input[@id='dns_time'])    ${common_unlock_add}    ALL
+    xpath=(//input[@id='dns_time'])    ${common_unlock_add}    ALL
 
 DNSFilter_TIME_test_109
     [Documentation]    验证time的默认值
@@ -329,10 +329,9 @@ DNSFilter_EndTime_test_201
     显示消息    ${message}
 
 验证day或time的单个checkbox
-    [Arguments]    ${dns_key}    ${day}    ${message}    ${eday}
+    [Arguments]    ${day}    ${message}    ${eday}
     删除列表里所有条目显示成功消息message
-    ${rdns_key}    process_special_charators    ${dns_key}
-    Run Keyword If    '${rdns_key}'!='${None}'    Input text    id=dns_key    baidu3.com
+    Input text    id=dns_key    baidu3.com
     ${rday}    process_special_charators    ${day}
     Run Keyword If    '${rday}'!='${None}'    Click Element    ${day}
     Click Element    id=add_dns_filter
