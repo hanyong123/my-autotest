@@ -1,8 +1,9 @@
 *** Settings ***
 Suite Setup
 Suite Teardown
-Library           AutoItLibrary
 Resource          keyword.txt
+Library           OperatingSystem
+Library           AutoItLibrary
 
 *** Test Cases ***
 SysAcccess_WrongUser_test_3
@@ -40,7 +41,6 @@ SysAcccess_ThreeTimes_test_6
 *** Keywords ***
 输入用户名密码
     [Arguments]    ${user}    ${pwd}
-    Sleep    5
     Wait For Active Window    需要验证    TimeOut=20
     Send    ${user}
     Send    {Tab}
@@ -48,4 +48,4 @@ SysAcccess_ThreeTimes_test_6
     Send    {ENTER}
 
 输入网址
-    Run Keyword And Ignore Error    Open Browser    http://192.168.1.1
+    Open Browser    http://192.168.1.1    ${browser}

@@ -3,6 +3,8 @@ Created on 2013-6-13
 
 @author: hany
 '''
+from robot.libraries import  BuiltIn
+
 
 def process_special_charators(string):
     if string != None:
@@ -18,8 +20,10 @@ def process_special_charators(string):
 
 def string_lower(string):
     return string.lower()
+
 def remove_leading_space(string):
     return string.strip()
+
         
 if __name__ == '__main__':
     pass
