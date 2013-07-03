@@ -5,6 +5,7 @@ Resource          keyword.txt
 
 *** Test Cases ***
 SystemReboot_ManualReboot_test_14
+    [Documentation]    点击“重启系统”按钮进行路由器的手动重启，跳转到重启倒计时页面，倒计时完成后自动跳转至WEB默认页面
     Choose Ok On Next Confirmation
     Click Element    id=reboot
     ${message}    Confirm Action
