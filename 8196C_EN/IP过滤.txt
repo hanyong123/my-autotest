@@ -33,58 +33,58 @@ IPandProtocal_NAME_test_4
 IPandProtocal_DIP_test_8
     [Documentation]    目的IP地址输入框超过15个字符后，无法输入
     [Template]
-    验证目的主机hostsIP地址最大输入长度    1234567890123456    15
-    验证源主机subnetIP地址最大输入长度    1234567890123456    15
-    验证源主机segmentstartIP地址最大输入长度    1234567890123456    15
-    验证源主机segmentendIP地址最大输入长度    1234567890123456    15
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址最大输入长度    1234567890123456    15
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址最大输入长度    1234567890123456    15
+    Run Keyword And Continue On Failure    验证源主机segmentstartIP地址最大输入长度    1234567890123456    15
+    Run Keyword And Continue On Failure    验证源主机segmentendIP地址最大输入长度    1234567890123456    15
 
 IPandProtocal_DIP_test_9
     [Documentation]    目的IP地址输入框：小数点>3，提示IP长度不正确
     [Template]
-    验证目的主机hostsIP地址    10.0.0.1.    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    10.0.0.1.    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    10.0.0.1.    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    10.0.0.1    10.0.0.1.    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    10.0.0.1.    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    10.0.0.1.    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    10.0.0.1.    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    10.0.0.1    10.0.0.1.    ${common_ip_addr_err}
 
 IPandProtocal_DIP_test_10
     [Documentation]    目的IP地址输入框：小数点<3，提示IP长度不正确
     [Template]
-    验证目的主机hostsIP地址    10.0.01    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    10.0.01    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    10.0.01    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.4    10.0.01    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    10.0.01    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    10.0.01    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    10.0.01    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.4    10.0.01    ${common_ip_addr_err}
 
 IPandProtocal_DIP_test_11
     [Documentation]    目的IP地址不能为空
     [Template]
-    验证目的主机hostsIP地址    ${EMPTY}    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    ${EMPTY}    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    ${EMPTY}    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.95    ${EMPTY}    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    ${EMPTY}    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    ${EMPTY}    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    ${EMPTY}    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.95    ${EMPTY}    ${common_ip_addr_err}
 
 IPandProtocal_DIP_test_12
     [Documentation]    目的IP地址输入框第一段IP值超出范围，提示只能在0~255之间
     [Template]
-    验证目的主机hostsIP地址    -1.0.0.2    ${common_ip_addr_err}
-    验证目的主机hostsIP地址    256.0.0.1    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    -1.0.0.2    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    256.0.0.1    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    -1.0.0.2    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    256.0.0.1    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.5    -1.0.0.2    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.5    256.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    -1.0.0.2    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    256.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    -1.0.0.2    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    256.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    -1.0.0.2    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    256.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.5    -1.0.0.2    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.5    256.0.0.1    ${common_ip_addr_err}
 
 IPandProtocal_DIP_test_13
     [Documentation]    目的IP地址输入框第二段IP值超出范围，提示只能在0~255之间
     [Template]
-    验证目的主机hostsIP地址    10.-1.0.10    ${common_ip_addr_err}
-    验证目的主机hostsIP地址    10.256.0.10    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    10.-1.0.10    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    10.256.0.10    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    10.-1.0.10    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    10.256.0.10    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.95    10.-1.0.10    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.95    10.256.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    10.-1.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    10.256.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    10.-1.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    10.256.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    10.-1.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    10.256.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.95    10.-1.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.95    10.256.0.10    ${common_ip_addr_err}
 
 IPandProtocal_DIP_test_14
     [Documentation]    目的IP地址输入框第三段IP值超出范围，提示只能在0~255之间
