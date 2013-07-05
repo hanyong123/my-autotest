@@ -50,3 +50,4 @@ SysAcccess_ThreeTimes_test_6
 
 输入网址
     Open Browser    http://192.168.1.1    ${browser}
+    Comment    async_open_browser    http://192.168.1.1    ${browser}
