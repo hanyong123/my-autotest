@@ -25,19 +25,11 @@ def string_lower(string):
 def remove_leading_space(string):
     return string.strip()
 
-def async_open_browser(url,browser):
-    class browserThread(threading.Thread):
-        def __init__(self,url,browser):
-            threading.Thread.__init__(self)            
-            self.url = url
-            self.browser = browser
-
-        def run(self):
-             BuiltIn.BuiltIn().run_keyword('Open Browser',self.url,self.browser)
-             time.sleep(10)
-
-    pt = browserThread(url,browser)
-    pt.start()
+def get_autoit_run_result():
+    f = open('autoit_status','r')
+    s = f.read()
+    f.close()
+    return s.strip()
 
 if __name__ == '__main__':
     pass
