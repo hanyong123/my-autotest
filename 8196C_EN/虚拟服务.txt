@@ -1,4 +1,4 @@
-*** Settings ***
+﻿*** Settings ***
 Suite Setup       Run Keywords    打开浏览器    AND    转到虚拟服务配置页面
 Suite Teardown    关闭浏览器
 Test Setup        等待时间

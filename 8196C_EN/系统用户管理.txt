@@ -121,9 +121,21 @@ UserManager_ConfirmPwd_test_23
     Should Be Equal    ${type}    password
 
 *** Keywords ***
+转到系统用户管理页面
+    Set Selenium Speed    0.5
+    Execute JavaScript    $.CurrentApp="passwd";$.load("passwd")
+
 设置旧密码新用户名新密码
     [Arguments]    ${message}    ${oldpwd}    ${newname}    ${newpwd}    ${confirmpwd}
     Input Text    id=old_pwd    ${oldpwd}
+    Input Text    id=new_user    ${newname}
+    Input Text    id=new_pwd    ${newpwd}
+    Input Text    id=new_pwd_confirm    ${confirmpwd}
+    Click Element    id=save_passwd
+    显示消息    ${message}
+
+第一次修改密码
+    [Arguments]    ${message}    ${newname}    ${newpwd}    ${confirmpwd}
     Input Text    id=new_user    ${newname}
     Input Text    id=new_pwd    ${newpwd}
     Input Text    id=new_pwd_confirm    ${confirmpwd}
