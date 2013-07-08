@@ -161,20 +161,25 @@ static_mask_test_23
 static_mask_test_24
     [Documentation]    子网掩码输入框第四段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
     [Template]    验证静态接入地址
-    10.0.0.1    255.255.255.255    10.0.0.1    ${common_unlock_error}
-    10.0.0.1    255.255.255.254    10.0.0.1    ${common_Bcast_err}
-    10.0.0.1    255.255.255.252    10.0.0.1    ${common_unlock_save}
-    10.0.0.1    255.255.255.248    10.0.0.1    ${common_unlock_save}
-    10.0.0.1    255.255.255.240    10.0.0.1    ${common_unlock_save}
-    10.0.0.1    255.255.255.224    10.0.0.1    ${common_unlock_save}
-    10.0.0.1    255.255.255.192    10.0.0.1    ${common_unlock_save}
-    10.0.0.1    255.255.255.129    10.0.0.1    ${common_unlock_save}
-    10.0.0.1    255.255.255.253    10.0.0.1    ${common_mask_addr_err}
+    10.0.0.100    255.255.255.255    10.0.0.100    ${common_mask_err}
+    10.0.0.101    255.255.255.254    10.0.0.101    ${common_Bcast_err}
+    10.0.0.100    255.255.255.252    10.0.0.101    ${common_segment_err}
+    10.0.0.101    255.255.255.252    10.0.0.100    ${common_segment_err}
+    10.0.0.101    255.255.255.252    10.0.0.101    ${common_wan_lan_err}
+    10.0.0.101    255.255.255.252    10.0.0.102    ${common_unlock_save}
+    10.0.0.103    255.255.255.248    10.0.0.100    ${common_Bcast_err}
+    10.0.0.96    255.255.255.248    10.0.0.100    ${common_segment_err}
+    10.0.0.100    255.255.255.248    10.0.0.96    ${common_segment_err}
+    10.0.0.100    255.255.255.240    10.0.0.101    ${common_unlock_save}
+    10.0.0.100    255.255.255.224    10.0.0.101    ${common_unlock_save}
+    10.0.0.100    255.255.255.192    10.0.0.101    ${common_unlock_save}
+    10.0.0.100    255.255.255.129    10.0.0.101    ${common_mask_addr_err}
+    10.0.0.100    255.255.255.253    10.0.0.1    ${common_mask_addr_err}
 
 static_mask_test_25
     [Documentation]    子网掩码输入框存在非法字符，提示发现n个非法字符
     [Template]    验证静态接入地址
-    10.0.0.1    255,255;0:s    10.0.0.1    ${common_mask_addr_err}
+    10.0.0.100    255,255;0:s    10.0.0.1    ${common_mask_addr_err}
 
 static_mask_test_26
     [Documentation]    子网掩码第一段、第二段、第三段、第四段均不能为空

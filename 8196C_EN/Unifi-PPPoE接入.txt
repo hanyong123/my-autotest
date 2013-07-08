@@ -240,14 +240,18 @@ UnifiPPPOE_staticIP_test_37
 UnifiPPPOE_staticIP_test_38
     [Documentation]    子网掩码输入框第四段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
     [Template]    验证Unifi-PPPOE静态接入
-    10.0.0.100    255.255.255.255    ${common_unlock_save}
-    10.0.0.100    255.255.255.254    ${common_unlock_save}
-    10.0.0.100    255.255.255.252    ${common_unlock_save}
+    10.0.0.100    255.255.255.255    ${common_mask_addr_err}
+    10.0.0.100    255.255.255.254    ${common_segment_err}
+    10.0.0.101    255.255.255.254    ${common_Bcast_err}
+    10.0.0.100    255.255.255.252    ${common_segment_err}
+    10.0.0.101    255.255.255.252    ${common_unlock_save}
+    10.0.0.102    255.255.255.252    ${common_unlock_save}
+    10.0.0.103    255.255.255.252    ${common_Bcast_err}
     10.0.0.100    255.255.255.248    ${common_unlock_save}
     10.0.0.100    255.255.255.240    ${common_unlock_save}
     10.0.0.100    255.255.255.224    ${common_unlock_save}
     10.0.0.100    255.255.255.192    ${common_unlock_save}
-    10.0.0.100    255.255.255.129    ${common_unlock_save}
+    10.0.0.100    255.255.255.128    ${common_unlock_save}
     10.0.0.100    255.255.255.253    ${common_mask_addr_err}
 
 UnifiPPPOE_staticIP_test_39
