@@ -7,7 +7,7 @@ Library           String
 
 *** Keywords ***
 转到PPPoE接入设置页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="wan";$.load("wan")
     Wait Until Page Contains Element    id=conntype
     Select From List By Value    id=conntype    3
@@ -67,7 +67,7 @@ Library           String
     Should Not Contain    ${string}    Saved Successfully!
 
 转到DHCP接入设置页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="wan";$.load("wan")
     Wait Until Page Contains Element    id=conntype    15
     Select From List By Value    id=conntype    1
@@ -105,7 +105,7 @@ Library           String
     Length Should Be    ${v}    ${max_len}
 
 转到静态接入设置页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="wan";$.load("wan")
     Wait Until Page Contains Element    id=conntype    15
     Select From List By Value    id=conntype    0
@@ -128,7 +128,7 @@ Library           String
     Click Button    id=save_wan_set
 
 转到内网配置页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="lan";$.load("lan")
 
 设置LAN口MAC
@@ -153,7 +153,7 @@ Library           String
     Click Button    id=save_dhcp_server
 
 转到DHCP保留地址设置页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="address_reservation";$.load("address_reservation")
 
 设置DHCP服务器保留地址
@@ -164,7 +164,7 @@ Library           String
     Click Button    id=add_reservation
 
 转到IP/MAC绑定页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="binds";$.load("binds")
 
 设置IP/MAC绑定
@@ -177,7 +177,7 @@ Library           String
     Click Element    id=add_binds
 
 转到IP过滤页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="ip_filter";$.load("ip_filter")
 
 设置IP过滤
@@ -222,7 +222,7 @@ Library           String
     Click Element    id=add_ip_filter
 
 转到MAC过滤页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="mac_filter";$.load("mac_filter")
 
 设置MAC过滤
@@ -242,7 +242,7 @@ Library           String
     Click Element    id=add_mac_filter
 
 转到恢复缺省页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="default";$.load("default")
 
 恢复出厂设置
@@ -260,7 +260,7 @@ Library           String
     Wait Until Keyword Succeeds    60    5    Page Should Not Contain Element    id=lock_bg
 
 转到接口状态页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="status";$.load("status")
 
 WAN口IP是${ip}
@@ -272,7 +272,7 @@ WAN口IP是${ip}
     Wait Until Keyword Succeeds    15    5    WAN口IP是${ip}
 
 转到虚拟服务配置页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="virtual";$.load("virtual")
 
 设置虚拟服务参数
@@ -296,7 +296,7 @@ WAN口IP是${ip}
     Click Element    id=save_virtual
 
 转到DMZ设置页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="dmz";$.load("dmz")
 
 设置DMZ参数
@@ -308,7 +308,7 @@ WAN口IP是${ip}
     Click Element    id=save_dmz
 
 转到SUPER-DMZ设置页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="dmz";$.load("dmz")
 
 设置SUPER-DMZ参数
@@ -325,7 +325,7 @@ WAN口IP是${ip}
     [Arguments]    ${lan_ip}=${None}    ${wan_ip}=${None}
 
 转到UPNP设置页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="upnp";$.load("upnp")
 
 设置UPNP参数
@@ -335,7 +335,7 @@ WAN口IP是${ip}
     Click Element    id=save_upnp
 
 转到动态域名设置页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="ddns";$.load("ddns")
 
 设置动态域名参数
@@ -352,7 +352,7 @@ WAN口IP是${ip}
     Click Element    id=save_ddns
 
 转到FTP私有端口设置页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="ftp";$.load("ftp")
 
 设置FTP私有端口参数
@@ -364,7 +364,7 @@ WAN口IP是${ip}
     Click Element    id=save_ftp
 
 转到端口触发页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="portTrigger";$.load("portTrigger")
 
 设置端口触发参数
@@ -386,7 +386,7 @@ WAN口IP是${ip}
     Click Element    id=save_app
 
 转到系统访问控制
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="remote";$.load("remote")
 
 设置系统访问控制参数
@@ -399,7 +399,7 @@ WAN口IP是${ip}
     Click Element    id=save_remote_port
 
 转到Russia-PPPoE接入页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="wan";$.load("wan")
     Wait Until Page Contains Element    id=conntype
     Select From List By Value    id=conntype    4
@@ -441,7 +441,7 @@ WAN口IP是${ip}
     Click Button    id=save_wan_set
 
 转到Unifi-PPPoE设置页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="wan";$.load("wan")
     Wait Until Page Contains Element    id=conntype    15
     Select From List By Value    id=conntype    5
@@ -483,7 +483,7 @@ WAN口IP是${ip}
     Click Button    id=save_wan_set
 
 转到AP模式的无线基本设置页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="base";$.load("base")
     Wait Until Page Contains Element    id=net_mode    15
     Select From List By Label    id=net_mode    Access Point
@@ -522,7 +522,7 @@ WAN口IP是${ip}
     Click Element    id=save_wl_base
 
 转到L2TP设置页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="wan";$.load("wan")
     Wait Until Page Contains Element    id=conntype
     Select From List By Value    id=conntype    6
@@ -562,7 +562,7 @@ WAN口IP是${ip}
     Click Element    id=save_wan_set
 
 转到PPTP设置页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="wan";$.load("wan")
     Wait Until Page Contains Element    id=conntype
     Select From List By Value    id=conntype    7
@@ -602,7 +602,7 @@ WAN口IP是${ip}
     Click Element    id=save_wan_set
 
 转到WPS模式的无线配置页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="wps";$.load("wps")
 
 设置WPS页面基本参数
@@ -614,7 +614,7 @@ WAN口IP是${ip}
     [Teardown]
 
 转到诊断工具页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="diagnostic";$.load("diagnostic")
 
 设置诊断工具页面
@@ -625,7 +625,7 @@ WAN口IP是${ip}
     click element    xpath=(//input[@id='tools_ip_url'])[2]
 
 转到网络唤醒页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="wakeup";$.load("wakeup")
 
 设置网络唤醒参数
@@ -642,7 +642,7 @@ WAN口IP是${ip}
     Wait Until Page Contains Element    id=hand_add_show
 
 转到系统用户管理页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="passwd";$.load("passwd")
 
 第一次修改密码

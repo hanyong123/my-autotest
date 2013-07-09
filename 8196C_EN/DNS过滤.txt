@@ -212,7 +212,7 @@ DNSFilter_EndTime_test_201
 
 *** Keywords ***
 转到DNS过滤页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="dns_filter";$.load("dns_filter")
 
 设置DNS过滤

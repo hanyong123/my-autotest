@@ -26,7 +26,7 @@ SysConfManager_ChangeToDefault_test_8
     Execute JavaScript    $.CurrentApp="default";$.load("default")
 
 转到系统参数管理页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="backup";$.load("backup")
 
 恢复参数成功

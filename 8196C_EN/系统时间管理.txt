@@ -259,7 +259,7 @@ SysTimeManger_ManualSet_Refresh_test_33
     显示消息    ${message}
 
 转到系统时间管理页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="sys_time";$.load("sys_time")
     Click Element    id=time_type_hand
 
