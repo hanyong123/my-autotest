@@ -633,7 +633,8 @@ DHCP保留地址列表没有${string}
     设置LAN口IP和MASK    ${ip}    ${mask}
     ${message}    Confirm Action
     Should Be Equal    ${message}    ${common_reboot_tip}
-    Sleep    40s
+    系统重启
+    等待系统重启完成
     关闭浏览器
     Open Browser    http://${login_user}:${login_passwd}@${ip}/index.htm    ${browser}
     Sleep    5

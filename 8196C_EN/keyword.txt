@@ -97,6 +97,7 @@ Library           String
     Set Selenium Speed    0
     Wait Until Keyword Succeeds    20    0    弹出对话框    ${message}
     Wait Until Keyword Succeeds    20    5    弹出对话框消失
+    Set Selenium Speed    ${selenium_speed}
 
 验证输入框最大输入长度
     [Arguments]    ${locator}    ${content}    ${max_len}
