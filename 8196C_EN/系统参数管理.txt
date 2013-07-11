@@ -17,8 +17,10 @@ SysConfManager_ChangeToDefault_test_8
     Click Element    id=default_set
     ${message}    Confirm Action
     Should Be Equal    ${message}    ${common_default_tip}
-    Sleep    45
-    Wait Until Keyword Succeeds    15    5    Page Should Contain Element    id=s_tips
+    系统重启
+    等待系统重启完成
+    Comment    Sleep    45
+    Comment    Wait Until Keyword Succeeds    15    5    Page Should Contain Element    id=s_tips
 
 *** Keywords ***
 转到恢复缺省页面
