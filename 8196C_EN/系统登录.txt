@@ -2,50 +2,99 @@
 Suite Setup
 Suite Teardown
 Resource          keyword.txt
+Library           OperatingSystem
 Library           AutoItLibrary
 
 *** Test Cases ***
 SysAcccess_WrongUser_test_3
     [Documentation]    帐号不存在，无法进入路由器WEB页面
+    恢复缺省
+    设置账号密码    ${login_user}    ${login_passwd}
+    ${cmd}    Catenate    AutoIt3    login.au3    545    ${login_passwd}    ${browser}
+    ...    fail
+    AutoItLibrary.Run    ${cmd}
     输入网址
-    输入用户名密码    545    ${login_passwd}
-    ${status}    Run Keyword And Return Status    Wait For Active Window    需要验证
-    Should Be Equal As Strings    ${status}    True
-    [Teardown]    关闭浏览器
+    Comment    输入用户名密码    545    ${login_passwd}
+    Comment    ${status}    Run Keyword And Return Status    Wait For Active Window    需要验证    TimeOut=20
+    Comment    Should Be Equal As Strings    ${status}    True
+    Sleep    5
+    ${r}    get_autoit_run_result
+    Should Be Equal    ${r}    True
+    [Teardown]    关闭浏览器进程
 
 SysAcccess_WrongPwd_test_4
     [Documentation]    密码错误，无法进入路由器WEB页面
+    恢复缺省
+    设置账号密码    ${login_user}    ${login_passwd}
+    ${cmd}    Catenate    AutoIt3    login.au3    ${login_user}    aaa    ${browser}
+    ...    fail
+    AutoItLibrary.Run    ${cmd}
     输入网址
-    输入用户名密码    ${login_user}    aaa
-    ${status1}    Run Keyword And Return Status    Wait For Active Window    需要验证    \    1
-    Run Keyword If    '${status1}'=='False'    Page Should Contain Element    id=errorTitleText
-    [Teardown]    关闭浏览器
+    Comment    输入用户名密码    ${login_user}    aaa
+    Comment    ${status1}    Run Keyword And Return Status    Wait For Active Window    需要验证    \    1
+    Comment    Run Keyword If    '${status1}'=='False'    Page Should Contain Element    id=errorTitleText
+    Sleep    5
+    ${r}    get_autoit_run_result
+    Should Be Equal    ${r}    True
+    [Teardown]    关闭浏览器进程
 
 SysAcccess_AllRight_test_5
     [Documentation]    认证成功，进入路由器WEB页面
+    恢复缺省
+    设置账号密码    ${login_user}    ${login_passwd}
+    ${cmd}    Catenate    AutoIt3    login.au3    ${login_user}    ${login_passwd}    ${browser}
+    ...    suc
+    AutoItLibrary.Run    ${cmd}
     输入网址
-    输入用户名密码    ${login_user}    ${login_passwd}
-    Sleep    2
+    Comment    输入用户名密码    ${login_user}    ${login_passwd}
+    Sleep    5
+    ${r}    get_autoit_run_result
+    Should Be Equal    ${r}    True
     Wait Until Keyword Succeeds    15    5    Page Should Contain Element    id=s_tips
-    [Teardown]    关闭浏览器
+    [Teardown]    关闭浏览器进程
 
 SysAcccess_ThreeTimes_test_6
     [Documentation]    认证失败三次后，自动跳转到“登录失败解决方案页面”
+    恢复缺省
+    设置账号密码    ${login_user}    ${login_passwd}
+    ${cmd}    Catenate    AutoIt3    login2.au3    ${browser}
+    AutoItLibrary.Run    ${cmd}
     输入网址
-    输入用户名密码    435    456
-    输入用户名密码    678    768
-    输入用户名密码    678    675
+    Comment    输入用户名密码    435    456
+    Comment    输入用户名密码    678    768
+    Comment    输入用户名密码    678    675
+    Sleep    5
+    ${r}    get_autoit_run_result
+    Should Be Equal    ${r}    True
     Wait Until Keyword Succeeds    15    5    Page Should Contain Element    id=errorTitleText
-    [Teardown]    关闭浏览器
+    [Teardown]    关闭浏览器进程
 
 *** Keywords ***
 输入用户名密码
     [Arguments]    ${user}    ${pwd}
-    Wait For Active Window    需要验证
+    Wait For Active Window    需要验证    TimeOut=20
     Send    ${user}
     Send    {Tab}
     Send    ${pwd}
     Send    {ENTER}
 
 输入网址
-    Open Browser    http://192.168.1.1
+    Open Browser    http://192.168.1.1    ${browser}
+
+关闭浏览器进程
+    关闭浏览器
+
+恢复缺省
+    打开浏览器
+    转到恢复缺省页面
+    恢复出厂设置
+    系统重启
+    等待系统重启完成
+    关闭浏览器
+
+设置账号密码
+    [Arguments]    ${user}    ${password}
+    打开浏览器
+    转到系统用户管理页面
+    第一次修改密码    ${common_unlock_save}    ${user}    ${password}    ${password}
+    关闭浏览器

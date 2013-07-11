@@ -122,7 +122,7 @@ UserManager_ConfirmPwd_test_23
 
 *** Keywords ***
 转到系统用户管理页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="passwd";$.load("passwd")
 
 设置旧密码新用户名新密码

@@ -18,7 +18,6 @@ import gzip, cStringIO
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-
 test_case_file_list = [u'DHCP服务器.txt',
                        u'DHCP接入.txt',
                        u'IPMAC绑定.txt',

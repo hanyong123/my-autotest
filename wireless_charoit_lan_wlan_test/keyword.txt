@@ -1,0 +1,42 @@
+*** Settings ***
+Resource          config.txt
+Library           HttpLibrary.HTTP
+Library           wirelessTestlib.py    ${remote_host_ip1}    ${remote_host_ip2}    ${local_host_wire_iface_name}    ${wirelessIP}
+
+*** Keywords ***
+初始化测试
+    Create HTTP Context    ${router_lan_ip}
+
+无线基本配置
+    [Arguments]    ${wl_enable}=1    ${net_mode}=0    ${wl_stand}=10    ${wl_mac}=08-10-74-00-00-1E    ${ssid}=hany    ${ssid_broad}=1
+    ...    ${channel_width}=1    ${channel_bind}=1    ${channel}=0
+    ${body}    get_wl_basic_set_body    ${wl_enable}    ${net_mode}    ${wl_stand}    ${wl_mac}    ${ssid}
+    ...    ${ssid_broad}    ${channel_width}    ${channel_bind}    ${channel}
+    Set Request Body    ${body}
+    Set Basic Auth    ${login_user}    ${login_passwd}
+    POST    ${netcore_set_cgi_url}
+    Response Body Should Contain    ${response_success_string}
+
+无线安全配置
+    [Arguments]    ${sec_mode}=0    ${key_size}=0    ${key_mode_wep}=1    ${key_wep}=12345    ${key_type}=0    ${key_mode_wpa}=1
+    ...    ${key_wpa}=123456    ${key_time}=86400
+    ${body}    get_wl_sec_set_body    ${sec_mode}    ${key_size}    ${key_mode_wep}    ${key_wep}    ${key_type}
+    ...    ${key_mode_wpa}    ${key_wpa}    ${key_time}
+    Set Request Body    ${body}
+    Set Basic Auth    ${login_user}    ${login_passwd}
+    POST    ${netcore_set_cgi_url}
+    Response Body Should Contain    ${response_success_string}
+
+无线高级配置
+    [Arguments]    ${beacon}=100    ${rts}=2347    ${fragment}=2346    ${rate_mode}=0    ${shortGi}=1    ${protection}=0
+    ...    ${preamble}=0    ${wlan_partition}=0    ${out_power}=0    ${wmm}=0
+    ${body}    get_wl_advance_set_body    ${beacon}    ${rts}    ${fragment}    ${rate_mode}    ${shortGi}
+    ...    ${protection}    ${preamble}    ${wlan_partition}    ${out_power}    ${wmm}
+    Set Request Body    ${body}
+    Set Basic Auth    ${login_user}    ${login_passwd}
+    POST    ${netcore_set_cgi_url}
+    Response Body Should Contain    ${response_success_string}
+
+清理测试
+    Run Keyword And Ignore Error    clean
+    Sleep    20

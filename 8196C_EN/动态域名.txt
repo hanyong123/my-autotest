@@ -7,11 +7,11 @@ Resource          keyword.txt
 DynamicDNS_test_1
     [Documentation]    成功设置动态域名
     设置动态域名参数    service_provider=No-IP    user=taonaqunying    passwd=19880509wan    domain=taonaqunying.no-ip.org
-    验证连接状态
     显示消息    ${common_unlock_save}
+    验证连接状态    taonaqunying    19880509wan    taonaqunying.no-ip.org
     设置动态域名参数    service_provider=Dyndns    user=netiskoxea    passwd=netcore123    domain=netiscd.dyndns.org
-    验证连接状态
     显示消息    ${common_unlock_save}
+    验证连接状态    netiskoxea    netcore123    netiscd.dyndns.org
 
 DynamicDNS_Link_test_3
     [Documentation]    花生壳，每步，希网链接可点击跳转到相应网站主页
@@ -25,7 +25,7 @@ DynamicDNS_Link_test_3
 DynamicDNS_Account_test_4
     [Documentation]    用户账号为空时，提示“用户帐号不能为空”
     [Template]    验证账号
-    ${EMPTY}    ${common_unlock_error}
+    ${EMPTY}    ${common_string_null}
 
 DynamicDNS_Account_test_5
     [Documentation]    用户账号输入数据带有 '"\或空格 ，提示“ 不能含有特殊字符 \ '"\和空格 ”
@@ -49,7 +49,7 @@ DynamicDNS_Account_test_7
 DynamicDNS_Password_test_8
     [Documentation]    密码为空时，提示“密码不能为空”
     [Template]    验证密码
-    ${EMPTY}    ${common_unlock_error}
+    ${EMPTY}    ${common_string_null}
 
 DynamicDNS_Password_test_9
     [Documentation]    密码输入数据带有 '"\或空格 ，提示“ 不能含有特殊字符 \ '"\和空格 ”
@@ -77,7 +77,7 @@ DynamicDNS_Password_test_13
 DynamicDNS_Domain_test_19
     [Documentation]    域名输入中文，提示域名不能含有中文
     [Template]    验证域名
-    中文    ${common_string_url_err}
+    中文    ${common_domain_err}
 
 DynamicDNS_Domain_test_20
     [Documentation]    域名输入连续两个点，提示域名格式错误
@@ -86,6 +86,13 @@ DynamicDNS_Domain_test_20
 
 *** Keywords ***
 验证连接状态
+    [Arguments]    ${username}=${None}    ${password}=${None}    ${domain}=${None}
+    ${user}    Get Value    id=ddns_username
+    Should Be Equal    ${user}    ${username}
+    ${pwd}    Get Value    id=ddns_password
+    Should Be Equal    ${pwd}    ${password}
+    ${dmn}    Get Value    id=ddns_domain
+    Should Be Equal    ${dmn}    ${domain}
     Sleep    60
     Click Element    refresh_ddns
     Sleep    10

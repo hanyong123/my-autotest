@@ -16,7 +16,7 @@ SysUpdate_NotChooseFile_test_5
 
 *** Keywords ***
 转到系统升级页面
-    Set Selenium Speed    0.5
+    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="update";$.load("update")
 
 升级不成功

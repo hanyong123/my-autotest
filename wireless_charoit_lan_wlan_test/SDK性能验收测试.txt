@@ -1,0 +1,490 @@
+*** Settings ***
+Suite Setup       初始化测试
+Resource          keyword.txt
+
+*** Test Cases ***
+WLAN->LAN 加密:None 20M长间隙Throughput测试
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置
+    无线高级配置    shortGi=0
+    wirelessConnect    ${ssid}    ${EMPTY}    none    ${EMPTY}    open
+    executChariotTest
+    writeToExcel    5    11
+    [Teardown]    清理测试
+
+WLAN->LAN 加密:None 20M短间隙Throughput测试
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${EMPTY}    none    ${EMPTY}    open
+    executChariotTest
+    writeToExcel    6    11
+    [Teardown]    清理测试
+
+WLAN->LAN 加密:None 40M长间隙Throughput测试
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置
+    无线高级配置    shortGi=0
+    wirelessConnect    ${ssid}    ${EMPTY}    none    ${EMPTY}    open
+    executChariotTest
+    writeToExcel    7    11
+    [Teardown]    清理测试
+
+WLAN->LAN 加密:None 40M短间隙Throughput测试
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${EMPTY}    none    ${EMPTY}    open
+    executChariotTest
+    writeToExcel    8    11
+    [Teardown]    清理测试
+
+WLAN->LAN 加密:WEP/64bits/ASCII/Open System 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=1    key_size=0    key_mode_wep=1    key_wep=${wep_passwd_64_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_64_asc}    wep    ${EMPTY}    open
+    executChariotTest
+    writeToExcel    11    11
+    [Teardown]    清理测试
+
+WLAN->LAN 加密:WEP/64bits/ASCII/Open System 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=1    key_size=0    key_mode_wep=1    key_wep=${wep_passwd_64_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_64_asc}    wep    ${EMPTY}    open
+    executChariotTest
+    writeToExcel    12    11
+    [Teardown]    清理测试
+
+WLAN->LAN 加密:WEP/64bits/Hex/Open System 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=1    key_size=0    key_mode_wep=0    key_wep=${wep_passwd_64_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_64_asc}    wep    ${EMPTY}    open
+    executChariotTest
+    writeToExcel    15    11
+    [Teardown]    清理测试
+
+WLAN->LAN 加密:WEP/64bits/Hex/Open System 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=1    key_size=0    key_mode_wep=0    key_wep=${wep_passwd_64_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_64_asc}    wep    ${EMPTY}    open
+    executChariotTest
+    writeToExcel    16    11
+    [Teardown]    清理测试
+
+WLAN->LAN 加密:WEP/64bits/ASCII/Shared Key 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=1    key_size=0    key_mode_wep=1    key_wep=${wep_passwd_64_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_64_asc}    wep    ${EMPTY}    shared
+    executChariotTest
+    writeToExcel    19    11
+    [Teardown]    清理测试
+
+WLAN->LAN 加密:WEP/64bits/ASCII/Shared Key 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=1    key_size=0    key_mode_wep=1    key_wep=${wep_passwd_64_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_64_asc}    wep    ${EMPTY}    shared
+    executChariotTest
+    writeToExcel    20    11
+    [Teardown]    清理测试
+
+WLAN->LAN 加密:WEP/64bits/Hex/Shared Key 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=1    key_size=0    key_mode_wep=0    key_wep=${wep_passwd_64_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_64_asc}    wep    ${EMPTY}    shared
+    executChariotTest
+    writeToExcel    23    11
+    [Teardown]    清理测试
+
+WLAN->LAN 加密:WEP/64bits/Hex/Shared Key 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=1    key_size=0    key_mode_wep=0    key_wep=${wep_passwd_64_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_64_asc}    wep    ${EMPTY}    shared
+    executChariotTest
+    writeToExcel    24    11
+    [Teardown]    清理测试
+
+WLAN->LAN 加密:WEP/128bits/ASCII/Open System 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=1    key_size=1    key_mode_wep=1    key_wep=${wep_passwd_128_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_128_asc}    wep    ${EMPTY}    open
+    executChariotTest
+    writeToExcel    27    11
+    [Teardown]    清理测试
+
+WLAN->LAN 加密:WEP/128bits/ASCII/Open System 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=1    key_size=1    key_mode_wep=1    key_wep=${wep_passwd_128_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_128_asc}    wep    ${EMPTY}    open
+    executChariotTest
+    writeToExcel    28    11
+    [Teardown]    清理测试
+
+WLAN->LAN 加密:WEP/128bits/Hex/Open System 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=1    key_size=1    key_mode_wep=0    key_wep=${wep_passwd_128_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_128_asc}    wep    ${EMPTY}    open
+    executChariotTest
+    writeToExcel    31    11
+    [Teardown]    清理测试
+
+WLAN->LAN 加密:WEP/128bits/Hex/Open System 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=1    key_size=1    key_mode_wep=0    key_wep=${wep_passwd_128_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_128_asc}    wep    ${EMPTY}    open
+    executChariotTest
+    writeToExcel    32    11
+    [Teardown]    清理测试
+
+WLAN->LAN 加密:WEP/128bits/ASCII/Shared Key 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=1    key_size=1    key_mode_wep=1    key_wep=${wep_passwd_128_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_128_asc}    wep    ${EMPTY}    shared
+    executChariotTest
+    writeToExcel    35    11
+    [Teardown]    清理测试
+
+WLAN->LAN 加密:WEP/128bits/ASCII/Shared Key 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=1    key_size=1    key_mode_wep=1    key_wep=${wep_passwd_128_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_128_asc}    wep    ${EMPTY}    shared
+    executChariotTest
+    writeToExcel    36    11
+    [Teardown]    清理测试
+
+WLAN->LAN 加密:WEP/128bits/Hex/Shared Key 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=1    key_size=1    key_mode_wep=0    key_wep=${wep_passwd_128_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_128_asc}    wep    ${EMPTY}    shared
+    executChariotTest
+    writeToExcel    39    11
+    [Teardown]    清理测试
+
+WLAN->LAN 加密:WEP/128bits/Hex/Shared Key 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=1    key_size=1    key_mode_wep=0    key_wep=${wep_passwd_128_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_128_asc}    wep    ${EMPTY}    shared
+    executChariotTest
+    writeToExcel    40    11
+    [Teardown]    清理测试
+
+WLAN->LAN WPA-PSK/AES/Passphrase 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=2    key_type=2    key_mode_wpa=1    key_wpa=${wpa_passwd_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wpa_passwd_asc}    WPAPSK    AES    ${EMPTY}
+    executChariotTest
+    writeToExcel    43    11
+    [Teardown]    清理测试
+
+WLAN->LAN WPA-PSK/AES/Passphrase 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=2    key_type=2    key_mode_wpa=1    key_wpa=${wpa_passwd_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wpa_passwd_asc}    WPAPSK    AES    ${EMPTY}
+    executChariotTest
+    writeToExcel    44    11
+    [Teardown]    清理测试
+
+WLAN->LAN WPA-PSK/AES/Hex 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=2    key_type=2    key_mode_wpa=0    key_wpa=${wpa_passwd_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wpa_passwd_hex}    WPAPSK    AES    ${EMPTY}    hex
+    executChariotTest    ${remote_host_ip}
+    writeToExcel    47    11
+    [Teardown]    清理测试
+
+WLAN->LAN WPA-PSK/AES/Hex 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=2    key_type=2    key_mode_wpa=0    key_wpa=${wpa_passwd_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wpa_passwd_hex}    WPAPSK    AES    ${EMPTY}    hex
+    executChariotTest
+    writeToExcel    48    11
+    [Teardown]    清理测试
+
+WLAN->LAN WPA2-PSK/AES/Passphrase 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=3    key_type=2    key_mode_wpa=1    key_wpa=${wpa_passwd_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wpa_passwd_asc}    WPA2PSK    AES    ${EMPTY}
+    executChariotTest
+    writeToExcel    51    11
+    [Teardown]    清理测试
+
+WLAN->LAN WPA2-PSK/AES/Passphrase 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=3    key_type=2    key_mode_wpa=1    key_wpa=${wpa_passwd_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wpa_passwd_asc}    WPA2PSK    AES    ${EMPTY}
+    executChariotTest
+    writeToExcel    52    11
+    [Teardown]    清理测试
+
+WLAN->LAN WPA2-PSK/AES/Hex 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=3    key_type=2    key_mode_wpa=0    key_wpa=${wpa_passwd_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wpa_passwd_hex}    WPA2PSK    AES    ${EMPTY}    hex
+    executChariotTest
+    writeToExcel    55    11
+    [Teardown]    清理测试
+
+WLAN->LAN WPA2-PSK/AES/Hex 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=3    key_type=2    key_mode_wpa=0    key_wpa=${wpa_passwd_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wpa_passwd_hex}    WPA2PSK    AES    ${EMPTY}    hex
+    executChariotTest
+    writeToExcel    56    11
+    [Teardown]    清理测试
+
+LAN->WLAN 加密:None 20M短间隙Throughput测试
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${EMPTY}    none    ${EMPTY}    open
+    executChariotTest    2
+    writeToExcel    59    11
+    [Teardown]    清理测试
+
+LAN->WLAN 加密:None 40M短间隙Throughput测试
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${EMPTY}    none    ${EMPTY}    open
+    executChariotTest    2
+    writeToExcel    60    11
+    [Teardown]    清理测试
+
+LAN->WLAN 加密:WEP/64bits/ASCII/Open System 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=1    key_size=0    key_mode_wep=1    key_wep=${wep_passwd_64_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_64_asc}    wep    ${EMPTY}    open
+    executChariotTest    2
+    writeToExcel    63    11
+    [Teardown]    清理测试
+
+LAN->WLAN 加密:WEP/64bits/ASCII/Open System 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=1    key_size=0    key_mode_wep=1    key_wep=${wep_passwd_64_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_64_asc}    wep    ${EMPTY}    open
+    executChariotTest    2
+    writeToExcel    64    11
+    [Teardown]    清理测试
+
+LAN->WLAN 加密:WEP/64bits/Hex/Open System 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=1    key_size=0    key_mode_wep=0    key_wep=${wep_passwd_64_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_64_asc}    wep    ${EMPTY}    open
+    executChariotTest    2
+    writeToExcel    67    11
+    [Teardown]    清理测试
+
+LAN->WLAN 加密:WEP/64bits/Hex/Open System 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=1    key_size=0    key_mode_wep=0    key_wep=${wep_passwd_64_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_64_asc}    wep    ${EMPTY}    open
+    executChariotTest    2
+    writeToExcel    68    11
+    [Teardown]    清理测试
+
+LAN->WLAN 加密:WEP/64bits/ASCII/Shared Key 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=1    key_size=0    key_mode_wep=1    key_wep=${wep_passwd_64_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_64_asc}    wep    ${EMPTY}    shared
+    executChariotTest    2
+    writeToExcel    71    11
+    [Teardown]    清理测试
+
+LAN->WLAN 加密:WEP/64bits/ASCII/Shared Key 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=1    key_size=0    key_mode_wep=1    key_wep=${wep_passwd_64_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_64_asc}    wep    ${EMPTY}    shared
+    executChariotTest    2
+    writeToExcel    72    11
+    [Teardown]    清理测试
+
+LAN->WLAN 加密:WEP/64bits/Hex/Shared Key 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=1    key_size=0    key_mode_wep=0    key_wep=${wep_passwd_64_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_64_asc}    wep    ${EMPTY}    shared
+    executChariotTest    2
+    writeToExcel    75    11
+    [Teardown]    清理测试
+
+LAN->WLAN 加密:WEP/64bits/Hex/Shared Key 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=1    key_size=0    key_mode_wep=0    key_wep=${wep_passwd_64_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_64_asc}    wep    ${EMPTY}    shared
+    executChariotTest    2
+    writeToExcel    76    11
+    [Teardown]    清理测试
+
+LAN->WLAN 加密:WEP/128bits/ASCII/Open System 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=1    key_size=1    key_mode_wep=1    key_wep=${wep_passwd_128_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_128_asc}    wep    ${EMPTY}    open
+    executChariotTest    2
+    writeToExcel    79    11
+    [Teardown]    清理测试
+
+LAN->WLAN 加密:WEP/128bits/ASCII/Open System 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=1    key_size=1    key_mode_wep=1    key_wep=${wep_passwd_128_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_128_asc}    wep    ${EMPTY}    open
+    executChariotTest    2
+    writeToExcel    80    11
+    [Teardown]    清理测试
+
+LAN->WLAN 加密:WEP/128bits/Hex/Open System 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=1    key_size=1    key_mode_wep=0    key_wep=${wep_passwd_128_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_128_asc}    wep    ${EMPTY}    open
+    executChariotTest    2
+    writeToExcel    83    11
+    [Teardown]    清理测试
+
+LAN->WLAN 加密:WEP/128bits/Hex/Open System 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=1    key_size=1    key_mode_wep=0    key_wep=${wep_passwd_128_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_128_asc}    wep    ${EMPTY}    open
+    executChariotTest    2
+    writeToExcel    84    11
+    [Teardown]    清理测试
+
+LAN->WLAN 加密:WEP/128bits/ASCII/Shared Key 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=1    key_size=1    key_mode_wep=1    key_wep=${wep_passwd_128_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_128_asc}    wep    ${EMPTY}    shared
+    executChariotTest    2
+    writeToExcel    87    11
+    [Teardown]    清理测试
+
+LAN->WLAN 加密:WEP/128bits/ASCII/Shared Key 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=1    key_size=1    key_mode_wep=1    key_wep=${wep_passwd_128_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_128_asc}    wep    ${EMPTY}    shared
+    executChariotTest    2
+    writeToExcel    88    11
+    [Teardown]    清理测试
+
+LAN->WLAN 加密:WEP/128bits/Hex/Shared Key 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=1    key_size=1    key_mode_wep=0    key_wep=${wep_passwd_128_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_128_asc}    wep    ${EMPTY}    shared
+    executChariotTest    2
+    writeToExcel    91    11
+    [Teardown]    清理测试
+
+LAN->WLAN 加密:WEP/128bits/Hex/Shared Key 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=1    key_size=1    key_mode_wep=0    key_wep=${wep_passwd_128_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wep_passwd_128_asc}    wep    ${EMPTY}    shared
+    executChariotTest    2
+    writeToExcel    92    11
+    [Teardown]    清理测试
+
+LAN->WLAN WPA-PSK/AES/Passphrase 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=2    key_type=2    key_mode_wpa=1    key_wpa=${wpa_passwd_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wpa_passwd_asc}    WPAPSK    AES    ${EMPTY}
+    executChariotTest    2
+    writeToExcel    95    11
+    [Teardown]    清理测试
+
+LAN->WLAN WPA-PSK/AES/Passphrase 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=2    key_type=2    key_mode_wpa=1    key_wpa=${wpa_passwd_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wpa_passwd_asc}    WPAPSK    AES    ${EMPTY}
+    executChariotTest    2
+    writeToExcel    96    11
+    [Teardown]    清理测试
+
+LAN->WLAN WPA-PSK/AES/Hex 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=2    key_type=2    key_mode_wpa=0    key_wpa=${wpa_passwd_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wpa_passwd_hex}    WPAPSK    AES    ${EMPTY}    hex
+    executChariotTest    2
+    writeToExcel    99    11
+    [Teardown]    清理测试
+
+LAN->WLAN WPA-PSK/AES/Hex 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=2    key_type=2    key_mode_wpa=0    key_wpa=${wpa_passwd_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wpa_passwd_hex}    WPAPSK    AES    ${EMPTY}    hex
+    executChariotTest    2
+    writeToExcel    100    11
+    [Teardown]    清理测试
+
+LAN->WLAN WPA2-PSK/AES/Passphrase 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=3    key_type=2    key_mode_wpa=1    key_wpa=${wpa_passwd_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wpa_passwd_asc}    WPA2PSK    AES    ${EMPTY}
+    executChariotTest    2
+    writeToExcel    103    11
+    [Teardown]    清理测试
+
+LAN->WLAN WPA2-PSK/AES/Passphrase 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=3    key_type=2    key_mode_wpa=1    key_wpa=${wpa_passwd_asc}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wpa_passwd_asc}    WPA2PSK    AES    ${EMPTY}
+    executChariotTest    2
+    writeToExcel    104    11
+    [Teardown]    清理测试
+
+LAN->WLAN WPA2-PSK/AES/Hex 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置    sec_mode=3    key_type=2    key_mode_wpa=0    key_wpa=${wpa_passwd_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wpa_passwd_hex}    WPA2PSK    AES    ${EMPTY}    hex
+    executChariotTest    2
+    writeToExcel    107    11
+    [Teardown]    清理测试
+
+LAN->WLAN WPA2-PSK/AES/Hex 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置    sec_mode=3    key_type=2    key_mode_wpa=0    key_wpa=${wpa_passwd_hex}
+    无线高级配置    shortGi=1
+    wirelessConnect    ${ssid}    ${wpa_passwd_hex}    WPA2PSK    AES    ${EMPTY}    hex
+    executChariotTest    2
+    writeToExcel    108    11
+    [Teardown]    清理测试

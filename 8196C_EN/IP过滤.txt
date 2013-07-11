@@ -33,161 +33,161 @@ IPandProtocal_NAME_test_4
 IPandProtocal_DIP_test_8
     [Documentation]    目的IP地址输入框超过15个字符后，无法输入
     [Template]
-    验证目的主机hostsIP地址最大输入长度    1234567890123456    15
-    验证源主机subnetIP地址最大输入长度    1234567890123456    15
-    验证源主机segmentstartIP地址最大输入长度    1234567890123456    15
-    验证源主机segmentendIP地址最大输入长度    1234567890123456    15
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址最大输入长度    1234567890123456    15
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址最大输入长度    1234567890123456    15
+    Run Keyword And Continue On Failure    验证源主机segmentstartIP地址最大输入长度    1234567890123456    15
+    Run Keyword And Continue On Failure    验证源主机segmentendIP地址最大输入长度    1234567890123456    15
 
 IPandProtocal_DIP_test_9
     [Documentation]    目的IP地址输入框：小数点>3，提示IP长度不正确
     [Template]
-    验证目的主机hostsIP地址    10.0.0.1.    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    10.0.0.1.    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    10.0.0.1.    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    10.0.0.1    10.0.0.1.    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    10.0.0.1.    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    10.0.0.1.    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    10.0.0.1.    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    10.0.0.1    10.0.0.1.    ${common_ip_addr_err}
 
 IPandProtocal_DIP_test_10
     [Documentation]    目的IP地址输入框：小数点<3，提示IP长度不正确
     [Template]
-    验证目的主机hostsIP地址    10.0.01    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    10.0.01    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    10.0.01    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.4    10.0.01    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    10.0.01    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    10.0.01    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    10.0.01    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.4    10.0.01    ${common_ip_addr_err}
 
 IPandProtocal_DIP_test_11
     [Documentation]    目的IP地址不能为空
     [Template]
-    验证目的主机hostsIP地址    ${EMPTY}    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    ${EMPTY}    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    ${EMPTY}    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.95    ${EMPTY}    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    ${EMPTY}    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    ${EMPTY}    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    ${EMPTY}    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.95    ${EMPTY}    ${common_ip_addr_err}
 
 IPandProtocal_DIP_test_12
     [Documentation]    目的IP地址输入框第一段IP值超出范围，提示只能在0~255之间
     [Template]
-    验证目的主机hostsIP地址    -1.0.0.2    ${common_ip_addr_err}
-    验证目的主机hostsIP地址    256.0.0.1    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    -1.0.0.2    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    256.0.0.1    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    -1.0.0.2    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    256.0.0.1    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.5    -1.0.0.2    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.5    256.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    -1.0.0.2    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    256.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    -1.0.0.2    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    256.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    -1.0.0.2    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    256.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.5    -1.0.0.2    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.5    256.0.0.1    ${common_ip_addr_err}
 
 IPandProtocal_DIP_test_13
     [Documentation]    目的IP地址输入框第二段IP值超出范围，提示只能在0~255之间
     [Template]
-    验证目的主机hostsIP地址    10.-1.0.10    ${common_ip_addr_err}
-    验证目的主机hostsIP地址    10.256.0.10    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    10.-1.0.10    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    10.256.0.10    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    10.-1.0.10    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    10.256.0.10    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.95    10.-1.0.10    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.95    10.256.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    10.-1.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    10.256.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    10.-1.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    10.256.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    10.-1.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    10.256.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.95    10.-1.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.95    10.256.0.10    ${common_ip_addr_err}
 
 IPandProtocal_DIP_test_14
     [Documentation]    目的IP地址输入框第三段IP值超出范围，提示只能在0~255之间
     [Template]
-    验证目的主机hostsIP地址    10.0.-1.10    ${common_ip_addr_err}
-    验证目的主机hostsIP地址    10.0.256.10    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    10.0.-1.10    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    10.0.256.10    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    10.0.-1.10    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    10.0.256.10    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.95    10.0.-1.10    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.95    10.0.256.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    10.0.-1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    10.0.256.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    10.0.-1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    10.0.256.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    10.0.-1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    10.0.256.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.95    10.0.-1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.95    10.0.256.10    ${common_ip_addr_err}
 
 IPandProtocal_DIP_test_15
     [Documentation]    目的IP地址输入框第四段IP值超出范围，提示只能在0~255之间
     [Template]
-    验证目的主机hostsIP地址    10.0.0.-1    ${common_ip_addr_err}
-    验证目的主机hostsIP地址    10.0.0.256    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    10.0.0.-1    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    10.0.0.256    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    10.0.0.-1    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    10.0.0.256    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.95    10.0.0.-1    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.95    10.0.0.256    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    10.0.0.-1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    10.0.0.256    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    10.0.0.-1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    10.0.0.256    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    10.0.0.-1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    10.0.0.256    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.95    10.0.0.-1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.95    10.0.0.256    ${common_ip_addr_err}
 
 IPandProtocal_DIP_test_16
     [Documentation]    目的IP地址输入框存在非法字符，提示发现n个非法字符
     [Template]
-    验证目的主机hostsIP地址    192,168;1:s    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    192,168;1:s    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    192,168;1:s    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.95    192,168;1:s    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    192,168;1:s    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    192,168;1:s    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    192,168;1:s    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.95    192,168;1:s    ${common_ip_addr_err}
 
 IPandProtocal_DIP_test_17
     [Documentation]    目的IP地址第一段、第二段、第三段、第四段均不能为空
     [Template]
-    验证目的主机hostsIP地址    .168.1.10    ${common_ip_addr_err}
-    验证目的主机hostsIP地址    192..1.10    ${common_ip_addr_err}
-    验证目的主机hostsIP地址    192.168..10    ${common_ip_addr_err}
-    验证目的主机hostsIP地址    192.168.1.    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    .168.1.10    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    192..1.10    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    192.168..10    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    192.168.1.    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    .168.1.10    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    192..1.10    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    192.168..10    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    192.168.1.    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.95    .168.1.10    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.95    192..1.10    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.95    192.168..10    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.95    192.168.1.    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    .168.1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    192..1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    192.168..10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    192.168.1.    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    .168.1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    192..1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    192.168..10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    192.168.1.    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    .168.1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    192..1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    192.168..10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    192.168.1.    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.95    .168.1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.95    192..1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.95    192.168..10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.95    192.168.1.    ${common_ip_addr_err}
 
 IPandProtocal_DIP_test_18
     [Documentation]    目的IP地址输入0.0.0.0，提示IP不能为全0
     [Template]
-    验证目的主机hostsIP地址    0.0.0.0    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    0.0.0.0    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    0.0.0.0    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.95    0.0.0.0    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    0.0.0.0    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    0.0.0.0    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    0.0.0.0    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.95    0.0.0.0    ${common_ip_addr_err}
 
 IPandProtocal_DIP_test_19
     [Documentation]    目的IP地址不为组播地址：223 < n1 < 255
-    删除列表里所有条目显示成功消息message
-    验证目的主机hostsIP地址    224.0.0.1    ${common_ip_addr_err}
-    验证目的主机hostsIP地址    255.0.0.1    ${common_ip_addr_err}
-    验证目的主机hostsIP地址    254.0.0.1    ${common_ip_addr_err}
-    验证目的主机hostsIP地址    223.0.0.1    ${common_unlock_add}
-    列表里含有${string}    223.0.0.1\n/223.0.0.1
-    删除列表里所有条目显示成功消息message
-    验证目的主机subnetIP地址    224.0.0.1    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    255.0.0.1    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    254.0.0.1    ${common_ip_addr_err}
-    验证目的子网地址    223.0.0.1    255.0.0.0    ${common_unlock_add}
-    列表里含有${string}    223.0.0.0\n/255.0.0.0
-    删除列表里所有条目显示成功消息message
-    验证目的主机segment起始IP地址    224.0.0.1    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    255.0.0.1    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    254.0.0.1    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    223.0.0.1    223.0.0.100    ${common_unlock_add}
-    列表里含有${string}    223.0.0.1\n/223.0.0.100
-    删除列表里所有条目显示成功消息message
-    验证目的主机segment结束IP地址    192.168.1.95    224.0.0.1    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.95    255.0.0.1    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.95    254.0.0.1    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    223.0.0.1    223.0.0.100    ${common_unlock_add}
-    列表里含有${string}    223.0.0.1\n/223.0.0.100
+    Run Keyword And Continue On Failure    删除列表里所有条目显示成功消息message
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    224.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    255.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    254.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    223.0.0.1    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    223.0.0.1\n/223.0.0.1
+    Run Keyword And Continue On Failure    删除列表里所有条目显示成功消息message
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    224.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    255.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    254.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的子网地址    223.0.0.1    255.0.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    223.0.0.0\n/255.0.0.0
+    Run Keyword And Continue On Failure    删除列表里所有条目显示成功消息message
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    224.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    255.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    254.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    223.0.0.1    223.0.0.100    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    223.0.0.1\n/223.0.0.100
+    Run Keyword And Continue On Failure    删除列表里所有条目显示成功消息message
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.95    224.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.95    255.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.95    254.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    223.0.0.1    223.0.0.100    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    223.0.0.1\n/223.0.0.100
 
 IPandProtocal_DIP_test_20
     [Documentation]    目的IP地址不为回环地址：n1 = 127
     [Template]
-    验证目的主机hostsIP地址    127.0.0.1    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    127.0.0.1    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    127.0.0.1    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.95    127.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    127.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    127.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    127.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.95    127.0.0.1    ${common_ip_addr_err}
 
 IPandProtocal_DIP_test_21
     [Documentation]    目的IP地址不为保留地址：n1=0
     [Template]
-    验证目的主机hostsIP地址    0.168.1.10    ${common_ip_addr_err}
-    验证目的主机subnetIP地址    0.168.1.10    ${common_ip_addr_err}
-    验证目的主机segment起始IP地址    0.168.1.10    ${common_ip_addr_err}
-    验证目的主机segment结束IP地址    192.168.1.5    0.168.1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机hostsIP地址    0.168.1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址    0.168.1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment起始IP地址    0.168.1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证目的主机segment结束IP地址    192.168.1.5    0.168.1.10    ${common_ip_addr_err}
 
 IPandProtocal_DMASK_test_22
     [Documentation]    目的网段：子网掩码输入框超过15个字符后，无法输入
@@ -211,87 +211,87 @@ IPandProtocal_DMASK_test_25
 
 IPandProtocal_DMASK_test_26
     [Documentation]    目的网段：子网掩码输入框第一段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
-    删除列表里所有条目显示成功消息message
-    验证目的子网地址    192.168.1.10    251.0.0.0    ${common_mask_addr_err}
-    验证目的子网地址    192.168.1.10    191.0.0.0    ${common_mask_addr_err}
-    验证目的子网地址    192.168.1.10    129.0.0.0    ${common_mask_addr_err}
-    验证目的子网地址    192.168.1.10    255.0.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.0.0.0
-    验证目的子网地址    192.168.1.10    254.0.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/254.0.0.0
-    验证目的子网地址    192.168.1.10    252.0.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/252.0.0.0
-    验证目的子网地址    192.168.1.10    248.0.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/248.0.0.0
-    验证目的子网地址    192.168.1.10    240.0.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/240.0.0.0
-    验证目的子网地址    192.168.1.10    224.0.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/224.0.0.0
-    验证目的子网地址    196.168.1.10    192.0.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/192.0.0.0
-    验证目的子网地址    192.168.1.10    128.0.0.0    ${common_unlock_add}
-    列表里含有${string}    128.0.0.0\n/128.0.0.0
+    Run Keyword And Continue On Failure    删除列表里所有条目显示成功消息message
+    Run Keyword And Continue On Failure    验证目的子网地址    192.168.1.10    251.0.0.0    ${common_mask_addr_err}
+    Run Keyword And Continue On Failure    验证目的子网地址    192.168.1.10    191.0.0.0    ${common_mask_addr_err}
+    Run Keyword And Continue On Failure    验证目的子网地址    192.168.1.10    129.0.0.0    ${common_mask_addr_err}
+    Run Keyword And Continue On Failure    验证目的子网地址    192.168.1.10    255.0.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.0.0.0
+    Run Keyword And Continue On Failure    验证目的子网地址    192.168.1.10    254.0.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/254.0.0.0
+    Run Keyword And Continue On Failure    验证目的子网地址    192.168.1.10    252.0.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/252.0.0.0
+    Run Keyword And Continue On Failure    验证目的子网地址    192.168.1.10    248.0.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/248.0.0.0
+    Run Keyword And Continue On Failure    验证目的子网地址    192.168.1.10    240.0.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/240.0.0.0
+    Run Keyword And Continue On Failure    验证目的子网地址    192.168.1.10    224.0.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/224.0.0.0
+    Run Keyword And Continue On Failure    验证目的子网地址    196.168.1.10    192.0.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/192.0.0.0
+    Run Keyword And Continue On Failure    验证目的子网地址    192.168.1.10    128.0.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    128.0.0.0\n/128.0.0.0
 
 IPandProtocal_DMASK_test_27
     [Documentation]    目的网段：子网掩码输入框第二段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
-    删除列表里所有条目显示成功消息message
-    验证目的子网地址    192.0.1.10    255.251.0.0    ${common_mask_addr_err}
-    验证目的子网地址    192.0.1.10    255.248.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.248.0.0
-    验证目的子网地址    192.0.1.10    255.255.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.255.0.0
-    验证目的子网地址    192.0.1.10    255.252.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.252.0.0
-    验证目的子网地址    192.0.1.10    255.240.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.240.0.0
-    验证目的子网地址    192.0.1.10    255.224.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.224.0.0
-    验证目的子网地址    192.0.1.10    255.192.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.192.0.0
-    验证目的子网地址    192.0.1.10    255.128.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.128.0.0
-    验证目的子网地址    192.0.1.10    255.0.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.0.0.0
+    Run Keyword And Continue On Failure    删除列表里所有条目显示成功消息message
+    Run Keyword And Continue On Failure    验证目的子网地址    192.0.1.10    255.251.0.0    ${common_mask_addr_err}
+    Run Keyword And Continue On Failure    验证目的子网地址    192.0.1.10    255.248.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.248.0.0
+    Run Keyword And Continue On Failure    验证目的子网地址    192.0.1.10    255.255.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.255.0.0
+    Run Keyword And Continue On Failure    验证目的子网地址    192.0.1.10    255.252.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.252.0.0
+    Run Keyword And Continue On Failure    验证目的子网地址    192.0.1.10    255.240.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.240.0.0
+    Run Keyword And Continue On Failure    验证目的子网地址    192.0.1.10    255.224.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.224.0.0
+    Run Keyword And Continue On Failure    验证目的子网地址    192.0.1.10    255.192.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.192.0.0
+    Run Keyword And Continue On Failure    验证目的子网地址    192.0.1.10    255.128.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.128.0.0
+    Run Keyword And Continue On Failure    验证目的子网地址    192.0.1.10    255.0.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.0.0.0
 
 IPandProtocal_DMASK_test_28
     [Documentation]    目的网段：子网掩码输入框第三段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
-    删除列表里所有条目显示成功消息message
-    验证目的子网地址    192.0.0.10    255.255.251.0    ${common_mask_addr_err}
-    验证目的子网地址    192.0.0.10    255.255.248.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.255.248.0
-    验证目的子网地址    192.0.0.10    255.255.255.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.255.255.0
-    验证目的子网地址    192.0.0.10    255.255.254.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.255.254.0
-    验证目的子网地址    192.0.0.10    255.255.252.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.255.252.0
-    验证目的子网地址    192.0.0.10    255.255.240.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.255.240.0
-    验证目的子网地址    192.0.0.10    255.255.224.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.255.224.0
-    验证目的子网地址    192.0.0.10    255.255.192.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.255.192.0
-    验证目的子网地址    192.0.0.10    255.255.128.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.255.128.0
+    Run Keyword And Continue On Failure    删除列表里所有条目显示成功消息message
+    Run Keyword And Continue On Failure    验证目的子网地址    192.0.0.10    255.255.251.0    ${common_mask_addr_err}
+    Run Keyword And Continue On Failure    验证目的子网地址    192.0.0.10    255.255.248.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.255.248.0
+    Run Keyword And Continue On Failure    验证目的子网地址    192.0.0.10    255.255.255.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.255.255.0
+    Run Keyword And Continue On Failure    验证目的子网地址    192.0.0.10    255.255.254.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.255.254.0
+    Run Keyword And Continue On Failure    验证目的子网地址    192.0.0.10    255.255.252.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.255.252.0
+    Run Keyword And Continue On Failure    验证目的子网地址    192.0.0.10    255.255.240.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.255.240.0
+    Run Keyword And Continue On Failure    验证目的子网地址    192.0.0.10    255.255.224.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.255.224.0
+    Run Keyword And Continue On Failure    验证目的子网地址    192.0.0.10    255.255.192.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.255.192.0
+    Run Keyword And Continue On Failure    验证目的子网地址    192.0.0.10    255.255.128.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.255.128.0
 
 IPandProtocal_DMASK_test_29
     [Documentation]    目的网段：子网掩码输入框第四段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
-    删除列表里所有条目显示成功消息message
-    验证目的子网地址    192.168.1.10    255.255.255.251    ${common_mask_addr_err}
-    验证目的子网地址    192.168.1.0    255.255.255.248    ${common_unlock_add}
-    列表里含有${string}    192.168.1.0\n/255.255.255.248
-    验证目的子网地址    192.168.1.0    255.255.255.254    ${common_unlock_add}
-    列表里含有${string}    192.168.1.0\n/255.255.255.254
-    验证目的子网地址    192.168.1.0    255.255.255.252    ${common_unlock_add}
-    列表里含有${string}    192.168.1.0\n/255.255.255.254
-    验证目的子网地址    192.168.1.0    255.255.255.240    ${common_unlock_add}
-    列表里含有${string}    192.168.1.0\n/255.255.255.240
-    验证目的子网地址    192.168.1.0    255.255.255.224    ${common_unlock_add}
-    列表里含有${string}    192.168.1.0\n/255.255.255.224
-    验证目的子网地址    192.168.1.0    255.255.255.192    ${common_unlock_add}
-    列表里含有${string}    192.168.1.0\n/255.255.255.192
-    验证目的子网地址    192.168.1.0    255.255.255.128    ${common_unlock_add}
-    列表里含有${string}    192.168.1.0\n/255.255.255.128
+    Run Keyword And Continue On Failure    删除列表里所有条目显示成功消息message
+    Run Keyword And Continue On Failure    验证目的子网地址    192.168.1.10    255.255.255.251    ${common_mask_addr_err}
+    Run Keyword And Continue On Failure    验证目的子网地址    192.168.1.0    255.255.255.248    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.168.1.0\n/255.255.255.248
+    Run Keyword And Continue On Failure    验证目的子网地址    192.168.1.0    255.255.255.254    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.168.1.0\n/255.255.255.254
+    Run Keyword And Continue On Failure    验证目的子网地址    192.168.1.0    255.255.255.252    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.168.1.0\n/255.255.255.254
+    Run Keyword And Continue On Failure    验证目的子网地址    192.168.1.0    255.255.255.240    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.168.1.0\n/255.255.255.240
+    Run Keyword And Continue On Failure    验证目的子网地址    192.168.1.0    255.255.255.224    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.168.1.0\n/255.255.255.224
+    Run Keyword And Continue On Failure    验证目的子网地址    192.168.1.0    255.255.255.192    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.168.1.0\n/255.255.255.192
+    Run Keyword And Continue On Failure    验证目的子网地址    192.168.1.0    255.255.255.128    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.168.1.0\n/255.255.255.128
 
 IPandProtocal_DMASK_test_30
     [Documentation]    目的网段：子网掩码输入框存在非法字符，提示发现n个非法字符
@@ -350,26 +350,26 @@ IPandProtocal_DIP_test_39
 IPandProtocal_SIP_test_40
     [Documentation]    源IP地址输入框超过15个字符后，无法输入
     [Template]
-    验证源主机hostsIP地址最大输入长度    1234567890123456    15
-    验证目的主机subnetIP地址最大输入长度    1234567890123456    15
-    验证目的主机segmentstart地址最大输入长度    1234567890123456    15
-    验证目的主机segmentend地址最大输入长度    1234567890123456    15
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址最大输入长度    1234567890123456    15
+    Run Keyword And Continue On Failure    验证目的主机subnetIP地址最大输入长度    1234567890123456    15
+    Run Keyword And Continue On Failure    验证目的主机segmentstart地址最大输入长度    1234567890123456    15
+    Run Keyword And Continue On Failure    验证目的主机segmentend地址最大输入长度    1234567890123456    15
 
 IPandProtocal_SIP_test_41
     [Documentation]    源IP地址输入框：小数点>3，提示IP长度不正确
     [Template]
-    验证源主机hostsIP地址    10.0.0.1.    ${common_ip_addr_err}
-    验证源主机subnetIP地址    10.0.0.1.    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    10.0.0.1.    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    10.0.0.102    10.0.0.1.    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址    10.0.0.1.    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址    10.0.0.1.    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment起始IP地址    10.0.0.1.    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    10.0.0.102    10.0.0.1.    ${common_ip_addr_err}
 
 IPandProtocal_SIP_test_42
     [Documentation]    源IP地址输入框：小数点<3，提示IP长度不正确
     [Template]
-    验证源主机hostsIP地址    10.0.01    ${common_ip_addr_err}
-    验证源主机subnetIP地址    10.0.01    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    10.0.01    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    10.0.0.102    10.0.01    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址    10.0.01    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址    10.0.01    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment起始IP地址    10.0.01    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    10.0.0.102    10.0.01    ${common_ip_addr_err}
 
 IPandProtocal_SMASK_test_54
     [Documentation]    本地网段：子网掩码输入框超过15个字符后，无法输入
@@ -393,87 +393,87 @@ IPandProtocal_SMASK_test_57
 
 IPandProtocal_SMASK_test_58
     [Documentation]    本地网段：子网掩码输入框第一段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
-    删除列表里所有条目显示成功消息message
-    验证源主机子网地址    192.168.1.10    251.0.0.0    ${common_mask_addr_err}
-    验证源主机子网地址    192.168.1.10    191.0.0.0    ${common_mask_addr_err}
-    验证源主机子网地址    192.168.1.10    129.0.0.0    ${common_mask_addr_err}
-    验证源主机子网地址    192.168.1.10    255.0.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.0.0.0
-    验证源主机子网地址    192.168.1.10    254.0.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/254.0.0.0
-    验证源主机子网地址    192.168.1.10    252.0.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/252.0.0.0
-    验证源主机子网地址    192.168.1.10    248.0.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/248.0.0.0
-    验证源主机子网地址    192.168.1.10    240.0.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/240.0.0.0
-    验证源主机子网地址    192.168.1.10    224.0.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/224.0.0.0
-    验证源主机子网地址    196.168.1.10    192.0.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/192.0.0.0
-    验证源主机子网地址    192.168.1.10    128.0.0.0    ${common_unlock_add}
-    列表里含有${string}    128.0.0.0\n/128.0.0.0
+    Run Keyword And Continue On Failure    删除列表里所有条目显示成功消息message
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.168.1.10    251.0.0.0    ${common_mask_addr_err}
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.168.1.10    191.0.0.0    ${common_mask_addr_err}
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.168.1.10    129.0.0.0    ${common_mask_addr_err}
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.168.1.10    255.0.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.0.0.0
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.168.1.10    254.0.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/254.0.0.0
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.168.1.10    252.0.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/252.0.0.0
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.168.1.10    248.0.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/248.0.0.0
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.168.1.10    240.0.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/240.0.0.0
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.168.1.10    224.0.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/224.0.0.0
+    Run Keyword And Continue On Failure    验证源主机子网地址    196.168.1.10    192.0.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/192.0.0.0
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.168.1.10    128.0.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    128.0.0.0\n/128.0.0.0
 
 IPandProtocal_SMASK_test_59
     [Documentation]    本地网段：子网掩码输入框第二段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
-    删除列表里所有条目显示成功消息message
-    验证源主机子网地址    192.0.1.10    255.251.0.0    ${common_mask_addr_err}
-    验证源主机子网地址    192.0.1.10    255.248.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.248.0.0
-    验证源主机子网地址    192.0.1.10    255.255.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.255.0.0
-    验证源主机子网地址    192.0.1.10    255.252.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.252.0.0
-    验证源主机子网地址    192.0.1.10    255.240.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.240.0.0
-    验证源主机子网地址    192.0.1.10    255.224.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.224.0.0
-    验证源主机子网地址    192.0.1.10    255.192.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.192.0.0
-    验证源主机子网地址    192.0.1.10    255.128.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.128.0.0
-    验证源主机子网地址    192.0.1.10    255.0.0.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.0.0.0
+    Run Keyword And Continue On Failure    删除列表里所有条目显示成功消息message
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.0.1.10    255.251.0.0    ${common_mask_addr_err}
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.0.1.10    255.248.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.248.0.0
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.0.1.10    255.255.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.255.0.0
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.0.1.10    255.252.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.252.0.0
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.0.1.10    255.240.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.240.0.0
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.0.1.10    255.224.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.224.0.0
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.0.1.10    255.192.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.192.0.0
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.0.1.10    255.128.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.128.0.0
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.0.1.10    255.0.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.0.0.0
 
 IPandProtocal_SMASK_test_60
     [Documentation]    本地网段：子网掩码输入框第三段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
-    删除列表里所有条目显示成功消息message
-    验证源主机子网地址    192.0.0.10    255.255.251.0    ${common_mask_addr_err}
-    验证源主机子网地址    192.0.0.10    255.255.248.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.255.248.0
-    验证源主机子网地址    192.0.0.10    255.255.255.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.255.255.0
-    验证源主机子网地址    192.0.0.10    255.255.254.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.255.254.0
-    验证源主机子网地址    192.0.0.10    255.255.252.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.255.252.0
-    验证源主机子网地址    192.0.0.10    255.255.240.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.255.240.0
-    验证源主机子网地址    192.0.0.10    255.255.224.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.255.224.0
-    验证源主机子网地址    192.0.0.10    255.255.192.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.255.192.0
-    验证源主机子网地址    192.0.0.10    255.255.128.0    ${common_unlock_add}
-    列表里含有${string}    192.0.0.0\n/255.255.128.0
+    Run Keyword And Continue On Failure    删除列表里所有条目显示成功消息message
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.0.0.10    255.255.251.0    ${common_mask_addr_err}
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.0.0.10    255.255.248.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.255.248.0
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.0.0.10    255.255.255.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.255.255.0
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.0.0.10    255.255.254.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.255.254.0
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.0.0.10    255.255.252.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.255.252.0
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.0.0.10    255.255.240.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.255.240.0
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.0.0.10    255.255.224.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.255.224.0
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.0.0.10    255.255.192.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.255.192.0
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.0.0.10    255.255.128.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.0.0.0\n/255.255.128.0
 
 IPandProtocal_SMASK_test_61
     [Documentation]    本地网段：子网掩码输入框第四段超出范围，提示只能属于{255,254,252,248,240,224,192,128,0}
-    删除列表里所有条目显示成功消息message
-    验证源主机子网地址    192.168.1.10    255.255.255.251    ${common_mask_addr_err}
-    验证源主机子网地址    192.168.1.0    255.255.255.248    ${common_unlock_add}
-    列表里含有${string}    192.168.1.0\n/255.255.255.248
-    验证源主机子网地址    192.168.1.0    255.255.255.254    ${common_unlock_add}
-    列表里含有${string}    192.168.1.0\n/255.255.255.254
-    验证源主机子网地址    192.168.1.0    255.255.255.252    ${common_unlock_add}
-    列表里含有${string}    192.168.1.0\n/255.255.255.254
-    验证源主机子网地址    192.168.1.0    255.255.255.240    ${common_unlock_add}
-    列表里含有${string}    192.168.1.0\n/255.255.255.240
-    验证源主机子网地址    192.168.1.0    255.255.255.224    ${common_unlock_add}
-    列表里含有${string}    192.168.1.0\n/255.255.255.224
-    验证源主机子网地址    192.168.1.0    255.255.255.192    ${common_unlock_add}
-    列表里含有${string}    192.168.1.0\n/255.255.255.192
-    验证源主机子网地址    192.168.1.0    255.255.255.128    ${common_unlock_add}
-    列表里含有${string}    192.168.1.0\n/255.255.255.128
+    Run Keyword And Continue On Failure    删除列表里所有条目显示成功消息message
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.168.1.10    255.255.255.251    ${common_mask_addr_err}
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.168.1.0    255.255.255.248    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.168.1.0\n/255.255.255.248
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.168.1.0    255.255.255.254    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.168.1.0\n/255.255.255.254
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.168.1.0    255.255.255.252    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.168.1.0\n/255.255.255.254
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.168.1.0    255.255.255.240    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.168.1.0\n/255.255.255.240
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.168.1.0    255.255.255.224    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.168.1.0\n/255.255.255.224
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.168.1.0    255.255.255.192    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.168.1.0\n/255.255.255.192
+    Run Keyword And Continue On Failure    验证源主机子网地址    192.168.1.0    255.255.255.128    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    192.168.1.0\n/255.255.255.128
 
 IPandProtocal_SMASK_test_62
     [Documentation]    本地网段：子网掩码输入框存在非法字符，提示发现n个非法字符
@@ -774,127 +774,127 @@ IPandProtocal_ETIME_test_134
 
 IPandProtocal_SIP_test_43
     [Documentation]    *源IP地址不能为空*
-    验证源主机hostsIP地址    ${EMPTY}    ${common_ip_addr_err}
-    验证源主机subnetIP地址    ${EMPTY}    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    ${EMPTY}    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    10.0.0.102    ${EMPTY}    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址    ${EMPTY}    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址    ${EMPTY}    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment起始IP地址    ${EMPTY}    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    10.0.0.102    ${EMPTY}    ${common_ip_addr_err}
 
 IPandProtocal_SIP_test_44
     [Documentation]    *源IP地址输入框第一段IP值超出范围，提示只能在0~255之间*
-    验证源主机hostsIP地址    -1.0.0.2    ${common_ip_addr_err}
-    验证源主机hostsIP地址    256.0.0.1    ${common_ip_addr_err}
-    验证源主机subnetIP地址    -1.0.0.2    ${common_ip_addr_err}
-    验证源主机subnetIP地址    256.0.0.1    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    -1.0.0.2    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    256.0.0.1    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    10.0.0.102    -1.0.0.2    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    10.0.0.102    256.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址    -1.0.0.2    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址    256.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址    -1.0.0.2    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址    256.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment起始IP地址    -1.0.0.2    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment起始IP地址    256.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    10.0.0.102    -1.0.0.2    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    10.0.0.102    256.0.0.1    ${common_ip_addr_err}
 
 IPandProtocal_SIP_test_45
     [Documentation]    *源IP地址输入框第二段IP值超出范围，提示只能在0~255之间*
-    验证源主机hostsIP地址    10.-1.0.10    ${common_ip_addr_err}
-    验证源主机hostsIP地址    10.256.0.10    ${common_ip_addr_err}
-    验证源主机subnetIP地址    10.-1.0.10    ${common_ip_addr_err}
-    验证源主机subnetIP地址    10.256.0.10    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    10.-1.0.10    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    10.256.0.10    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    10.0.0.102    10.-1.0.10    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    10.0.0.102    10.256.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址    10.-1.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址    10.256.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址    10.-1.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址    10.256.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment起始IP地址    10.-1.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment起始IP地址    10.256.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    10.0.0.102    10.-1.0.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    10.0.0.102    10.256.0.10    ${common_ip_addr_err}
 
 IPandProtocal_SIP_test_46
     [Documentation]    *源IP地址输入框第三段IP值超出范围，提示只能在0~255之间*
-    验证源主机hostsIP地址    10.0.-1.10    ${common_ip_addr_err}
-    验证源主机hostsIP地址    10.0.256.10    ${common_ip_addr_err}
-    验证源主机subnetIP地址    10.0.-1.10    ${common_ip_addr_err}
-    验证源主机subnetIP地址    10.0.256.10    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    10.0.-1.10    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    10.0.256.10    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    10.0.0.102    10.0.-1.10    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    10.0.0.102    10.0.256.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址    10.0.-1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址    10.0.256.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址    10.0.-1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址    10.0.256.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment起始IP地址    10.0.-1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment起始IP地址    10.0.256.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    10.0.0.102    10.0.-1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    10.0.0.102    10.0.256.10    ${common_ip_addr_err}
 
 IPandProtocal_SIP_test_47
     [Documentation]    *源IP地址输入框第四段IP值超出范围，提示只能在0~255之间*
-    验证源主机hostsIP地址    10.0.0.-1    ${common_ip_addr_err}
-    验证源主机hostsIP地址    10.0.0.256    ${common_ip_addr_err}
-    验证源主机subnetIP地址    10.0.0.-1    ${common_ip_addr_err}
-    验证源主机subnetIP地址    10.0.0.256    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    10.0.0.-1    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    10.0.0.256    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    10.0.0.102    10.0.0.-1    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    10.0.0.102    10.0.0.256    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址    10.0.0.-1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址    10.0.0.256    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址    10.0.0.-1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址    10.0.0.256    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment起始IP地址    10.0.0.-1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment起始IP地址    10.0.0.256    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    10.0.0.102    10.0.0.-1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    10.0.0.102    10.0.0.256    ${common_ip_addr_err}
 
 IPandProtocal_SIP_test_48
     [Documentation]    *源IP地址输入框存在非法字符，提示发现n个非法字符*
-    验证源主机hostsIP地址    192,168;1:s    ${common_ip_addr_err}
-    验证源主机subnetIP地址    192,168;1:s    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    192,168;1:s    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    192.168.1.95    192,168;1:s    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址    192,168;1:s    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址    192,168;1:s    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment起始IP地址    192,168;1:s    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    192.168.1.95    192,168;1:s    ${common_ip_addr_err}
 
 IPandProtocal_SIP_test_49
     [Documentation]    *源IP地址第一段、第二段、第三段、第四段均不能为空*
-    验证源主机hostsIP地址    .168.1.10    ${common_ip_addr_err}
-    验证源主机hostsIP地址    192..1.10    ${common_ip_addr_err}
-    验证源主机hostsIP地址    192.168..10    ${common_ip_addr_err}
-    验证源主机hostsIP地址    192.168.1.    ${common_ip_addr_err}
-    验证源主机subnetIP地址    .168.1.10    ${common_ip_addr_err}
-    验证源主机subnetIP地址    192..1.10    ${common_ip_addr_err}
-    验证源主机subnetIP地址    192.168..10    ${common_ip_addr_err}
-    验证源主机subnetIP地址    192.168.1.    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    .168.1.10    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    192..1.10    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    192.168..10    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    192.168.1.    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    192.168.1.95    .168.1.10    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    192.168.1.95    192..1.10    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    192.168.1.95    192.168..10    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    192.168.1.95    192.168.1.    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址    .168.1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址    192..1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址    192.168..10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址    192.168.1.    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址    .168.1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址    192..1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址    192.168..10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址    192.168.1.    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment起始IP地址    .168.1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment起始IP地址    192..1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment起始IP地址    192.168..10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment起始IP地址    192.168.1.    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    192.168.1.95    .168.1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    192.168.1.95    192..1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    192.168.1.95    192.168..10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    192.168.1.95    192.168.1.    ${common_ip_addr_err}
 
 IPandProtocal_SIP_test_50
     [Documentation]    *源IP地址输入0.0.0.0，提示IP不能为全0*
-    验证源主机hostsIP地址    0.0.0.0    ${common_ip_addr_err}
-    验证源主机subnetIP地址    0.0.0.0    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    0.0.0.0    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    192.168.1.95    0.0.0.0    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址    0.0.0.0    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址    0.0.0.0    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment起始IP地址    0.0.0.0    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    192.168.1.95    0.0.0.0    ${common_ip_addr_err}
 
 IPandProtocal_SIP_test_51
     [Documentation]    *源IP地址不为组播地址或保留地址：223 < n1 < 255*
-    删除列表里所有条目显示成功消息message
-    验证源主机hostsIP地址    224.0.0.1    ${common_ip_addr_err}
-    验证源主机hostsIP地址    240.0.0.1    ${common_ip_addr_err}
-    验证源主机hostsIP地址    223.0.0.1    ${common_unlock_add}
-    列表里含有${string}    223.0.0.1\n/223.0.0.1
-    删除列表里所有条目显示成功消息message
-    验证源主机subnetIP地址    224.0.0.1    ${common_ip_addr_err}
-    验证源主机subnetIP地址    255.0.0.1    ${common_ip_addr_err}
-    验证源主机subnetIP地址    254.0.0.1    ${common_ip_addr_err}
-    验证源主机子网地址    223.0.0.1    255.0.0.0    ${common_unlock_add}
-    列表里含有${string}    223.0.0.0\n/255.0.0.0
-    删除列表里所有条目显示成功消息message
-    验证源主机segment起始IP地址    224.0.0.1    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    255.0.0.1    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    254.0.0.1    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    223.0.0.1    223.0.0.100    ${common_unlock_add}
-    列表里含有${string}    223.0.0.1\n/223.0.0.100
-    删除列表里所有条目显示成功消息message
-    验证源主机segment结束IP地址    192.168.1.95    224.0.0.1    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    192.168.1.95    255.0.0.1    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    192.168.1.95    254.0.0.1    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    223.0.0.1    223.0.0.100    ${common_unlock_add}
-    列表里含有${string}    223.0.0.1\n/223.0.0.100
+    Run Keyword And Continue On Failure    删除列表里所有条目显示成功消息message
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址    224.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址    240.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址    223.0.0.1    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    223.0.0.1\n/223.0.0.1
+    Run Keyword And Continue On Failure    删除列表里所有条目显示成功消息message
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址    224.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址    255.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址    254.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机子网地址    223.0.0.1    255.0.0.0    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    223.0.0.0\n/255.0.0.0
+    Run Keyword And Continue On Failure    删除列表里所有条目显示成功消息message
+    Run Keyword And Continue On Failure    验证源主机segment起始IP地址    224.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment起始IP地址    255.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment起始IP地址    254.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    223.0.0.1    223.0.0.100    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    223.0.0.1\n/223.0.0.100
+    Run Keyword And Continue On Failure    删除列表里所有条目显示成功消息message
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    192.168.1.95    224.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    192.168.1.95    255.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    192.168.1.95    254.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    223.0.0.1    223.0.0.100    ${common_unlock_add}
+    Run Keyword And Continue On Failure    列表里含有${string}    223.0.0.1\n/223.0.0.100
 
 IPandProtocal_SIP_test_52
     [Documentation]    *源IP地址不为回环地址：n1 = 127*
-    验证源主机hostsIP地址    127.0.0.1    ${common_ip_addr_err}
-    验证源主机subnetIP地址    127.0.0.1    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    127.0.0.1    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    126.0.0.100    127.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址    127.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址    127.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment起始IP地址    127.0.0.1    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    126.0.0.100    127.0.0.1    ${common_ip_addr_err}
 
 IPandProtocal_SIP_test_53
     [Documentation]    *源IP地址不为保留地址：n1=0*
-    验证源主机hostsIP地址    0.168.1.10    ${common_ip_addr_err}
-    验证源主机subnetIP地址    0.168.1.10    ${common_ip_addr_err}
-    验证源主机segment起始IP地址    0.168.1.10    ${common_ip_addr_err}
-    验证源主机segment结束IP地址    192.168.1.95    0.168.1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机hostsIP地址    0.168.1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机subnetIP地址    0.168.1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment起始IP地址    0.168.1.10    ${common_ip_addr_err}
+    Run Keyword And Continue On Failure    验证源主机segment结束IP地址    192.168.1.95    0.168.1.10    ${common_ip_addr_err}
 
 *** Keywords ***
 验证规则名
