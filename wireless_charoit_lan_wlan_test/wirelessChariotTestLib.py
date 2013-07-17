@@ -83,7 +83,7 @@ class wirelessChariotTest:
         
     def getWirelessInterfaceGUID(self):
         cmdline = 'wcm ei'
-        restr = subprocess.check_output(cmdline,shell=True)
+        restr = subprocess.check_call(cmdline,shell=True)
         i = restr.find('GUID: ')
         i = i + len('GUID: ')
         j = restr.find('\n',i)
