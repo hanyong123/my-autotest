@@ -38,11 +38,8 @@ Library           String
     Click Button    id=save_wan_set
 
 弹出对话框
-    [Arguments]    ${dlg_string}
     ${style}    Get Element Attribute    xpath=//div[@class="df_lock_load"]@style
     Should Contain    ${style}    display: block
-    ${string}    Get Text    xpath=//div[@class="df_lock_load"]
-    Should Contain    ${string}    ${dlg_string}
 
 弹出对话框消失
     ${style}    Get Element Attribute    xpath=//div[@class="df_lock_load"]@style
@@ -95,7 +92,9 @@ Library           String
 显示消息
     [Arguments]    ${message}
     Set Selenium Speed    0
-    Wait Until Keyword Succeeds    20    0    弹出对话框    ${message}
+    Wait Until Keyword Succeeds    10    0    弹出对话框
+    ${string}    Get Text    xpath=//div[@class="df_lock_load"]
+    Run Keyword And Continue On Failure    Should Contain    ${string}    ${message}
     Wait Until Keyword Succeeds    20    5    弹出对话框消失
     Set Selenium Speed    ${selenium_speed}
 

@@ -122,7 +122,7 @@ LanConfig_MAC_test_13
 LanConfig_MAC_test_14
     [Documentation]    MAC地址符合格式规范，成功保存并生效
     设置LAN口MAC    00:1c:c0:a2:c2:80
-    显示消息    common_unlock_save
+    显示消息    ${common_unlock_save}
     Sleep    3
     ${v}    Get Value    id=lan_mac
     Should Be Equal    ${v}    00:1c:c0:a2:c3:80

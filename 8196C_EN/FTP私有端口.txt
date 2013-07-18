@@ -17,7 +17,7 @@ FTP_PORT_test_6
 
 FTP_PORT_test_7
     [Template]    验证端口非法字符
-    ${empty}    ${common_port_err}
+    ${EMPTY}    ${common_port_err}
     "    ${common_port_err}
     '    ${common_port_err}
     \\    ${common_port_err}
