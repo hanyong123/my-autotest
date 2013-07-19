@@ -1,13 +1,16 @@
 *** Variables ***
 ${router_wan_mask}    255.255.0.0
 ${host_lan_ip}    192.168.1.25
+${host_wan_ip}    100.0.0.100
+${router_wan_ip}    100.0.10.100
+${router_lan_ip}    192.168.1.1
+${host_lan_mask}    255.255.255.0
+${host_wan_mask}    255.255.0.0
 ${browser}        firefox
 ${login_passwd}    guest
 ${language}       us
-${host_wan_ip}    100.0.0.100
-${router_wan_ip}    100.0.10.100
 ${login_user}     guest
-${router_lan_ip}    192.168.1.1
-${host_wan_mask}    255.255.0.0
 ${base_url}       http://${login_user}:${login_passwd}@${router_lan_ip}/index.htm
 ${selenium_speed}    0.5
+${host_lan_if_name}    lan
+${host_wan_if_name}    wan
