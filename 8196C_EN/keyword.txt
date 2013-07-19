@@ -92,7 +92,7 @@ Library           String
 显示消息
     [Arguments]    ${message}
     Set Selenium Speed    0
-    Wait Until Keyword Succeeds    10    0    弹出对话框
+    Wait Until Keyword Succeeds    5    0    弹出对话框
     ${string}    Get Text    xpath=//div[@class="df_lock_load"]
     Run Keyword And Continue On Failure    Should Contain    ${string}    ${message}
     Wait Until Keyword Succeeds    20    5    弹出对话框消失
