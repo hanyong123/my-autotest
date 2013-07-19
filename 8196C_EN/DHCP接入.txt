@@ -1,6 +1,7 @@
 *** Settings ***
 Suite Setup       Run Keywords    打开浏览器    AND    转到DHCP接入设置页面
 Suite Teardown    关闭浏览器
+Force Tags
 Resource          keyword.txt
 
 *** Test Cases ***

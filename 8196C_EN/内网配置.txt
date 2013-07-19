@@ -122,7 +122,7 @@ LanConfig_MAC_test_13
 LanConfig_MAC_test_14
     [Documentation]    MAC地址符合格式规范，成功保存并生效
     设置LAN口MAC    00:1c:c0:a2:c2:80
-    显示消息    common_unlock_save
+    显示消息    ${common_unlock_save}
     Sleep    3
     ${v}    Get Value    id=lan_mac
     Should Be Equal    ${v}    00:1c:c0:a2:c3:80
@@ -362,12 +362,14 @@ LanConfig_MASK_test_46
 
 LanConfig_IPMASK_test_47
     [Documentation]    输入正确的LAN口IP，正确的LAN口子网掩码，点击“保存生效”按钮，保存生效并重启成功。
+    [Setup]    Run Keyword    set_host_if_dhcp    ${host_lan_if_name}
     [Template]    验证IP和MASK是否保存成功
     10.0.0.4    255.0.0.0
     192.168.1.5    255.255.255.128
     192.168.1.8    255.255.240.0
     129.43.1.8    255.224.0.0
     192.168.1.1    255.255.255.0
+    [Teardown]    Run Keyword    set_host_if_static    ${host_lan_if_name}    ${host_lan_ip}    ${host_lan_mask}    ${router_lan_ip}
 
 *** Keywords ***
 验证路由器LAN口IP和MASK
