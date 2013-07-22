@@ -666,6 +666,8 @@ DHCP保留地址列表没有${string}
     转到DHCP保留地址设置页面
     设置DHCP服务器保留地址    ${des}    ${ip}    ${mac}
     显示消息    ${message}
+    ${rmessage}    process_special_charators    ${message}
+    Run Keyword If    '${rmessage}'=='${common_unlock_add}'    Sleep    10
 
 修改客户端列表中某行Reserved状态
     [Arguments]    ${row}    ${isReserve}=0
