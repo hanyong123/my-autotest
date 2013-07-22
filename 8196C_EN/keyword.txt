@@ -92,7 +92,7 @@ Library           String
 显示消息
     [Arguments]    ${message}
     Set Selenium Speed    0
-    Wait Until Keyword Succeeds    5    1    弹出对话框
+    Wait Until Keyword Succeeds    5    0    弹出对话框
     Run Keyword And Continue On Failure    Wait Until Keyword Succeeds    20    2    比较弹出对话框内容    ${message}
     Wait Until Keyword Succeeds    20    5    弹出对话框消失
     Set Selenium Speed    ${selenium_speed}
@@ -161,7 +161,6 @@ Library           String
     Input Text    id=reserve_ip    ${ip}
     Input Text    id=reserve_mac    ${mac}
     Click Button    id=add_reservation
-    Comment    Click Element    id=add_reservation
 
 转到IP/MAC绑定页面
     Set Selenium Speed    ${selenium_speed}
