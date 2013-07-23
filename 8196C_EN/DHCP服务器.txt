@@ -622,6 +622,7 @@ DHCP保留地址列表第${row}行第${col}列是${string}
     ${message}    Confirm Action
     Should Be Equal    ${message}    ${common_del_tip}
     显示消息    ${common_unlock_delete}
+    Sleep    15
 
 DHCP保留地址列表没有${string}
     Run Keyword And Expect Error    *    Table Should Contain    xpath=//table[@class="df_tab"]    ${string}
@@ -668,7 +669,7 @@ DHCP保留地址列表没有${string}
     设置DHCP服务器保留地址    ${des}    ${ip}    ${mac}
     显示消息    ${message}
     ${rmessage}    process_special_charators    ${message}
-    Run Keyword If    '${rmessage}'=='${common_unlock_add}'    Sleep    10
+    Run Keyword If    '${rmessage}'=='${common_unlock_add}'    Sleep    15
 
 修改客户端列表中某行Reserved状态
     [Arguments]    ${row}    ${isReserve}=0
