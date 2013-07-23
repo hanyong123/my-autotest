@@ -8,7 +8,7 @@ from robot.libraries import  BuiltIn
 import threading
 import time
 import subprocess
-import psutil 
+
 
 
 def process_special_charators(string):
