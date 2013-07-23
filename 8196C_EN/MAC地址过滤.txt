@@ -300,8 +300,7 @@ MACFilter_ETIME_test_67
     Choose Ok On Next Confirmation
     ${message}    Confirm Action
     Should Be Equal    ${message}    ${common_del_tip}
-    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
-    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    显示消息    ${common_unlock_delete}
 
 验证规则名
     [Arguments]    ${name}    ${message}
