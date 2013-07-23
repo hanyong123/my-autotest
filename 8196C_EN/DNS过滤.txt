@@ -249,8 +249,7 @@ DNSFilter_EndTime_test_201
     Choose Ok On Next Confirmation
     ${message}    Confirm Action
     Should Be Equal    ${message}    ${common_del_tip}
-    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
-    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    显示消息    ${common_unlock_delete}
 
 列表第row行第col列是string
     [Arguments]    ${row}    ${col}    ${string}
