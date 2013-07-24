@@ -1,0 +1,9 @@
+*** Settings ***
+Library           serialLibary.py
+Resource          keyword.txt
+
+*** Test Cases ***
+try
+    open_connection
+    ${r}    execute_command    flash
+    close_connection
