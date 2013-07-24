@@ -627,18 +627,6 @@ DHCP保留地址列表第${row}行第${col}列是${string}
 DHCP保留地址列表没有${string}
     Run Keyword And Expect Error    *    Table Should Contain    xpath=//table[@class="df_tab"]    ${string}
 
-修改LAN口IP
-    [Arguments]    ${ip}    ${mask}
-    Choose Ok On Next Confirmation
-    转到内网配置页面
-    设置LAN口IP和MASK    ${ip}    ${mask}
-    ${message}    Confirm Action
-    Should Be Equal    ${message}    ${common_reboot_tip}
-    关闭浏览器
-    Sleep    40s
-    Open Browser    http://${login_user}:${login_passwd}@${ip}/index.htm    ${browser}
-    Sleep    5
-
 检查DHCP服务器是否保存成功
     [Arguments]    ${startIp}    ${endIp}
     转到内网配置页面

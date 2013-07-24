@@ -323,8 +323,8 @@ DNSFilter_EndTime_test_201
 删除DNS过滤列表里第${row}行显示成功消息${message}
     [Arguments]    ${row}    ${message}
     Click Element    xpath=(//div[@id='${${row}-1}'])[2]
-    ${message2}    Confirm Action
-    Should Be Equal    ${message2}    ${common_del_one_tip}
+    Comment    ${message2}    Confirm Action
+    Comment    Should Be Equal    ${message2}    ${common_del_one_tip}
     显示消息    ${message}
 
 验证day或time的单个checkbox
