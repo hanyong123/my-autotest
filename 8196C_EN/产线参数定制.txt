@@ -4,6 +4,6 @@ Resource          keyword.txt
 
 *** Test Cases ***
 try
-    open_connection
+    open_connection    COM3    38400
     ${r}    execute_command    flash
     close_connection
