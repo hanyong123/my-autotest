@@ -3,7 +3,78 @@ Library           serialLibary.py
 Resource          keyword.txt
 
 *** Test Cases ***
-try
-    open_connection    COM3    38400
-    ${r}    execute_command    flash
+$flash set HW_WLAN0_TX_POWER_DIFF_OFDM
+    [Documentation]    $flash set HW_WLAN0_TX_POWER_DIFF_OFDM
+    ...
+    ...    ERP_TC_ID:1995
+    [Template]    完成flash接口测试
+    flash set HW_WLAN0_TX_POWER_DIFF_OFDM 01 01 01 01 01 01 01 01 01 01 01 01 01 01    flash all | grep "HW_WLAN0_TX_POWER_DIFF_OFDM"     HW_WLAN0_TX_POWER_DIFF_OFDM=0101010101010101010101010101
+    flash set HW_WLAN0_TX_POWER_DIFF_OFDM 01 02 03 04 05 06 07 08 09 10 11 12 13 14     flash all | grep "HW_WLAN0_TX_POWER_DIFF_OFDM"     HW_WLAN0_TX_POWER_DIFF_OFDM=0102030405060708090a0b0c0d0e
+    flash set HW_WLAN0_TX_POWER_DIFF_OFDM 14 13 12 11 10 09 08 07 06 05 04 03 02 01     flash all | grep "HW_WLAN0_TX_POWER_DIFF_OFDM"    HW_WLAN0_TX_POWER_DIFF_OFDM=0e0d0c0b0a090807060504030201
+
+$flash set HW_WLAN0_TX_POWER_DIFF_HT20
+    [Documentation]    $flash set HW_WLAN0_TX_POWER_DIFF_HT20
+    ...
+    ...    ERP_TC_ID:1994
+    [Template]    完成flash接口测试
+    flash set HW_WLAN0_TX_POWER_DIFF_HT20 01 01 01 01 01 01 01 01 01 01 01 01 01 01     flash all | grep "HW_WLAN0_TX_POWER_DIFF_HT20"     HW_WLAN0_TX_POWER_DIFF_HT20=0101010101010101010101010101
+    flash set HW_WLAN0_TX_POWER_DIFF_HT20 01 02 03 04 05 06 07 08 09 10 11 12 13 14     flash all | grep "HW_WLAN0_TX_POWER_DIFF_HT20"     HW_WLAN0_TX_POWER_DIFF_HT20=0102030405060708090a0b0c0d0e
+    flash set HW_WLAN0_TX_POWER_DIFF_HT20 14 13 12 11 10 09 08 07 06 05 04 03 02 01     flash all | grep "HW_WLAN0_TX_POWER_DIFF_HT20"    HW_WLAN0_TX_POWER_DIFF_HT20=0e0d0c0b0a090807060504030201
+
+$flash set HW_WLAN0_TX_POWER_DIFF_HT40_2S
+    [Documentation]    $flash set HW_WLAN0_TX_POWER_DIFF_HT40_2S
+    ...
+    ...    ERP_TC_ID:1993
+    [Template]    完成flash接口测试
+    flash set HW_WLAN0_TX_POWER_DIFF_HT40_2S 01 01 01 01 01 01 01 01 01 01 01 01 01 01    flash all | grep "HW_WLAN0_TX_POWER_DIFF_HT40_2S"     HW_WLAN0_TX_POWER_DIFF_HT40_2S=0101010101010101010101010101
+    flash set HW_WLAN0_TX_POWER_DIFF_HT40_2S 01 02 03 04 05 06 07 08 09 10 11 12 13 14    flash all | grep "HW_WLAN0_TX_POWER_DIFF_HT40_2S"     HW_WLAN0_TX_POWER_DIFF_HT40_2S=0102030405060708090a0b0c0d0e
+    flash set HW_WLAN0_TX_POWER_DIFF_HT40_2S 14 13 12 11 10 09 08 07 06 05 04 03 02 01     flash all | grep "HW_WLAN0_TX_POWER_DIFF_HT40_2S"    HW_WLAN0_TX_POWER_DIFF_HT40_2S=0e0d0c0b0a090807060504030201
+
+$flash set HW_WLAN0_TX_POWER_HT40_1S_B
+    [Documentation]    $flash set HW_WLAN0_TX_POWER_HT40_1S_B
+    ...
+    ...    ERP_TC_ID:1992
+    [Template]    完成flash接口测试
+    flash set HW_WLAN0_TX_POWER_HT40_1S_B 01 01 01 01 01 01 01 01 01 01 01 01 01 01    flash all | grep "HW_WLAN0_TX_POWER_HT40_1S_B"     HW_WLAN0_TX_POWER_HT40_1S_B=0101010101010101010101010101
+    flash set HW_WLAN0_TX_POWER_HT40_1S_B 01 02 03 04 05 06 07 08 09 10 11 12 13 14     flash all | grep "HW_WLAN0_TX_POWER_HT40_1S_B"     HW_WLAN0_TX_POWER_HT40_1S_B=0102030405060708090a0b0c0d0e
+    flash set HW_WLAN0_TX_POWER_HT40_1S_B 14 13 12 11 10 09 08 07 06 05 04 03 02 01     flash all | grep "HW_WLAN0_TX_POWER_HT40_1S_B"    HW_WLAN0_TX_POWER_HT40_1S_B=0e0d0c0b0a090807060504030201
+
+$flash set HW_WLAN0_TX_POWER_HT40_1S_A
+    [Documentation]    $flash set HW_WLAN0_TX_POWER_HT40_1S_A
+    ...
+    ...    ERP_TC_ID:1991
+    [Template]    完成flash接口测试
+    flash set HW_WLAN0_TX_POWER_HT40_1S_A 01 01 01 01 01 01 01 01 01 01 01 01 01 01    flash all | grep "HW_WLAN0_TX_POWER_HT40_1S_A"     HW_WLAN0_TX_POWER_HT40_1S_A=0101010101010101010101010101
+    flash set HW_WLAN0_TX_POWER_HT40_1S_A 01 02 03 04 05 06 07 08 09 10 11 12 13 14     flash all | grep "HW_WLAN0_TX_POWER_HT40_1S_A"     HW_WLAN0_TX_POWER_HT40_1S_A=0102030405060708090a0b0c0d0e
+    flash set HW_WLAN0_TX_POWER_HT40_1S_A 14 13 12 11 10 09 08 07 06 05 04 03 02 01     flash all | grep "HW_WLAN0_TX_POWER_HT40_1S_A"    HW_WLAN0_TX_POWER_HT40_1S_A=0e0d0c0b0a090807060504030201
+
+$flash set HW_WLAN0_TX_POWER_CCK_B
+    [Documentation]    $flash set HW_WLAN0_TX_POWER_CCK_B
+    ...
+    ...    ERP_TC_ID:1990
+    [Template]    完成flash接口测试
+    flash set HW_WLAN0_TX_POWER_CCK_B 01 01 01 01 01 01 01 01 01 01 01 01 01 01     flash all | grep "HW_WLAN0_TX_POWER_CCK_B"     HW_WLAN0_TX_POWER_CCK_B=0101010101010101010101010101
+    flash set HW_WLAN0_TX_POWER_CCK_B 01 02 03 04 05 06 07 08 09 10 11 12 13 14     flash all | grep "HW_WLAN0_TX_POWER_CCK_B"     HW_WLAN0_TX_POWER_CCK_B=0102030405060708090a0b0c0d0e
+    flash set HW_WLAN0_TX_POWER_CCK_B 14 13 12 11 10 09 08 07 06 05 04 03 02 01     flash all | grep "HW_WLAN0_TX_POWER_CCK_B"    HW_WLAN0_TX_POWER_CCK_B=0e0d0c0b0a090807060504030201
+
+$flash set HW_WLAN0_TX_POWER_CCK_A
+    [Documentation]    $flash set HW_WLAN0_TX_POWER_CCK_A
+    ...
+    ...    ERP_TC_ID:1989
+    [Template]    完成flash接口测试
+    flash set HW_WLAN0_TX_POWER_CCK_A 01 01 01 01 01 01 01 01 01 01 01 01 01 01     flash all | grep "HW_WLAN0_TX_POWER_CCK_A"     HW_WLAN0_TX_POWER_CCK_A=0101010101010101010101010101
+    flash set HW_WLAN0_TX_POWER_CCK_A 01 02 03 04 05 06 07 08 09 10 11 12 13 14     flash all | grep "HW_WLAN0_TX_POWER_CCK_A"     HW_WLAN0_TX_POWER_CCK_A=0102030405060708090a0b0c0d0e
+    flash set HW_WLAN0_TX_POWER_CCK_A 14 13 12 11 10 09 08 07 06 05 04 03 02 01     flash all | grep "HW_WLAN0_TX_POWER_CCK_A"    HW_WLAN0_TX_POWER_CCK_A=0e0d0c0b0a090807060504030201
+
+*** Keywords ***
+完成flash接口测试
+    [Arguments]    ${write}    ${read}    ${check}
+    [Documentation]    flash命令测试
+    ...    write，写入数据的操作
+    ...    read，读出数据的操作
+    ...    check，读出数据应当等于的值
+    open_connection    COM7    38400
+    ${r1}    execute_command    ${write}
+    ${r2}    execute_command    ${read}
     close_connection
+    Should Be Equal    ${r2}    ${check}
