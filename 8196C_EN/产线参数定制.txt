@@ -2,6 +2,9 @@
 Library           serialLibary.py
 Resource          keyword.txt
 
+*** Variables ***
+@{COM}            COM7
+
 *** Test Cases ***
 $flash set HW_WLAN0_TX_POWER_DIFF_OFDM
     [Documentation]    $flash set HW_WLAN0_TX_POWER_DIFF_OFDM
@@ -73,7 +76,7 @@ $flash set HW_WLAN0_TX_POWER_CCK_A
     ...    write，写入数据的操作
     ...    read，读出数据的操作
     ...    check，读出数据应当等于的值
-    open_connection    COM7    38400
+    open_connection    @{COM}    38400
     ${r1}    execute_command    ${write}
     ${r2}    execute_command    ${read}
     close_connection
