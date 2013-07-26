@@ -363,8 +363,7 @@ IPMAC绑定列表第${row}行第${col}列是${string}
     Click Element    xpath=//div[@class="tab_del_btn"][${row}]
     ${message}    Confirm Action
     Should Be Equal    ${message}    ${common_del_one_tip}
-    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
-    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    显示消息    ${common_unlock_delete}
 
 修改IPMAC绑定列表里第${row}行规则名为${name}IP地址为${ip}MAC地址为${mac}并显示消息${message}
     Click Element    xpath=(//div[@class="tab_mod_btn"])[${row}]
@@ -379,8 +378,7 @@ IPMAC绑定列表第${row}行第${col}列是${string}
     Click Element    xpath=(//input[@id='del_binds_all'])
     ${message}    Confirm Action
     Should Be Equal    ${message}    ${common_del_tip}
-    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
-    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    显示消息    ${common_unlock_delete}
 
 IPMAC绑定列表里没有${string}
     Run Keyword And Expect Error    *    Table Should Contain    xpath=//table[@class="df_tab"]    ${string}

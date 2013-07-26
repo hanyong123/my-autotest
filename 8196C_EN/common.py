@@ -7,7 +7,8 @@ Created on 2013-6-13
 from robot.libraries import  BuiltIn
 import threading
 import time
-import subprocess 
+import subprocess
+
 
 
 def process_special_charators(string):
@@ -45,7 +46,8 @@ def set_host_if_static(if_name,ip,mask,gateway):
         ip+' mask='+mask+' gateway='+gateway+' gwmetric=1'
     subprocess.call(cmd,shell=True)
     time.sleep(5)
-    
+
+
 if __name__ == '__main__':
     pass
   

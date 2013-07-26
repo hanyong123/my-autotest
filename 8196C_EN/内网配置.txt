@@ -415,5 +415,5 @@ LanConfig_IPMASK_test_47
 提示重启路由器
     ${message}    Confirm Action
     Should Be Equal    ${message}    ${common_reboot_tip}
-    Sleep    40s
     关闭浏览器
+    Sleep    40s

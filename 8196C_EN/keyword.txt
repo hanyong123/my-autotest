@@ -93,8 +93,7 @@ Library           String
     [Arguments]    ${message}
     Set Selenium Speed    0
     Wait Until Keyword Succeeds    5    0    弹出对话框
-    ${string}    Get Text    xpath=//div[@class="df_lock_load"]
-    Run Keyword And Continue On Failure    Should Contain    ${string}    ${message}
+    Run Keyword And Continue On Failure    Wait Until Keyword Succeeds    20    1    比较弹出对话框内容    ${message}
     Wait Until Keyword Succeeds    20    5    弹出对话框消失
     Set Selenium Speed    ${selenium_speed}
 
@@ -153,8 +152,8 @@ Library           String
     Click Button    id=save_dhcp_server
 
 转到DHCP保留地址设置页面
-    Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="address_reservation";$.load("address_reservation")
+    Set Selenium Speed    ${selenium_speed}
 
 设置DHCP服务器保留地址
     [Arguments]    ${des}    ${ip}    ${mac}
@@ -652,3 +651,20 @@ WAN口IP是${ip}
     Input Text    id=new_pwd_confirm    ${confirmpwd}
     Click Element    id=save_passwd
     显示消息    ${message}
+
+比较弹出对话框内容
+    [Arguments]    ${message}
+    ${string}    Get Text    xpath=//div[@class="df_lock_load"]
+    Should Contain    ${string}    ${message}
+
+修改LAN口IP
+    [Arguments]    ${ip}    ${mask}
+    Choose Ok On Next Confirmation
+    转到内网配置页面
+    设置LAN口IP和MASK    ${ip}    ${mask}
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_reboot_tip}
+    关闭浏览器
+    Sleep    40s
+    Open Browser    http://${login_user}:${login_passwd}@${ip}/index.htm    ${browser}
+    Sleep    5

@@ -1089,8 +1089,7 @@ IPandProtocal_SIP_test_53
     Choose Ok On Next Confirmation
     ${message}    Confirm Action
     Should Be Equal    ${message}    ${common_del_tip}
-    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
-    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    显示消息    ${common_unlock_delete}
 
 删除IP过滤列表里第${row}行显示成功消息${message}
     [Arguments]    ${row}    ${message}

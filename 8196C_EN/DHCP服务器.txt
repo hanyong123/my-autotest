@@ -190,6 +190,7 @@ DhcpServer_PoolRange_test_29
     [Documentation]    设置DHCP服务器地址池范围超过地址池IP个数最大值63，提示超出最大范围
     ...
     ...    注：该用例需要本机IP设置为自动获取
+    [Setup]    Run Keyword    set_host_if_dhcp    ${host_lan_if_name}
     [Template]
     验证DHCP服务器    192.168.1.1    192.168.1.254    ${common_lan_addr_err}
     验证DHCP服务器    192.168.1.0    192.168.1.254    ${common_segment_err}
@@ -199,6 +200,7 @@ DhcpServer_PoolRange_test_29
     转到内网配置页面
     验证DHCP服务器    192.168.0.2    192.168.1.2    ${common_addr_err}
     修改LAN口IP    192.168.1.1    255.255.255.0
+    [Teardown]    Run Keyword    set_host_if_static    ${host_lan_if_name}    ${host_lan_ip}    ${host_lan_mask}    ${router_lan_ip}
 
 DhcpServer_PoolRange_test_30
     [Documentation]    设置DHCP服务器地址池起始IP小于或等于结束IP，保存成功，地址池的范围从“起始IP”到“结束IP”
@@ -603,8 +605,7 @@ DHCP保留地址列表第${row}行第${col}列是${string}
     Click Element    xpath=//div[@class="tab_del_btn"][${row}]
     ${message}    Confirm Action
     Should Be Equal    ${message}    ${common_del_one_tip}
-    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
-    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    显示消息    ${common_unlock_delete}
 
 修改DHCP保留地址列表第${row}行的规则名为${name}IP地址为${ip}MAC地址为${mac}并显示消息${message}
     Click Element    xpath=(//div[@class="tab_mod_btn"])[${row}]
@@ -620,27 +621,15 @@ DHCP保留地址列表第${row}行第${col}列是${string}
     Click Element    id=del_all_reservation
     ${message}    Confirm Action
     Should Be Equal    ${message}    ${common_del_tip}
-    Wait Until Keyword Succeeds    5    0    弹出对话框    ${common_unlock_delete}
-    Wait Until Keyword Succeeds    5    1    弹出对话框消失
+    显示消息    ${common_unlock_delete}
+    Sleep    15
 
 DHCP保留地址列表没有${string}
     Run Keyword And Expect Error    *    Table Should Contain    xpath=//table[@class="df_tab"]    ${string}
 
-修改LAN口IP
-    [Arguments]    ${ip}    ${mask}
-    Choose Ok On Next Confirmation
-    转到内网配置页面
-    设置LAN口IP和MASK    ${ip}    ${mask}
-    ${message}    Confirm Action
-    Should Be Equal    ${message}    ${common_reboot_tip}
-    系统重启
-    等待系统重启完成
-    关闭浏览器
-    Open Browser    http://${login_user}:${login_passwd}@${ip}/index.htm    ${browser}
-    Sleep    5
-
 检查DHCP服务器是否保存成功
     [Arguments]    ${startIp}    ${endIp}
+    转到内网配置页面
     Sleep    3
     ${v}    Get Value    id=dhcp_start_ip
     Should Be Equal    ${v}    ${startIp}
@@ -667,6 +656,8 @@ DHCP保留地址列表没有${string}
     转到DHCP保留地址设置页面
     设置DHCP服务器保留地址    ${des}    ${ip}    ${mac}
     显示消息    ${message}
+    ${rmessage}    process_special_charators    ${message}
+    Run Keyword If    '${rmessage}'=='${common_unlock_add}'    Sleep    15
 
 修改客户端列表中某行Reserved状态
     [Arguments]    ${row}    ${isReserve}=0
