@@ -14,3 +14,4 @@ ${base_url}       http://${login_user}:${login_passwd}@${router_lan_ip}/index.ht
 ${selenium_speed}    0.5
 ${host_lan_if_name}    lan
 ${host_wan_if_name}    wan
+${base_url1}      http://${router_lan_ip}/index.htm

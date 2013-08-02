@@ -83,7 +83,8 @@ Library           String
     Click Button    id=save_wan_set
 
 打开浏览器
-    Open Browser    ${base_url}    ${browser}
+    Run Keyword If    '${login_user}' !=''    Open Browser    ${base_url}    ${browser}
+    Run Keyword If    '${login_user}' ==''    Open Browser    ${base_url1}    ${browser}
     Wait Until Page Contains Element    id=p_menu_status    20
 
 关闭浏览器

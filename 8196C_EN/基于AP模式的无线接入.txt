@@ -123,23 +123,27 @@ Wireless_SSIDMaxLen_test_24
 
 Wireless_Region_test_31
     [Documentation]    *在802.11b+g+n模式下，设置区域为US（FCC），频道带宽为20Mhz时，无线频道频道可选项为：Auto，channel 1-channel 11*
-    验证区域设置    US    0    \    @{channel1-11}
+    验证区域设置    1    0    \    @{channel1-11}
+    #FCC Regionvalue为1
 
 Wireless_Region_test_32
     [Documentation]    *在802.11b+g+n模式下，设置区域为US（FCC），频道带宽为40Mhz时*
     ...    *频道绑定为向下绑定时，无线频道频道可选项为：Auto，channel 1-channel 9*
-    验证区域设置    US    1    0    @{channel1-9}
+    验证区域设置    1    1    0    @{channel1-9}
+    #FCC Regionvalue为1
 
 Wireless_Region_test_33
     [Documentation]    *在802.11b+g+n模式下，设置区域为US（FCC），频道带宽为40Mhz时*
     ...    *频道绑定为向上绑定时，无线频道频道可选项为：Auto，channel 5-channel 11*
-    验证区域设置    US    1    1    @{channel5-11}
+    验证区域设置    1    1    1    @{channel5-11}
+    #FCC Regionvalue为1
 
 Wireless_Region_test_34
     [Documentation]    *在802.11b+g+n模式下，设置区域为IC，频道带宽为20Mhz时*
     ...
     ...    *无线频道频道可选项为：Auto，channel 1-channel 11*
-    验证区域设置    IC    0    \    @{channel1-11}
+    验证区域设置    2    0    \    @{channel1-11}
+    #IC Regionvalue为1
 
 Wireless_Region_test_35
     [Documentation]    *在802.11b+g+n模式下，设置区域为IC，频道带宽为40Mhz时*
@@ -728,10 +732,10 @@ try
     显示消息    ${message}
 
 验证区域设置
-    [Arguments]    ${region}=US    ${channel_width}=0    ${control_side}=${None}    @{channel_range}
+    [Arguments]    ${region}=1    ${channel_width}=0    ${control_side}=${None}    @{channel_range}
     clickElement    wl_enable_on
-    Select From List By Label    wl_stand    802.11b+g+n
-    Select From List By Label    region    ${region}
+    Select From List By \ Label    wl_stand    802.11b+g+n
+    Select From List By Value    region    ${region}
     Run Keyword If    '${channel_width}'=='1'    Click Element    id=channel_width_40
     Run Keyword If    '${channel_width}'=='0'    Click Element    id=channel_width_20
     Run Keyword If    '${control_side}'=='0'    Click Element    id=channel_bind_down

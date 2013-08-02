@@ -60,16 +60,16 @@ DNSFilter_ADD_test_57
     @{ADDLIST1}    Create List    xpath=(//input[@id='dns_day'])[2]    xpath=(//input[@id='dns_day'])[4]    xpath=(//input[@id='dns_day'])[6]
     添加DNS过滤条目    wdes=abc    wrule=0    wdns_key=baidu.com    wday_locator=@{ADDLIST1}    wstart_time=02:00    wend_time=06:00
     ...    wmessage=${common_unlock_add}
-    验证列表中某一行每一列的值    1    abc    Deny    baidu.com    Mon Wed Fri    02:00-06:00
+    验证列表中某一行每一列的值    1    abc    ${common_forbid_s}    baidu.com    Mon Wed Fri    02:00-06:00
     @{ADDLIST2}    Create List    xpath=(//input[@id='dns_day'])[1]
     添加DNS过滤条目    wdes=123    wrule=1    wdns_key=sina.com.cn    wday_locator=@{ADDLIST2}    wallday_locator=dns_time    wmessage=${common_unlock_add}
-    验证列表中某一行每一列的值    1    123    Permit    sina.com.cn    Sun    ALL
-    验证列表中某一行每一列的值    2    abc    Deny    baidu.com    Mon Wed Fri    02:00-06:00
+    验证列表中某一行每一列的值    1    123    ${common_allow_s}    sina.com.cn    Sun    ${common_all}
+    验证列表中某一行每一列的值    2    abc    ${common_forbid_s}    baidu.com    Mon Wed Fri    02:00-06:00
     @{ADDLIST3}    Create List
     添加DNS过滤条目    wdns_key=ifeng.com    wmessage=${common_unlock_add}
-    验证列表中某一行每一列的值    1    ${EMPTY}    Deny    ifeng.com    ALL    ALL
-    验证列表中某一行每一列的值    2    123    Permit    sina.com.cn    Sun    ALL
-    验证列表中某一行每一列的值    3    abc    Deny    baidu.com    Mon Wed Fri    02:00-06:00
+    验证列表中某一行每一列的值    1    ${EMPTY}    ${common_forbid_s}    ifeng.com    ${common_all}    ${common_all}
+    验证列表中某一行每一列的值    2    123    ${common_allow_s}    sina.com.cn    Sun    ${common_all}
+    验证列表中某一行每一列的值    3    abc    ${common_forbid_s}    baidu.com    Mon Wed Fri    02:00-06:00
     Comment    添加DNS过滤条目    wdes=    wrule=    wdns_key=    wday_locator=    wstart_time=
     ...    wend_time=    wallday_locator=    wmessage=
 
@@ -89,7 +89,7 @@ DNSFilter_ADD_test_59
     @{ADDLIST1}    Create List    xpath=(//input[@id='dns_day'])[2]    xpath=(//input[@id='dns_day'])[4]    xpath=(//input[@id='dns_day'])[6]
     添加DNS过滤条目    wdes=abc    wrule=0    wdns_key=baidu.com    wday_locator=@{ADDLIST1}    wstart_time=02:00    wend_time=06:00
     ...    wmessage=${common_unlock_add}
-    验证列表中某一行每一列的值    1    abc    Deny    baidu.com    Mon Wed Fri    02:00-06:00
+    验证列表中某一行每一列的值    1    abc    ${common_forbid_s}    baidu.com    Mon Wed Fri    02:00-06:00
     关闭浏览器重新进入DNS协议过滤页面
     @{ADDLIST1}    Create List    xpath=(//input[@id='dns_day'])[2]    xpath=(//input[@id='dns_day'])[4]    xpath=(//input[@id='dns_day'])[6]
     添加DNS过滤条目    wdes=abc    wrule=0    wdns_key=baidu.com    wday_locator=@{ADDLIST1}    wstart_time=02:00    wend_time=06:00
@@ -97,7 +97,7 @@ DNSFilter_ADD_test_59
     关闭浏览器重新进入DNS协议过滤页面
     @{ADDLIST3}    Create List
     添加DNS过滤条目    wdns_key=ifeng.com    wmessage=${common_unlock_add}
-    验证列表中某一行每一列的值    1    ${EMPTY}    Deny    ifeng.com    ALL    ALL
+    验证列表中某一行每一列的值    1    ${EMPTY}    ${common_forbid_s}    ifeng.com    ${common_all}    ${common_all}
     @{ADDLIST3}    Create List
     添加DNS过滤条目    wdns_key=ifeng.com    wmessage=${common_add_item_err}
     Comment    添加DNS过滤条目    wdes=    wrule=    wdns_key=    wday_locator=    wstart_time=
@@ -109,11 +109,11 @@ DNSFilter_MODIFY_test_61
     @{ADD1}    Create List    xpath=(//input[@id='dns_day'])[2]    xpath=(//input[@id='dns_day'])[4]    xpath=(//input[@id='dns_day'])[6]
     添加DNS过滤条目    wdes=abc    wrule=0    wdns_key=baidu.com    wday_locator=@{ADD1}    wstart_time=02:00    wend_time=06:00
     ...    wmessage=${common_unlock_add}
-    验证列表中某一行每一列的值    1    abc    Deny    baidu.com    Mon Wed Fri    02:00-06:00
+    验证列表中某一行每一列的值    1    abc    ${common_forbid_s}    baidu.com    Mon Wed Fri    02:00-06:00
     @{MODIFY1}    Create List    xpath=(//input[@id='dns_day'])[1]
     修改第{row}行DNS过滤条目    1    wdes=123    wrule=1    wdns_key=google.com    wday_locator=@{MODIFY1}    wstart_time=12:00
     ...    wend_time=13:00    pwday_locator=@{ADD1}    wmessage=${common_unlock_add}
-    验证列表中某一行每一列的值    1    123    Permit    google.com    Sun    12:00-13:00
+    验证列表中某一行每一列的值    1    123    ${common_allow_s}    google.com    Sun    12:00-13:00
     Comment    修改第{row}行DNS过滤条目    1    wdes=    wrule=    wdns_key=    wday_locator=
     ...    wstart_time=    wend_time=    wallday_locator=    pwday_locator=    wallday_locator=    wmessage=
 
@@ -130,8 +130,8 @@ DNSFilter_MODIFY_test_63
     @{MODIFY1}    Create List    xpath=(//input[@id='dns_day'])[2]    xpath=(//input[@id='dns_day'])[4]    xpath=(//input[@id='dns_day'])[6]
     修改第{row}行DNS过滤条目    1    wrule=1    wdns_key=baidu.com    wday_locator=@{MODIFY1}    wstart_time=02:00    wend_time=06:00
     ...    pwday_locator=@{ADD2}    pwallday_locator=dns_time    wmessage=${common_add_item_err}
-    验证列表中某一行每一列的值    2    abc    Deny    baidu.com    Mon Wed Fri    02:00-06:00
-    验证列表中某一行每一列的值    1    ${EMPTY}    Deny    google.com    ALL    ALL
+    验证列表中某一行每一列的值    2    abc    ${common_forbid_s}    baidu.com    Mon Wed Fri    02:00-06:00
+    验证列表中某一行每一列的值    1    ${EMPTY}    ${common_forbid_s}    google.com    ${common_all}    ${common_all}
     Comment    修改第{row}行DNS过滤条目    1    wdes=    wrule=    wdns_key=    wday_locator=
     ...    wstart_time=    wend_time=    wallday_locator=    pwday_locator=    wallday_locator=    wmessage=
 
@@ -144,7 +144,7 @@ DNSFilter_DELETE_test_65
     @{ADDLIST2}    Create List    xpath=(//input[@id='dns_day'])[1]
     添加DNS过滤条目    wdes=123    wrule=1    wdns_key=sina.com.cn    wday_locator=@{ADDLIST2}    wallday_locator=dns_time    wmessage=${common_unlock_add}
     删除DNS过滤列表里第${row}行显示成功消息${message}    2    ${common_unlock_delete}
-    验证列表中某一行每一列的值    1    123    Permit    sina.com.cn    Sun    ALL
+    验证列表中某一行每一列的值    1    123    ${common_allow_s}    sina.com.cn    Sun    ${common_all}
 
 DNSFilter_DELETE_test_66
     [Documentation]    成功删除所有条目，自动刷新后不存在
