@@ -485,7 +485,7 @@ WAN口IP是${ip}
     Set Selenium Speed    ${selenium_speed}
     Execute JavaScript    $.CurrentApp="base";$.load("base")
     Wait Until Page Contains Element    id=net_mode    15
-    Select From List By Label    id=net_mode    Access Point
+    #Select From List By Label    id=net_mode    Access Point
 
 设置AP模式的无线基本参数
     [Arguments]    ${enable}=${None}    ${radio_band}=${None}    ${ssid}=${None}    ${ssid_broadcast}=1    ${region}=${None}    ${channel_width}=${None}

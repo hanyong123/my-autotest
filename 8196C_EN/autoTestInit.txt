@@ -20,7 +20,7 @@ getTranslateMap
     Run Keyword If    '${language}'=='ru'    GET    /config/language_ru.js
     Run Keyword If    '${language}'=='tc'    GET    /config/language_tc.js
     Run Keyword If    '${language}'=='tu'    GET    /config/language_tu.js
-    Run Keyword If    '${language}'=='cn'    GET    /config/config.js
+    Run Keyword If    '${language}'=='cn'    GET    /config/language_cn.js
     ${html}    get_response_body
     ${content}    convert_string_to_utf8    ${html}
     get_lang_var    ${content}
