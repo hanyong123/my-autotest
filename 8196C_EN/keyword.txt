@@ -45,23 +45,13 @@ Library           String
     ${style}    Get Element Attribute    xpath=//div[@class="df_lock_load"]@style
     Should Contain    ${style}    display: none
 
-设置成功
+显示消息
+    [Arguments]    ${message}
     Set Selenium Speed    0
-    Wait Until Keyword Succeeds    5    0    弹出对话框    Saved Successfully!
-    Wait Until Keyword Succeeds    15    5    弹出对话框消失
-
-设置失败
-    Set Selenium Speed    0
-    Wait Until Keyword Succeeds    5    0    弹出设置失败对话框
-    Wait Until Keyword Succeeds    15    5    弹出对话框消失
-
-弹出设置失败对话框
-    ${style}    Get Element Attribute    xpath=//div[@class="df_lock_load"]@style
-    Should Contain    ${style}    display: block
-    ${string}    Get Text    xpath=//div[@class="df_lock_load"]
-    Should Not Be Empty    ${string}
-    Should Not Contain    ${string}    Saving
-    Should Not Contain    ${string}    Saved Successfully!
+    Wait Until Keyword Succeeds    5    0    弹出对话框
+    Run Keyword And Continue On Failure    Wait Until Keyword Succeeds    20    1    比较弹出对话框内容    ${message}
+    Wait Until Keyword Succeeds    20    5    弹出对话框消失
+    Set Selenium Speed    ${selenium_speed}
 
 转到DHCP接入设置页面
     Set Selenium Speed    ${selenium_speed}
@@ -88,14 +78,6 @@ Library           String
 
 关闭浏览器
     Close Browser
-
-显示消息
-    [Arguments]    ${message}
-    Set Selenium Speed    0
-    Wait Until Keyword Succeeds    5    0    弹出对话框
-    Run Keyword And Continue On Failure    Wait Until Keyword Succeeds    20    1    比较弹出对话框内容    ${message}
-    Wait Until Keyword Succeeds    20    5    弹出对话框消失
-    Set Selenium Speed    ${selenium_speed}
 
 验证输入框最大输入长度
     [Arguments]    ${locator}    ${content}    ${max_len}
