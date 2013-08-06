@@ -8,9 +8,10 @@ ${host_lan_mask}    255.255.255.0
 ${host_wan_mask}    255.255.0.0
 ${browser}        firefox
 ${login_passwd}    guest
-${language}       us
+${language}       cn
 ${login_user}     guest
 ${base_url}       http://${login_user}:${login_passwd}@${router_lan_ip}/index.htm
 ${selenium_speed}    0.5
 ${host_lan_if_name}    lan
 ${host_wan_if_name}    wan
+${base_url1}      http://${router_lan_ip}/index.htm
