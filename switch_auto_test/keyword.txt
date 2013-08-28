@@ -1,0 +1,48 @@
+*** Settings ***
+Resource          config.txt
+Library           Telnet    3    CRLF    #
+Library           common.py
+
+*** Keywords ***
+Telnet登录交换机
+    Open Connection    ${switc_manage_ip}    prompt=#
+    Sleep    1
+    Write    ${EMPTY}
+    Sleep    1
+    Write    ${login_passwd}
+    Sleep    1
+    Write    ena
+    Sleep    1
+    Write    ${login_user}
+    Sleep    1
+    Write    ${login_passwd}
+    Sleep    1
+    ${out}    Read
+    Execute Command    configure terminal
+    Execute Command    line vty
+    Execute Command    no exec-timeout
+    Execute Command    exit
+    Execute Command    exit
+
+退出登录
+    Close All Connections
+
+创建Access模式vlan
+    [Arguments]    ${port}    ${vlan_id}
+    Execute Command    configure terminal
+    ${cmd}    Catenate    interface    ${port}
+    Execute Command    ${cmd}
+    Execute Command    switchport mode access
+    ${cmd}    Catenate    switchport access vlan    ${vlan_id}
+    Execute Command    ${cmd}
+    Execute Command    exit
+    Execute Command    exit
+
+构建发送包
+    [Arguments]    ${scapy_pkt_cons}
+    pkt_construct    ${scapy_pkt_cons}
+
+执行Scapy命令
+    [Arguments]    ${cmd}
+    ${r}    execut_scapy_command    ${cmd}
+    [Return]    ${r}

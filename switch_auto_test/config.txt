@@ -1,0 +1,4 @@
+*** Variables ***
+${switc_manage_ip}    192.168.2.11
+${login_user}     guest
+${login_passwd}    guest

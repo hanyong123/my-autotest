@@ -1,0 +1,34 @@
+*** Settings ***
+Resource          keyword.txt
+
+*** Variables ***
+${port1_host_if}    eth6
+${port2_host_if}    eth2
+${port3_host_if}    eth3
+${port4_host_if}    eth4
+
+*** Test Cases ***
+验证MAC地址的学习
+    Telnet登录交换机
+    创建Access模式vlan    fastethernet 0/1    1
+    创建Access模式vlan    fastethernet 0/2    2
+    创建Access模式vlan    fastethernet 0/3    3
+    创建Access模式vlan    fastethernet 0/4    4
+    构建发送包    Ether(src='00:00:00:00:00:01')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
+    ${cmd}    Catenate    SEPARATOR=    sendp(p,iface='    ${port1_host_if}    ',count=3)
+    执行Scapy命令    ${cmd}
+    ${out}    Execute Command    show mac-address-table vlan 1
+    Should Contain    ${out}    1 \ \ \ \ \ \ 0000.0000.0001 \ \
+    ${cmd}    Catenate    SEPARATOR=    sendp(p,iface='    ${port2_host_if}    ',count=3)
+    执行Scapy命令    ${cmd}
+    ${out}    Execute Command    show mac-address-table vlan 2
+    Should Contain    ${out}    2 \ \ \ \ \ \ 0000.0000.0001 \ \
+    ${cmd}    Catenate    SEPARATOR=    sendp(p,iface='    ${port3_host_if}    ',count=3)
+    执行Scapy命令    ${cmd}
+    ${out}    Execute Command    show mac-address-table vlan 3
+    Should Contain    ${out}    3 \ \ \ \ \ \ 0000.0000.0001 \ \
+    ${cmd}    Catenate    SEPARATOR=    sendp(p,iface='    ${port4_host_if}    ',count=3)
+    执行Scapy命令    ${cmd}
+    ${out}    Execute Command    show mac-address-table vlan 4
+    Should Contain    ${out}    4 \ \ \ \ \ \ 0000.0000.0001 \ \
+    [Teardown]    退出登录
