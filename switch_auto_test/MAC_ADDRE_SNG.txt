@@ -1,34 +1,197 @@
 *** Settings ***
+Suite Setup       Telnet登录交换机
+Suite Teardown    退出登录
 Resource          keyword.txt
+Library           Collections
+Library           OperatingSystem
 
 *** Variables ***
-${port1_host_if}    eth6
+${port1_host_if}    eth1
 ${port2_host_if}    eth2
 ${port3_host_if}    eth3
 ${port4_host_if}    eth4
 
 *** Test Cases ***
 验证MAC地址的学习
-    Telnet登录交换机
-    创建Access模式vlan    fastethernet 0/1    1
-    创建Access模式vlan    fastethernet 0/2    2
-    创建Access模式vlan    fastethernet 0/3    3
-    创建Access模式vlan    fastethernet 0/4    4
-    构建发送包    Ether(src='00:00:00:00:00:01')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
-    ${cmd}    Catenate    SEPARATOR=    sendp(p,iface='    ${port1_host_if}    ',count=3)
-    执行Scapy命令    ${cmd}
+    创建Access模式vlan    ${port1}    1
+    创建Access模式vlan    ${port2}    2
+    创建Access模式vlan    ${port3}    3
+    创建Access模式vlan    ${port4}    4
+    ${p}    执行Scapy命令    Ether(src='00:00:00:00:00:01')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
+    执行Scapy命令    sendp('${p}',iface='${port1_host_if}',count=3)
+    Sleep    3s
     ${out}    Execute Command    show mac-address-table vlan 1
     Should Contain    ${out}    1 \ \ \ \ \ \ 0000.0000.0001 \ \
-    ${cmd}    Catenate    SEPARATOR=    sendp(p,iface='    ${port2_host_if}    ',count=3)
-    执行Scapy命令    ${cmd}
+    执行Scapy命令    sendp('${p}',iface='${port2_host_if}',count=3)
+    Sleep    3s
     ${out}    Execute Command    show mac-address-table vlan 2
     Should Contain    ${out}    2 \ \ \ \ \ \ 0000.0000.0001 \ \
-    ${cmd}    Catenate    SEPARATOR=    sendp(p,iface='    ${port3_host_if}    ',count=3)
-    执行Scapy命令    ${cmd}
+    执行Scapy命令    sendp('${p}',iface='${port3_host_if}',count=3)
+    Sleep    3s
     ${out}    Execute Command    show mac-address-table vlan 3
     Should Contain    ${out}    3 \ \ \ \ \ \ 0000.0000.0001 \ \
-    ${cmd}    Catenate    SEPARATOR=    sendp(p,iface='    ${port4_host_if}    ',count=3)
-    执行Scapy命令    ${cmd}
+    执行Scapy命令    sendp('${p}',iface='${port4_host_if}',count=3)
+    Sleep    3s
     ${out}    Execute Command    show mac-address-table vlan 4
     Should Contain    ${out}    4 \ \ \ \ \ \ 0000.0000.0001 \ \
-    [Teardown]    退出登录
+    [Teardown]    恢复默认vlan
+
+验证单个VALN下MAC地址老化
+    配置系统MAC地址老化时间    30
+    ${p}    执行Scapy命令    Ether(src='00:00:00:00:00:02')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
+    执行Scapy命令    sendp('${p}',iface='${port1_host_if}',count=3)
+    ${p}    执行Scapy命令    Ether(src='00:00:00:00:00:03')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
+    执行Scapy命令    sendp('${p}',iface='${port1_host_if}',count=3)
+    ${p}    执行Scapy命令    Ether(src='00:00:00:00:00:04')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
+    执行Scapy命令    sendp('${p}',iface='${port1_host_if}',count=3)
+    ${p}    执行Scapy命令    Ether(src='00:00:00:00:00:05')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
+    执行Scapy命令    sendp('${p}',iface='${port1_host_if}',count=3)
+    ${p}    执行Scapy命令    Ether(src='00:00:00:00:00:06')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
+    执行Scapy命令    sendp('${p}',iface='${port1_host_if}',count=3)
+    ${p}    执行Scapy命令    Ether(src='00:00:00:00:00:07')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
+    执行Scapy命令    sendp('${p}',iface='${port1_host_if}',count=3)
+    ${p}    执行Scapy命令    Ether(src='00:00:00:00:00:08')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
+    执行Scapy命令    sendp('${p}',iface='${port1_host_if}',count=3)
+    ${p}    执行Scapy命令    Ether(src='00:00:00:00:00:09')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
+    执行Scapy命令    sendp('${p}',iface='${port1_host_if}',count=3)
+    ${p}    执行Scapy命令    Ether(src='00:00:00:00:00:0a')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
+    执行Scapy命令    sendp('${p}',iface='${port1_host_if}',count=3)
+    ${p}    执行Scapy命令    Ether(src='00:00:00:00:00:0b')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
+    执行Scapy命令    sendp('${p}',iface='${port1_host_if}',count=3)
+    Sleep    5s
+    ${output}    Execute Command    show mac-address-table
+    Should Contain    ${output}    1 \ \ \ \ \ \ 0000.0000.0002
+    Should Contain    ${output}    1 \ \ \ \ \ \ 0000.0000.0003
+    Should Contain    ${output}    1 \ \ \ \ \ \ 0000.0000.0004
+    Should Contain    ${output}    1 \ \ \ \ \ \ 0000.0000.0005
+    Should Contain    ${output}    1 \ \ \ \ \ \ 0000.0000.0006
+    Should Contain    ${output}    1 \ \ \ \ \ \ 0000.0000.0007
+    Should Contain    ${output}    1 \ \ \ \ \ \ 0000.0000.0008
+    Should Contain    ${output}    1 \ \ \ \ \ \ 0000.0000.0009
+    Should Contain    ${output}    1 \ \ \ \ \ \ 0000.0000.000a
+    Should Contain    ${output}    1 \ \ \ \ \ \ 0000.0000.000b
+    Sleep    60s
+    ${output}    Execute Command    show mac-address-table
+    Should Not Contain    ${output}    1 \ \ \ \ \ \ 0000.0000.0002
+    Should Not Contain    ${output}    1 \ \ \ \ \ \ 0000.0000.0003
+    Should Not Contain    ${output}    1 \ \ \ \ \ \ 0000.0000.0004
+    Should Not Contain    ${output}    1 \ \ \ \ \ \ 0000.0000.0005
+    Should Not Contain    ${output}    1 \ \ \ \ \ \ 0000.0000.0006
+    Should Not Contain    ${output}    1 \ \ \ \ \ \ 0000.0000.0007
+    Should Not Contain    ${output}    1 \ \ \ \ \ \ 0000.0000.0008
+    Should Not Contain    ${output}    1 \ \ \ \ \ \ 0000.0000.0009
+    Should Not Contain    ${output}    1 \ \ \ \ \ \ 0000.0000.000a
+    Should Not Contain    ${output}    1 \ \ \ \ \ \ 0000.0000.000b
+
+验证多个VLAN下MAC地址老化
+    配置系统MAC地址老化时间    30
+    创建Access模式vlan    ${port1}    1
+    创建Access模式vlan    ${port2}    2
+    创建Access模式vlan    ${port3}    3
+    创建Access模式vlan    ${port4}    4
+    ${p}    执行Scapy命令    Ether(src='00:00:00:00:00:01')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
+    执行Scapy命令    sendp('${p}',iface='${port1_host_if}',count=3)
+    Sleep    3s
+    ${out}    Execute Command    show mac-address-table vlan 1
+    Should Contain    ${out}    1 \ \ \ \ \ \ 0000.0000.0001 \ \
+    执行Scapy命令    sendp('${p}',iface='${port2_host_if}',count=3)
+    Sleep    3s
+    ${out}    Execute Command    show mac-address-table vlan 2
+    Should Contain    ${out}    2 \ \ \ \ \ \ 0000.0000.0001 \ \
+    执行Scapy命令    sendp('${p}',iface='${port3_host_if}',count=3)
+    Sleep    3s
+    ${out}    Execute Command    show mac-address-table vlan 3
+    Should Contain    ${out}    3 \ \ \ \ \ \ 0000.0000.0001 \ \
+    执行Scapy命令    sendp('${p}',iface='${port4_host_if}',count=3)
+    Sleep    3s
+    ${out}    Execute Command    show mac-address-table vlan 4
+    Should Contain    ${out}    4 \ \ \ \ \ \ 0000.0000.0001 \ \
+    Sleep    60s
+    ${out}    Execute Command    show mac-address-table vlan 2
+    Should Not Contain    ${out}    2 \ \ \ \ \ \ 0000.0000.0001 \ \
+    ${out}    Execute Command    show mac-address-table vlan 3
+    Should Not Contain    ${out}    3 \ \ \ \ \ \ 0000.0000.0001 \ \
+    ${out}    Execute Command    show mac-address-table vlan 4
+    Should Not Contain    ${out}    4 \ \ \ \ \ \ 0000.0000.0001 \ \
+    ${out}    Execute Command    show mac-address-table vlan 1
+    Should Not Contain    ${out}    1 \ \ \ \ \ \ 0000.0000.0001 \ \
+    [Teardown]    恢复默认vlan
+
+验证MAC地址黑洞
+    配置黑洞MAC    0001.0001.0001    1
+    ${mac}    get_mac_by_iface    ${port2_host_if}
+    ${p}    执行Scapy命令    Ether(src='00:01:00:01:00:01',dst='${mac}')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
+    Start Process    tshark -i ${port2_host_if} -f 'ether src 00:01:00:01:00:01 and ether dst ${mac} and icmp' -w 1.pcap
+    Sleep    10s
+    执行Scapy命令    sendp('${p}',iface='${port1_host_if}',count=3)
+    Sleep    10s
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Should Contain    ${r}    Number of packets: \ \ 0
+    Start Process    tshark -i ${port1_host_if} -f 'ether dst 00:01:00:01:00:01 and icmp' -w 2.pcap
+    Sleep    10s
+    ${p}    执行Scapy命令    Ether(dst='00:01:00:01:00:01',src='${mac}')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
+    执行Scapy命令    sendp('${p}',iface='${port2_host_if}',count=3)
+    Sleep    10s
+    Run    killall tshark
+    ${r}    Run    capinfos -c 2.pcap
+    Should Contain    ${r}    Number of packets: \ \ 0
+    Remove Files    1.pcap    2.pcap
+    删除黑洞MAC    0001.0001.0001    1
+
+验证MAC地址缓存能力
+    ${b}    Create List
+    @{a}    get_rand_mac    1025
+    : FOR    ${mac}    IN    @{a}
+    \    ${output}    配置静态MAC地址    ${mac}    1    ${port1}
+    \    ${output}    Run Keyword And Return Status    Should Contain    ${output}    set failure!
+    \    Run Keyword If    ${output}    Exit For Loop
+    \    Append To List    ${b}    ${mac}
+    ${mac}    Get From List    ${b}    0
+    ${p}    执行Scapy命令    Ether(dst='${mac}')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
+    Start Process    tshark -i ${port1_host_if} -f 'ether dst ${mac} and icmp' -w 1.pcap
+    Start Process    tshark -i ${port3_host_if} -f 'ether dst ${mac} and icmp' -w 2.pcap
+    Start Process    tshark -i ${port4_host_if} -f 'ether dst ${mac} and icmp' -w 3.pcap
+    Sleep    10s
+    执行Scapy命令    sendp('${p}',iface='${port2_host_if}',count=3)
+    Sleep    10s
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Should Contain    ${r}    Number of packets: \ \ 3
+    ${r}    Run    capinfos -c 2.pcap
+    Should Contain    ${r}    Number of packets: \ \ 0
+    ${r}    Run    capinfos -c 3.pcap
+    Should Contain    ${r}    Number of packets: \ \ 0
+    Remove Files    1.pcap    2.pcap    3.pcap
+    [Teardown]    Run Keyword    删除多个静态MAC地址    ${b}
+
+验证支持最大数量的动态MAC地址数目
+    [Setup]
+    配置系统MAC地址老化时间    600
+    ${m}    get_mac_by_iface    ${port1_host_if}
+    ${p}    执行Scapy命令    Ether(src='${m}')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
+    执行Scapy命令    sendp('${p}',iface='${port1_host_if}',count=3)
+    ${m}    get_mac_by_iface    ${port2_host_if}
+    ${p}    执行Scapy命令    Ether(src='${m}')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
+    执行Scapy命令    sendp('${p}',iface='${port2_host_if}',count=3)
+    ${m}    get_mac_by_iface    ${port3_host_if}
+    ${p}    执行Scapy命令    Ether(src='${m}')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
+    执行Scapy命令    sendp('${p}',iface='${port3_host_if}',count=3)
+    ${m}    get_mac_by_iface    ${port4_host_if}
+    ${p}    执行Scapy命令    Ether(src='${m}')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
+    执行Scapy命令    sendp('${p}',iface='${port4_host_if}',count=3)
+    ${n}    get_mac_table_max_entry    ${port1_host_if}    ${port2_host_if}    ${port3_host_if}
+    Should Be Equal    ${n}    8190
+    [Teardown]    Run Keyword    配置系统MAC地址老化时间    30
+
+*** Keywords ***
+恢复默认vlan
+    创建Access模式vlan    ${port2}    1
+    创建Access模式vlan    ${port3}    1
+    创建Access模式vlan    ${port4}    1
+
+删除多个静态MAC地址
+    [Arguments]    ${b}
+    @{b}    Convert To List    ${b}
+    : FOR    ${mac}    IN    @{b}
+    \    删除静态MAC地址    ${mac}    1

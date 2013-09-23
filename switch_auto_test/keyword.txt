@@ -9,11 +9,11 @@ Telnet登录交换机
     Sleep    1
     Write    ${EMPTY}
     Sleep    1
+    Write    ${login_user}
+    Sleep    1
     Write    ${login_passwd}
     Sleep    1
     Write    ena
-    Sleep    1
-    Write    ${login_user}
     Sleep    1
     Write    ${login_passwd}
     Sleep    1
@@ -40,9 +40,47 @@ Telnet登录交换机
 
 构建发送包
     [Arguments]    ${scapy_pkt_cons}
-    pkt_construct    ${scapy_pkt_cons}
+    ${r}    pkt_construct    ${scapy_pkt_cons}
+    [Return]    ${r}
 
 执行Scapy命令
     [Arguments]    ${cmd}
     ${r}    execut_scapy_command    ${cmd}
     [Return]    ${r}
+
+配置系统MAC地址老化时间
+    [Arguments]    ${t}
+    Execute Command    configure terminal
+    ${cmd}    Catenate    mac-address-table    aging-time    ${t}
+    Execute Command    ${cmd}
+    Execute Command    exit
+    ${output}    Execute Command    show mac-address-table aging-time
+    Should Contain    ${output}    ${t}
+
+配置黑洞MAC
+    [Arguments]    ${mac}    ${vlan}
+    Execute Command    configure terminal
+    ${cmd}    Catenate    mac-address-table    filter    ${mac}    vlan    ${vlan}
+    ${out}    Execute Command    ${cmd}
+    Execute Command    exit
+    ${output}    Execute Command    show mac-address-table filter
+    Should Contain    ${output}    ${mac}
+
+配置静态MAC地址
+    [Arguments]    ${mac}    ${vlan}    ${if}
+    Execute Command    configure terminal
+    ${output}    Execute Command    mac-address-table static ${mac} vlan ${vlan} interface ${if}
+    Execute Command    exit
+    [Return]    ${output}
+
+删除黑洞MAC
+    [Arguments]    ${mac}    ${vlan}
+    Execute Command    configure terminal
+    Execute Command    no mac-address-table filter ${mac} vlan ${vlan}
+    Execute Command    exit
+
+删除静态MAC地址
+    [Arguments]    ${mac}    ${vlan}
+    Execute Command    configure terminal
+    Execute Command    no mac-address-table static ${mac} vlan ${vlan}
+    Execute Command    exit

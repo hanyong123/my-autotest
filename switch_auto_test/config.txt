@@ -2,3 +2,7 @@
 ${switc_manage_ip}    192.168.2.11
 ${login_user}     guest
 ${login_passwd}    guest
+${port1}          Gi 0/01
+${port2}          Gi 0/02
+${port3}          Gi 0/03
+${port4}          Gi 0/04
