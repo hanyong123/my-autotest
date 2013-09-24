@@ -4,11 +4,10 @@ Created on 2013 8 28
 @author: hany
 '''
 from scapy.all import *
-import threading
 import time
 import sys
 import platform
-from multiprocessing import Process,Queue,Value
+import subprocess
 
 def execut_scapy_command(s):
     r =  eval(s)
@@ -47,97 +46,31 @@ def get_rand_mac(count):
     return a
         
     
-class sniffThread(Process):
-    
-    def __init__(self,filter,iface,timeout=60,count=None):
-        Process.__init__(self)
-        self.rule = filter
-        self.iface = iface
-        self.timeout = timeout
-        self.count = count
-        self.p = None
-        self.done = Value('d',0.0)
-        self.sniff_count = Value('d',0.0)
-        self.bstop = False
-        self.q = Queue(1)
-    
-    def stop(self):
-        return self.bstop
-    
-    def set_stop(self):
-        self.bstop = True
-        
-    def run(self):
-        if self.count == None and self.timeout == None:
-            self.p = sniff(filter=self.rule,iface=self.iface,stopperTimeout=5,stopper=self.stop)   
-        else:
-            self.p = sniff(filter=self.rule,iface=self.iface,timeout=self.timeout,count=self.count)
-        self.done.value = 1
-        #if self.p != None:
-        sys.stdout = sys.__stdout__
-        print self.p
-        self.sniff_count.value = len(self.p.res)
-
-
-def start_sniff_thread(filter,iface,timeout=60,count=1):
-    filter = filter.encode('ascii')
-    iface = iface.encode('ascii')
-    global sniff_thread
-    if count == None and timeout == None:
-        sniff_thread = sniffThread(filter,iface,timeout,count)
-    else:
-        sniff_thread = sniffThread(filter,iface,int(timeout),int(count))
-    sniff_thread.start()
-    return sniff_thread
-
-def should_sniff_pkt(t):
-    sniff_thread = t
-    while sniff_thread.done.value == 0:
-        time.sleep(1)
-    time.sleep(3)
-    print sniff_thread.sniff_count.value
-    if sniff_thread.sniff_count.value == 0:
-        raise RuntimeError('no sniff pkt')
-    
-
-def should_not_sniff_pkt(t):
-    sniff_thread = t
-    while sniff_thread.done.value == 0:
-        time.sleep(1)
-    time.sleep(3)
-    print sniff_thread.sniff_count.value    
-    if sniff_thread.sniff_count.value != 0:
-        raise RuntimeError('sniff pkt')
-
 def get_mac_table_entry(send_if,recv_if,mon_if,test_num):
     send_if = send_if.encode('ascii')
     recv_if = recv_if.encode('ascii')
     mon_if = mon_if.encode('ascii')
     m  = get_order_mac(test_num)
-    print '1'
     t = get_if_raw_hwaddr(recv_if)
-    print '2'
-    print str(t)
     s = str2mac(t[1])
     pkts = []
     for mac in m:
         p = Ether(src=mac,dst=s)/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
         pkts.append(p)
-     
     sendpfast(pkts,pps=500,iface=send_if)
-    
     pkts = []
     for mac in m:
         p = Ether(src=s,dst=mac)/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
         pkts.append(p)
     f = 'ether src '+s+' and icmp'
-    ts = start_sniff_thread(f,mon_if,None,None)
+    p = subprocess.Popen(['tshark','-i',mon_if,'-f',f,'-w','1.pcap'])
+    time.sleep(5)
     sendpfast(pkts,pps=500,iface=recv_if)
-    ts.set_stop()
-    while ts.done == False:
-        time.sleep(1)
-    print ts.sniff_count
-    return test_num-ts.sniff_count
+    time.sleep(5)
+    p.kill()
+    a = rdpcap('1.pcap')
+    os.remove('1.pcap')
+    return test_num-len(a.res)
 
 def get_mac_table_max_entry(send_if,recv_if,mon_if):
     st = 15000
@@ -149,10 +82,46 @@ def get_mac_table_max_entry(send_if,recv_if,mon_if):
         n2 = get_mac_table_entry(send_if,recv_if,mon_if,st)
         print n2
         if n1 == n2:
-            return n1 + 4
+            return str(n1 + 4)
         else:
             n1 = n2
-        
+def test_learn_rate(send_if,recv_if,mon_if,rate,learn_num):
+    send_if = send_if.encode('ascii')
+    recv_if = recv_if.encode('ascii')
+    mon_if = mon_if.encode('ascii')
+    m  = get_order_mac(learn_num)
+    t = get_if_raw_hwaddr(recv_if)
+    s = str2mac(t[1])
+    pkts = []
+    for mac in m:
+        p = Ether(src=mac,dst=s)/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
+        pkts.append(p)
+    sendpfast(pkts,pps=rate,iface=send_if)
+    pkts = []
+    for mac in m:
+        p = Ether(src=s,dst=mac)/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
+        pkts.append(p)
+    f = 'ether src '+s+' and icmp'
+    p = subprocess.Popen(['tshark','-i',mon_if,'-f',f,'-w','1.pcap'])
+    time.sleep(5)
+    sendpfast(pkts,pps=500,iface=recv_if)
+    time.sleep(5)
+    p.kill()
+    a = rdpcap('1.pcap')
+    os.remove('1.pcap')
+    if len(a.res) == 0:
+        print 'sdsdsda'
+        return True
+    else:
+        return False
+
+def get_learn_rate(send_if,recv_if,mon_if,learn_num):
+    learn_num = int(learn_num.encode('ascii'))
+    rate = 100
+    test_learn_rate(send_if,recv_if,mon_if,rate,learn_num)
+    return str(rate)
+
+
 if __name__ == '__main__':
     a = get_mac_table_max_entry('eth3','eth2','eth4')
     print a

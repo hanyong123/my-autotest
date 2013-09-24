@@ -118,6 +118,7 @@ ${port4_host_if}    eth4
     [Teardown]    恢复默认vlan
 
 验证MAC地址黑洞
+    [Setup]    Run Keyword    删除黑洞MAC    0001.0001.0001    1
     配置黑洞MAC    0001.0001.0001    1
     ${mac}    get_mac_by_iface    ${port2_host_if}
     ${p}    执行Scapy命令    Ether(src='00:01:00:01:00:01',dst='${mac}')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
@@ -137,7 +138,6 @@ ${port4_host_if}    eth4
     ${r}    Run    capinfos -c 2.pcap
     Should Contain    ${r}    Number of packets: \ \ 0
     Remove Files    1.pcap    2.pcap
-    删除黑洞MAC    0001.0001.0001    1
 
 验证MAC地址缓存能力
     ${b}    Create List
@@ -167,6 +167,8 @@ ${port4_host_if}    eth4
 
 验证支持最大数量的动态MAC地址数目
     [Setup]
+    配置系统MAC地址老化时间    30
+    Sleep    60s
     配置系统MAC地址老化时间    600
     ${m}    get_mac_by_iface    ${port1_host_if}
     ${p}    执行Scapy命令    Ether(src='${m}')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
@@ -181,7 +183,7 @@ ${port4_host_if}    eth4
     ${p}    执行Scapy命令    Ether(src='${m}')/IP()/ICMP()/'aaaaaaaaaaaaaaaaaaaaaaa'
     执行Scapy命令    sendp('${p}',iface='${port4_host_if}',count=3)
     ${n}    get_mac_table_max_entry    ${port1_host_if}    ${port2_host_if}    ${port3_host_if}
-    Should Be Equal    ${n}    8190
+    Should Be Equal    ${n}    8189
     [Teardown]    Run Keyword    配置系统MAC地址老化时间    30
 
 *** Keywords ***
