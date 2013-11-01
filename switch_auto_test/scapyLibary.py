@@ -21,7 +21,7 @@ class scapyLibary:
     
     def open_scapy_session(self,name=None):
         self.index = self.index + 1
-        self.curSession = pexpect.spawn('scapy.bat')
+        self.curSession = pexpect.spawn('scapy')
         time.sleep(2)
         self.curSession.expect('>>>')
         s = scapySession()
