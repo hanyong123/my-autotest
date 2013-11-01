@@ -84,3 +84,42 @@ Telnet登录交换机
     Execute Command    configure terminal
     Execute Command    no mac-address-table static ${mac} vlan ${vlan}
     Execute Command    exit
+
+创建端口QinQ模式
+    [Arguments]    ${port}
+    Execute Command    configure terminal
+    ${cmd}    Catenate    interface    ${port}
+    Execute Command    ${cmd}
+    Execute Command    switchport mode qinq
+    Execute Command    exit
+    Execute Command    exit
+
+创建ACL规则
+    [Arguments]    ${acl_number}    ${rule}
+    Execute Command    configure terminal
+    Execute Command    access-list ${acl_number} ${rule}
+    Execute Command    commit
+    Execute Command    exit
+    ${out}    Execute Command    show access-lists
+    Should Contain    ${out}    Standard IP access list ${acl_number} (Commit)
+
+删除ACL规则
+    [Arguments]    ${number}
+    Execute Command    configure terminal
+    Execute Command    no access-list ${number}
+    Execute Command    exit
+
+设置流量优先级
+    [Arguments]    ${rule}    ${propety}
+    Execute Command    configure terminal
+    Execute Command    policy-map access-group ${rule}
+    Execute Command    up ${propety}
+    Execute Command    exit
+    Execute Command    exit
+    ${out}    Execute Command    show policy-map
+    Should Contain    ${out}    Policy Map access-group ${rule}
+
+设置严格优先级
+    Execute Command    configure terminal
+    Execute Command    mls qos queue type strict
+    Execute Command    exit

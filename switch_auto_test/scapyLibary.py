@@ -21,7 +21,7 @@ class scapyLibary:
     
     def open_scapy_session(self,name=None):
         self.index = self.index + 1
-        self.curSession = pexpect.spawn('scapy')
+        self.curSession = pexpect.spawn('scapy.bat')
         time.sleep(2)
         self.curSession.expect('>>>')
         s = scapySession()
@@ -32,6 +32,9 @@ class scapyLibary:
         s.handle = self.curSession
         self.session_list.append(s)
     
+    def ansysnc_excute_scapy_conmmand(self,cmd):
+	self.curSession.sendline(cmd)
+
     def excute_scapy_conmmand(self,cmd):
         self.curSession.sendline(cmd)
         self.curSession.expect('>>>')
@@ -47,7 +50,10 @@ class scapyLibary:
     def send_ctrl_c(self):
         self.curSession.sendcontrol('c')
         self.curSession.expect('>>>')
-        return self.curSession.before 
+        return self.curSession.before
+    
+    def close_scapy_session(self):
+        self.curSession.close()
         
                         
 if __name__ == '__main__':
