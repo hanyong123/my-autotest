@@ -1,0 +1,142 @@
+*** Settings ***
+Documentation     陈美君
+Suite Setup
+Suite Teardown    退出登录
+Resource          keyword.txt
+Library           Collections
+Library           OperatingSystem
+Library           scapyLibary.py
+
+*** Variables ***
+${host1_eth}      eth0
+${host2_eth}      eth1
+${host3_eth}      eth2
+@{ports}          ${port1}    ${port2}    ${port3}
+${FF}             ff:ff:ff:ff:ff:ff
+
+*** Test Cases ***
+验证端口之间二层报文隔离功能
+    [Setup]    Telnet登录交换机
+    创建Access模式vlan    ${port1}    20
+    创建Access模式vlan    ${port2}    20
+    创建Access模式vlan    ${port3}    20
+    创建多个端口隔离    1    @{ports}
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='${FF}')/IP()/ICMP()
+    StartProcess    tshark -i ${host2_eth} -f 'ether src 00:00:00:00:00:01 and ether dst ${FF} and icmp' -w 1.pcap
+    StartProcess    tshark -i ${host3_eth} -f 'ether src 00:00:00:00:00:01 and ether dst ${FF} and icmp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 1.pcap
+    ShouldContain    ${out}    Number of packets: \ \ 0
+    ${out}    Run    capinfos -c 2.pcap
+    ShouldContain    ${out}    Number of packets: \ \ 0
+    Remove Files    1.pcap    2.pcap
+    取消端口隔离    ${port3}    1
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='${FF}')/IP()/ICMP()
+    StartProcess    tshark -i ${host2_eth} -f 'ether src 00:00:00:00:00:01 and ether dst ${FF} and icmp' -w 1.pcap
+    StartProcess    tshark -i ${host3_eth} -f 'ether src 00:00:00:00:00:01 and ether dst ${FF} and icmp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 1.pcap
+    ShouldContain    ${out}    Number of packets: \ \ 0
+    ${out}    Run    capinfos -c 2.pcap
+    ShouldContain    ${out}    Number of packets: \ \ 5
+    Remove Files    1.pcap    2.pcap
+    取消端口隔离    ${port2}    1
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='${FF}')/IP()/ICMP()
+    StartProcess    tshark -i ${host2_eth} -f 'ether src 00:00:00:00:00:01 and ether dst ${FF} and icmp' -w 1.pcap
+    StartProcess    tshark -i ${host3_eth} -f 'ether src 00:00:00:00:00:01 and ether dst ${FF} and icmp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 1.pcap
+    ShouldContain    ${out}    Number of packets: \ \ 0
+    ${out}    Run    capinfos -c 2.pcap
+    ShouldContain    ${out}    Number of packets: \ \ 5
+    Remove Files    1.pcap    2.pcap
+    [Teardown]    Run Keywords    恢复默认vlan    AND    取消多个端口隔离    1    @{ports}
+    ...    AND    close_scapy_session
+
+验证组内和组外端口不隔离
+    [Setup]
+    登录指定交换机    192.168.2.11    DUT1
+    创建端口隔离    ${port1}    1
+    登录指定交换机    192.168.2.12    DUT2
+    创建端口隔离    ${port2}    2
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:02')/IP()/ICMP()
+    StartProcess    tshark -i ${host2_eth} -f 'ether src 00:00:00:00:00:01 and ether dst 00:00:00:00:00:02 and icmp' -w 1.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 1.pcap
+    ShouldContain    ${out}    Number of packets: \ \ 5
+    Remove Files    1.pcap
+    [Teardown]    Run Keywords    Switch Connection    DUT1    AND    取消端口隔离    ${port1}
+    ...    1    AND    Switch Connection    DUT2    AND    取消端口隔离
+    ...    ${port2}    2    AND    close_scapy_session
+
+*** Keywords ***
+恢复默认vlan
+    创建Access模式vlan    ${port1}    1
+    创建Access模式vlan    ${port2}    1
+    创建Access模式vlan    ${port3}    1
+
+创建多个端口隔离
+    [Arguments]    ${group}    @{pts}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    port-isolation group ${group}
+    ExecuteCommand    exit
+    : FOR    ${p}    IN    @{pts}
+    \    创建端口隔离    ${p}    ${group}
+
+取消多个端口隔离
+    [Arguments]    ${group}    @{pts}
+    : FOR    ${p}    IN    @{pts}
+    \    取消端口隔离    ${p}    ${group}
+
+创建端口隔离
+    [Arguments]    ${port}    ${group}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    interface ${port}
+    ExecuteCommand    port-isolation
+    ExecuteCommand    port-isolation allowed ${group}
+    ExecuteCommand    exit
+    ExecuteCommand    exit
+
+取消端口隔离
+    [Arguments]    ${port}    ${group}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    interface ${port}
+    ExecuteCommand    no port-isolation allowed ${group}
+    ExecuteCommand    exit
+    ExecuteCommand    exit
+
+登录指定交换机
+    [Arguments]    ${switch_ip}    ${name}
+    Open Connection    ${switch_ip}    ${name}    prompt=#
+    Log    ${index}
+    Sleep    1
+    Write    ${EMPTY}
+    Sleep    1
+    Write    ${login_user}
+    Sleep    1
+    Write    ${login_passwd}
+    Sleep    1
+    Write    ena
+    Sleep    1
+    Write    ${login_passwd}
+    Sleep    1
+    ${out}    Read
+    Execute Command    configure terminal
+    Execute Command    line vty
+    Execute Command    no exec-timeout
+    Execute Command    exit
+    Execute Command    exit

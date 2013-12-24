@@ -1,0 +1,122 @@
+*** Settings ***
+Documentation     @author \ zhaohy
+...               @date 2013.11.19
+Suite Setup       Telnet登录交换机
+Suite Teardown    Run keywords    退出登录
+Library           OperatingSystem
+Resource          keyword.txt
+Library           scapyLibary.py
+Library           autotest_igmp.py
+
+*** Variables ***
+${if_server}      eth1
+${if_pc1}         eth2
+${if_pc2}         eth3
+
+*** Test Cases ***
+验证IGMP V1/V2加入、离开报文的处理
+    [Timeout]
+    启用igmp snooping
+    ${p}    build_igmp_pkt    00:11:00:00:00:01    192.168.3.1    0x11    0.0.0.0
+    发送L2包    ${p}    ${if_server}
+    ${p}    build_igmp_pkt    00:11:00:00:00:02    192.168.2.12    0x16    225.0.0.1
+    发送L2包    ${p}    ${if_pc1}
+    ${p}    build_igmp_pkt    00:11:00:00:00:03    192.168.2.13    0x16    225.0.0.1
+    发送L2包    ${p}    ${if_pc2}
+    ${output}    Execute Command    sho ip igmp snooping
+    Should Contain    ${output}    225.0.0.1 \ \ \ \ \ \ Gi 0/2
+    Should Contain    ${output}    225.0.0.1 \ \ \ \ \ \ Gi 0/3
+    ${output}    Execute Command    sho ip igmp snooping mrouter
+    Should Contain    ${output}    Gi 0/1
+    ${p}    build_igmp_pkt    00:11:00:00:00:02    192.168.2.12    0x17    225.0.0.1
+    发送L2包    ${p}    ${if_pc1}
+    ${p}    build_igmp_pkt    00:11:00:00:00:03    192.168.2.13    0x17    225.0.0.1
+    发送L2包    ${p}    ${if_pc2}
+    ${output}    Execute Command    sho ip igmp snooping
+    Should not Contain    ${output}    225.0.0.1
+    [Teardown]    Run keywords    取消igmpsnooping
+
+验证组播数据流转发
+    [Timeout]
+    启用igmp snooping
+    ${p}    build_igmp_pkt    00:00:00:00:00:01    192.168.3.1    0x11    0.0.0.0
+    发送L2包    ${p}    ${if_server}
+    ${output}    Execute Command    sho ip igmp snooping mrouter
+    Should Contain    ${output}    Gi 0/1
+    ${p}    build_igmp_pkt    00:11:00:00:00:02    192.168.2.12    0x16    225.0.0.1
+    发送L2包    ${p}    ${if_pc1}
+    ${output}    Execute Command    sho ip igmp snooping
+    Should Contain    ${output}    225.0.0.1 \ \ \ \ \ \ Gi 0/2
+    Should not Contain    ${output}    225.0.0.1 \ \ \ \ \ \ Gi 0/3
+    Start Process    tshark -i ${if_pc1} \ -f 'ether src 00:00:00:00:00:01 and udp' -w 5.1.2_1.pcap
+    Sleep    1
+    Start Process    tshark -i ${if_pc2} \ -f 'ether src 00:00:00:00:00:01 and udp' -w 5.1.2_2.pcap
+    Sleep    1
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst="01:00:5e:00:00:01")/IP(src='192.168.3.1', dst='225.0.0.1')/UDP(sport=1234, dport=5678)
+    excute_scapy_conmmand    sendp(p, iface='${if_server}')
+    Run    killall tshark
+    ${r}    Run    capinfos -c 5.1.2_1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 1
+    ${r}    Run    capinfos -c 5.1.2_2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    Remove Files    5.1.2_1.pcap    5.1.2_1.pcap
+    [Teardown]    Run keywords    取消igmpsnooping    AND    close_scapy_session    AND    Remove Files
+    ...    5.1.2_1.pcap    5.1.2_2.pcap
+
+验证表项老化
+    [Timeout]
+    启用igmp snooping
+    设置组播路由器端口老化时间    100
+    设置组播成员端口老化时间    100
+    ${p}    build_igmp_pkt    00:00:00:00:00:01    192.168.3.1    0x11    0.0.0.0
+    发送L2包    ${p}    ${if_server}
+    ${output}    Execute Command    sho ip igmp snooping mrouter
+    Should Contain    ${output}    Gi 0/1
+    ${p}    build_igmp_pkt    00:11:00:00:00:02    192.168.2.12    0x16    225.0.0.1
+    发送L2包    ${p}    ${if_pc1}
+    ${p}    build_igmp_pkt    00:11:00:00:00:03    192.168.2.13    0x16    225.0.0.1
+    发送L2包    ${p}    ${if_pc2}
+    ${output}    Execute Command    sho ip igmp snooping
+    Should Contain    ${output}    225.0.0.1 \ \ \ \ \ \ Gi 0/2
+    Should Contain    ${output}    225.0.0.1 \ \ \ \ \ \ Gi 0/3
+    sleep    105
+    ${output}    Execute Command    sho ip igmp snooping mrouter
+    Should not Contain    ${output}    Gi 0/1
+    ${output}    Execute Command    sho ip igmp snooping
+    Should not Contain    ${output}    225.0.0.1 \ \ \ \ \ \ Gi 0/2
+    Should not Contain    ${output}    225.0.0.1 \ \ \ \ \ \ Gi 0/3
+    [Teardown]    Run keywords    取消igmpsnooping
+
+验证多播组过滤策略
+    [Timeout]
+    启用igmp snooping
+    ${p}    build_igmp_pkt    00:00:00:00:00:01    192.168.3.1    0x11    0.0.0.0
+    发送L2包    ${p}    ${if_server}
+    ${output}    Execute Command    sho ip igmp snooping mrouter
+    Should Contain    ${output}    Gi 0/1
+    ${p}    build_igmp_pkt    00:11:00:00:00:02    192.168.2.12    0x16    224.1.2.3
+    发送L2包    ${p}    ${if_pc1}
+    ${output}    Execute Command    sho ip igmp snooping
+    Should Contain    ${output}    224.1.2.3 \ \ \ \ \ \ Gi 0/2
+    ${p}    build_igmp_pkt    00:11:00:00:00:02    192.168.2.12    0x17    224.1.2.3
+    发送L2包    ${p}    ${if_pc1}
+    ${output}    Execute Command    sho ip igmp snooping
+    Should not Contain    ${output}    224.1.2.3 \ \ \ \ \ \ Gi 0/2
+    设置组播禁止地址    224.1.2.3
+    对端口应用多播组禁止策略    ${port1}
+    ${p}    build_igmp_pkt    00:11:00:00:00:02    192.168.2.12    0x16    224.1.2.3
+    发送L2包    ${p}    ${if_pc1}
+    ${p}    build_igmp_pkt    00:11:00:00:00:02    192.168.2.12    0x16    224.1.2.5
+    发送L2包    ${p}    ${if_pc1}
+    ${output}    Execute Command    sho ip igmp snooping
+    Should not Contain    ${output}    224.1.2.3 \ \ \ \ \ \ Gi 0/2
+    Should Contain    ${output}    224.1.2.5 \ \ \ \ \ \ Gi 0/2
+    [Teardown]    Run keywords    取消igmpsnooping
+
+*** Keywords ***
+发送L2包
+    [Arguments]    ${p}    ${iface}
+    send_l2_pkt    ${p}    ${iface}

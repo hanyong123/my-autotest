@@ -1,0 +1,641 @@
+*** Settings ***
+Documentation     jlt
+Suite Setup       Telnet登录交换机
+Suite Teardown    退出登录
+Resource          keyword.txt
+Library           arp.py
+Library           common.py
+Library           OperatingSystem
+Library           scapyLibary.py
+
+*** Variables ***
+${port1_host_if}    eth0
+${port2_host_if}    eth1
+${port3_host_if}    eth2
+${port4_host_if}    eth3
+
+*** Test Cases ***
+验证单个端口帧镜像
+	Execute Command		configure terminal
+    open_scapy_session
+    excute_scapy_conmmand    data="1111111111111111111"
+    StartProcess    tshark -i ${port2_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 1.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:03')/IP(dst='255.255.255.255', src='192.168.1.3')/UDP(sport=1234,dport=5678)
+    excute_scapy_conmmand    sendp(p,iface='${port3_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    1.pcap
+    StartProcess    tshark -i ${port3_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 1.pcap
+    StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='00:00:00:00:00:03', src='00:00:00:00:00:02')/IP(dst='192.168.1.3', src='192.168.1.2')/UDP(sport=1234,dport=5678)
+    excute_scapy_conmmand    sendp(p,iface='${port2_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    1.pcap
+	${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    RemoveFiles    2.pcap
+	${cmd}		Catenate  monitor session destination interface gigabitethernet 0/1 
+	Execute Command    ${cmd}
+    ${cmd}		Catenate  monitor session source interface gigabitethernet 0/2 rx
+	Execute Command    ${cmd}
+	Execute Command    exit
+	${out}	Execute Command    sho monitor
+    ShouldContain    ${out}		RX Only      : Gi 0/2 
+    ShouldContain    ${out}		Destination Ports       : Gi 0/1
+	Execute Command		configure terminal
+	StartProcess    tshark -i ${port3_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 1.pcap
+    StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='00:00:00:00:00:03', src='00:00:00:00:00:02')/IP(dst='192.168.1.3', src='192.168.1.2')/UDP(sport=1234,dport=5678)
+    excute_scapy_conmmand    sendp(p,iface='${port2_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    1.pcap
+	${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    2.pcap
+	StartProcess    tshark -i ${port2_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 1.pcap
+    StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='00:00:00:00:00:02', src='00:00:00:00:00:03')/IP(dst='192.168.1.2', src='192.168.1.3')/UDP(sport=1234,dport=5678)
+    excute_scapy_conmmand    sendp(p,iface='${port3_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    1.pcap
+	${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    RemoveFiles    2.pcap
+	${cmd}		Catenate	no monitor session source interface gigabitethernet 0/2 rx
+	Execute Command    ${cmd}
+    ${cmd}		Catenate	monitor session source interface gigabitethernet 0/2 tx 
+	Execute Command    ${cmd}
+	Execute Command    exit
+	${out}	Execute Command    sho monitor
+    ShouldContain    ${out}		TX Only      : Gi 0/2
+    ShouldContain    ${out}		Destination Ports       : Gi 0/1
+	Execute Command		configure terminal
+	StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 1.pcap
+    StartProcess    tshark -i ${port2_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 2.pcap
+    StartProcess    tshark -i ${port4_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 4.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='00:00:00:00:00:02', src='00:00:00:00:00:03')/IP(dst='192.168.1.2', src='192.168.1.3')/UDP(sport=1234,dport=5678)
+    excute_scapy_conmmand    sendp(p,iface='${port3_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    1.pcap
+	${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    2.pcap
+	${r}    Run    capinfos -c 4.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    RemoveFiles    2.pcap
+	${cmd}		Catenate	monitor session source interface gigabitethernet 0/2 both
+	Execute Command    ${cmd}
+	Execute Command    exit
+	${out}	Execute Command    sho monitor
+    ShouldContain    ${out}		BOTH         : Gi 0/2
+    ShouldContain    ${out}		Destination Ports       : Gi 0/1
+	Execute Command		configure terminal
+	StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 1.pcap
+    StartProcess    tshark -i ${port3_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 2.pcap
+    StartProcess    tshark -i ${port4_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 4.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='00:00:00:00:00:03', src='00:00:00:00:00:02')/IP(dst='192.168.1.3', src='192.168.1.2')/UDP(sport=1234,dport=5678)
+    excute_scapy_conmmand    sendp(p,iface='${port2_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    1.pcap
+	${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    2.pcap
+	${r}    Run    capinfos -c 4.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    RemoveFiles    2.pcap
+	StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 1.pcap
+    StartProcess    tshark -i ${port2_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 2.pcap
+    StartProcess    tshark -i ${port4_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 4.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='00:00:00:00:00:02', src='00:00:00:00:00:03')/IP(dst='192.168.1.2', src='192.168.1.3')/UDP(sport=1234,dport=5678)
+    excute_scapy_conmmand    sendp(p,iface='${port3_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    1.pcap
+	${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    2.pcap
+	${r}    Run    capinfos -c 4.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    RemoveFiles    2.pcap
+	${cmd}		Catenate  no monitor session destination 
+	Execute Command    ${cmd}
+	${cmd}		Catenate	no monitor session source interface gigabitethernet 0/2 both
+	Execute Command    ${cmd}
+验证多个端口帧镜像
+	Execute Command		configure terminal
+	open_scapy_session
+    excute_scapy_conmmand    data="1111111111111111111"
+    StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 2.pcap
+    StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 3.pcap
+    StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:04 and ip src 192.168.1.4 and udp' -w 4.pcap
+    Sleep    10
+    excute_scapy_conmmand    p2=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:02')/IP(dst='255.255.255.255', src='192.168.1.2')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    p3=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:03')/IP(dst='255.255.255.255', src='192.168.1.3')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    p4=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:04')/IP(dst='255.255.255.255', src='192.168.1.4')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    sendp(p2,iface='${port2_host_if}',count=3)
+    excute_scapy_conmmand    sendp(p3,iface='${port3_host_if}',count=3)
+    excute_scapy_conmmand    sendp(p4,iface='${port4_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles     2.pcap
+    ${r}    Run    capinfos -c 3.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    3.pcap
+    ${r}    Run    capinfos -c 4.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    4.pcap
+	${cmd}		Catenate  monitor session destination interface gigabitethernet 0/1 
+	Execute Command    ${cmd}
+    ${cmd}		Catenate  monitor session source interface gigabitethernet 0/2 rx
+	Execute Command    ${cmd}
+	${cmd}		Catenate  monitor session source interface gigabitethernet 0/3 rx
+	Execute Command    ${cmd}
+	${cmd}		Catenate  monitor session source interface gigabitethernet 0/4 rx
+	Execute Command    ${cmd}
+	Execute Command    exit
+	${out}	Execute Command    sho monitor
+    ShouldContain    ${out}		RX Only      : Gi 0/2\\\Gi 0/3\\\Gi 0/4
+    ShouldContain    ${out}		Destination Ports       : Gi 0/1
+	Execute Command		configure terminal
+	StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 1.pcap
+    StartProcess    tshark -i ${port3_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 3.pcap
+    StartProcess    tshark -i ${port4_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 4.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='00:00:00:00:00:03', src='00:00:00:00:00:02')/IP(dst='192.168.1.3', src='192.168.1.2')/UDP(sport=1234,dport=5678)/data
+	excute_scapy_conmmand    sendp(p,iface='${port2_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    1.pcap
+	${r}    Run    capinfos -c 3.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    3.pcap
+	${r}    Run    capinfos -c 4.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    RemoveFiles    4.pcap
+	excute_scapy_conmmand    p2=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:02')/IP(dst='255.255.255.255', src='192.168.1.2')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    p3=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:03')/IP(dst='255.255.255.255', src='192.168.1.3')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    p4=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:04')/IP(dst='255.255.255.255', src='192.168.1.4')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    sendp(p2,iface='${port2_host_if}',count=3)
+    excute_scapy_conmmand    sendp(p3,iface='${port3_host_if}',count=3)
+    excute_scapy_conmmand    sendp(p4,iface='${port4_host_if}',count=3)
+	sleep	10
+	StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 1.pcap
+    StartProcess    tshark -i ${port2_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 2.pcap
+    StartProcess    tshark -i ${port4_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 4.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='00:00:00:00:00:04', src='00:00:00:00:00:03')/IP(dst='192.168.1.4', src='192.168.1.3')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    sendp(p,iface='${port3_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    1.pcap
+	${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    RemoveFiles    2.pcap
+	${r}    Run    capinfos -c 4.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    4.pcap
+	excute_scapy_conmmand    p2=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:02')/IP(dst='255.255.255.255', src='192.168.1.2')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    p3=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:03')/IP(dst='255.255.255.255', src='192.168.1.3')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    p4=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:04')/IP(dst='255.255.255.255', src='192.168.1.4')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    sendp(p2,iface='${port2_host_if}',count=3)
+    excute_scapy_conmmand    sendp(p3,iface='${port3_host_if}',count=3)
+    excute_scapy_conmmand    sendp(p4,iface='${port4_host_if}',count=3)
+    Sleep    10
+	StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:04 and ip src 192.168.1.4 and udp' -w 1.pcap
+    StartProcess    tshark -i ${port2_host_if} -f 'ether src 00:00:00:00:00:04 and ip src 192.168.1.4 and udp' -w 2.pcap
+    StartProcess    tshark -i ${port3_host_if} -f 'ether src 00:00:00:00:00:04 and ip src 192.168.1.4 and udp' -w 3.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='00:00:00:00:00:02', src='00:00:00:00:00:04')/IP(dst='192.168.1.2', src='192.168.1.4')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    sendp(p,iface='${port4_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    1.pcap
+	${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    2.pcap
+	${r}    Run    capinfos -c 3.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    RemoveFiles    3.pcap
+    ${cmd}		Catenate  no monitor session source interface gigabitethernet 0/2 rx
+	Execute Command    ${cmd}
+	${cmd}		Catenate  no monitor session source interface gigabitethernet 0/3 rx
+	Execute Command    ${cmd}
+	${cmd}		Catenate  no monitor session source interface gigabitethernet 0/4 rx
+	Execute Command    ${cmd}
+	${cmd}		Catenate  monitor session source interface gigabitethernet 0/2 tx
+	Execute Command    ${cmd}
+	${cmd}		Catenate  monitor session source interface gigabitethernet 0/3 tx
+	Execute Command    ${cmd}
+	${cmd}		Catenate  monitor session source interface gigabitethernet 0/4 tx
+	Execute Command    ${cmd}
+	Execute Command    exit
+	${out}	Execute Command    sho monitor
+    ShouldContain    ${out}		TX Only      : Gi 0/2\\\Gi 0/3\\\Gi 0/4
+    ShouldContain    ${out}		Destination Ports       : Gi 0/1
+	excute_scapy_conmmand    p2=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:02')/IP(dst='255.255.255.255', src='192.168.1.2')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    p3=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:03')/IP(dst='255.255.255.255', src='192.168.1.3')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    p4=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:04')/IP(dst='255.255.255.255', src='192.168.1.4')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    sendp(p2,iface='${port2_host_if}',count=3)
+    excute_scapy_conmmand    sendp(p3,iface='${port3_host_if}',count=3)
+    excute_scapy_conmmand    sendp(p4,iface='${port4_host_if}',count=3)
+	Execute Command		configure terminal
+	StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 1.pcap
+    StartProcess    tshark -i ${port3_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 3.pcap
+    StartProcess    tshark -i ${port4_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 4.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='00:00:00:00:00:03', src='00:00:00:00:00:02')/IP(dst='192.168.1.3', src='192.168.1.2')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    sendp(p,iface='${port2_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    1.pcap
+	${r}    Run    capinfos -c 3.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    3.pcap
+	${r}    Run    capinfos -c 4.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    RemoveFiles    4.pcap
+	excute_scapy_conmmand    p2=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:02')/IP(dst='255.255.255.255', src='192.168.1.2')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    p3=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:03')/IP(dst='255.255.255.255', src='192.168.1.3')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    p4=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:04')/IP(dst='255.255.255.255', src='192.168.1.4')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    sendp(p2,iface='${port2_host_if}',count=3)
+    excute_scapy_conmmand    sendp(p3,iface='${port3_host_if}',count=3)
+    excute_scapy_conmmand    sendp(p4,iface='${port4_host_if}',count=3)
+	sleep	10
+	StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 1.pcap
+    StartProcess    tshark -i ${port2_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 2.pcap
+    StartProcess    tshark -i ${port4_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 4.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='00:00:00:00:00:04', src='00:00:00:00:00:03')/IP(dst='192.168.1.4', src='192.168.1.3')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    sendp(p,iface='${port3_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    1.pcap
+	${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    RemoveFiles    2.pcap
+	${r}    Run    capinfos -c 4.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    4.pcap
+	excute_scapy_conmmand    p2=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:02')/IP(dst='255.255.255.255', src='192.168.1.2')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    p3=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:03')/IP(dst='255.255.255.255', src='192.168.1.3')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    p4=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:04')/IP(dst='255.255.255.255', src='192.168.1.4')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    sendp(p2,iface='${port2_host_if}',count=3)
+    excute_scapy_conmmand    sendp(p3,iface='${port3_host_if}',count=3)
+    excute_scapy_conmmand    sendp(p4,iface='${port4_host_if}',count=3)
+	StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:04 and ip src 192.168.1.4 and udp' -w 1.pcap
+    StartProcess    tshark -i ${port2_host_if} -f 'ether src 00:00:00:00:00:04 and ip src 192.168.1.4 and udp' -w 2.pcap
+    StartProcess    tshark -i ${port3_host_if} -f 'ether src 00:00:00:00:00:04 and ip src 192.168.1.4 and udp' -w 3.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='00:00:00:00:00:02', src='00:00:00:00:00:04')/IP(dst='192.168.1.2', src='192.168.1.4')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    sendp(p,iface='${port4_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    1.pcap
+	${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    2.pcap
+	${r}    Run    capinfos -c 3.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    RemoveFiles    3.pcap
+	${cmd}		Catenate	monitor session source interface gigabitethernet 0/2 both
+	Execute Command    ${cmd}
+	${cmd}		Catenate	monitor session source interface gigabitethernet 0/3 both
+	Execute Command    ${cmd}
+	${cmd}		Catenate	monitor session source interface gigabitethernet 0/4 both
+	Execute Command    ${cmd}
+	Execute Command    exit
+	${out}	Execute Command    sho monitor
+    ShouldContain    ${out}		BOTH         : Gi 0/2 Gi 0/3 Gi 0/4
+    ShouldContain    ${out}		Destination Ports       : Gi 0/1
+	excute_scapy_conmmand    p2=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:02')/IP(dst='255.255.255.255', src='192.168.1.2')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    p3=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:03')/IP(dst='255.255.255.255', src='192.168.1.3')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    p4=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:04')/IP(dst='255.255.255.255', src='192.168.1.4')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    sendp(p2,iface='${port2_host_if}',count=3)
+    excute_scapy_conmmand    sendp(p3,iface='${port3_host_if}',count=3)
+    excute_scapy_conmmand    sendp(p4,iface='${port4_host_if}',count=3)
+	Execute Command		configure terminal
+	StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 1.pcap
+    StartProcess    tshark -i ${port3_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 3.pcap
+    StartProcess    tshark -i ${port4_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 4.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='00:00:00:00:00:03', src='00:00:00:00:00:02')/IP(dst='192.168.1.3', src='192.168.1.2')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    sendp(p,iface='${port2_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 6
+    RemoveFiles    1.pcap
+	${r}    Run    capinfos -c 3.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    3.pcap
+	${r}    Run    capinfos -c 4.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    RemoveFiles    4.pcap
+	excute_scapy_conmmand    p2=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:02')/IP(dst='255.255.255.255', src='192.168.1.2')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    p3=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:03')/IP(dst='255.255.255.255', src='192.168.1.3')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    p4=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:04')/IP(dst='255.255.255.255', src='192.168.1.4')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    sendp(p2,iface='${port2_host_if}',count=3)
+    excute_scapy_conmmand    sendp(p3,iface='${port3_host_if}',count=3)
+    excute_scapy_conmmand    sendp(p4,iface='${port4_host_if}',count=3)
+    Sleep    10
+	StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 1.pcap
+    StartProcess    tshark -i ${port2_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 2.pcap
+    StartProcess    tshark -i ${port4_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 4.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='00:00:00:00:00:04', src='00:00:00:00:00:03')/IP(dst='192.168.1.4', src='192.168.1.3')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    sendp(p,iface='${port3_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 6
+    RemoveFiles    1.pcap
+	${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    RemoveFiles    2.pcap
+	${r}    Run    capinfos -c 4.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    4.pcap
+	excute_scapy_conmmand    p2=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:02')/IP(dst='255.255.255.255', src='192.168.1.2')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    p3=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:03')/IP(dst='255.255.255.255', src='192.168.1.3')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    p4=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:04')/IP(dst='255.255.255.255', src='192.168.1.4')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    sendp(p2,iface='${port2_host_if}',count=3)
+    excute_scapy_conmmand    sendp(p3,iface='${port3_host_if}',count=3)
+    excute_scapy_conmmand    sendp(p4,iface='${port4_host_if}',count=3)
+    Sleep    10
+	StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:04 and ip src 192.168.1.4 and udp' -w 1.pcap
+    StartProcess    tshark -i ${port2_host_if} -f 'ether src 00:00:00:00:00:04 and ip src 192.168.1.4 and udp' -w 2.pcap
+    StartProcess    tshark -i ${port3_host_if} -f 'ether src 00:00:00:00:00:04 and ip src 192.168.1.4 and udp' -w 3.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='00:00:00:00:00:02', src='00:00:00:00:00:04')/IP(dst='192.168.1.2', src='192.168.1.4')/UDP(sport=1234,dport=5678)/data
+    excute_scapy_conmmand    sendp(p,iface='${port4_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 6
+    RemoveFiles    1.pcap
+	${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    2.pcap
+	${r}    Run    capinfos -c 3.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    RemoveFiles    3.pcap
+	${cmd}		Catenate	no monitor session source interface gigabitethernet 0/2 both
+	Execute Command    ${cmd}
+	${cmd}		Catenate	no monitor session source interface gigabitethernet 0/3 both
+	Execute Command    ${cmd}
+	${cmd}		Catenate	no monitor session source interface gigabitethernet 0/4 both
+	Execute Command    ${cmd}
+	${cmd}		Catenate  no monitor session destination interface gigabitethernet 0/1 
+	Execute Command    ${cmd}
+	Execute Command    exit
+
+验证不同VLAN内端口镜像
+	创建Access模式vlan	${port2}	2
+	创建Access模式vlan	${port3}	2
+	sleep	1
+    ExecuteCommand    configure terminal
+    open_scapy_session
+    excute_scapy_conmmand    data="1111111111111111111"
+    StartProcess    tshark -i ${port2_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 1.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:03')/IP(dst='255.255.255.255', src='192.168.1.3')/UDP(sport=1234,dport=5678)
+    excute_scapy_conmmand    sendp(p,iface='${port3_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    1.pcap
+    StartProcess    tshark -i ${port3_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 1.pcap
+    StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='00:00:00:00:00:03', src='00:00:00:00:00:02')/IP(dst='192.168.1.3', src='192.168.1.2')/UDP(sport=1234,dport=5678)
+    excute_scapy_conmmand    sendp(p,iface='${port2_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    1.pcap
+	${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    RemoveFiles    2.pcap
+	${cmd}		Catenate  monitor session destination interface gigabitethernet 0/1 
+	Execute Command    ${cmd}
+    ${cmd}		Catenate  monitor session source interface gigabitethernet 0/2 rx
+	Execute Command    ${cmd}
+	Execute Command    exit
+	${out}	Execute Command    sho monitor
+    ShouldContain    ${out}		RX Only      : Gi 0/2 
+    ShouldContain    ${out}		Destination Ports       : Gi 0/1
+	Execute Command		configure terminal
+	StartProcess    tshark -i ${port3_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 1.pcap
+    StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='00:00:00:00:00:03', src='00:00:00:00:00:02')/IP(dst='192.168.1.3', src='192.168.1.2')/UDP(sport=1234,dport=5678)
+    excute_scapy_conmmand    sendp(p,iface='${port2_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    1.pcap
+	${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    2.pcap
+	StartProcess    tshark -i ${port2_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 1.pcap
+    StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='00:00:00:00:00:02', src='00:00:00:00:00:03')/IP(dst='192.168.1.2', src='192.168.1.3')/UDP(sport=1234,dport=5678)
+    excute_scapy_conmmand    sendp(p,iface='${port3_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    1.pcap
+	${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    RemoveFiles    2.pcap
+	${cmd}		Catenate	no monitor session source interface gigabitethernet 0/2 rx
+	Execute Command    ${cmd}
+    ${cmd}		Catenate	monitor session source interface gigabitethernet 0/2 tx 
+	Execute Command    ${cmd}
+	Execute Command    exit
+	${out}	Execute Command    sho monitor
+    ShouldContain    ${out}		TX Only      : Gi 0/2
+    ShouldContain    ${out}		Destination Ports       : Gi 0/1
+	Execute Command		configure terminal
+	StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 1.pcap
+    StartProcess    tshark -i ${port2_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 2.pcap
+    StartProcess    tshark -i ${port4_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 4.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='00:00:00:00:00:02', src='00:00:00:00:00:03')/IP(dst='192.168.1.2', src='192.168.1.3')/UDP(sport=1234,dport=5678)
+    excute_scapy_conmmand    sendp(p,iface='${port3_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    1.pcap
+	${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    2.pcap
+	${r}    Run    capinfos -c 4.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    RemoveFiles    2.pcap
+	${cmd}		Catenate	monitor session source interface gigabitethernet 0/2 both
+	Execute Command    ${cmd}
+	Execute Command    exit
+	${out}	Execute Command    sho monitor
+    ShouldContain    ${out}		BOTH         : Gi 0/2
+    ShouldContain    ${out}		Destination Ports       : Gi 0/1
+	Execute Command		configure terminal
+	StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 1.pcap
+    StartProcess    tshark -i ${port3_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 2.pcap
+    StartProcess    tshark -i ${port4_host_if} -f 'ether src 00:00:00:00:00:02 and ip src 192.168.1.2 and udp' -w 4.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='00:00:00:00:00:03', src='00:00:00:00:00:02')/IP(dst='192.168.1.3', src='192.168.1.2')/UDP(sport=1234,dport=5678)
+    excute_scapy_conmmand    sendp(p,iface='${port2_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    1.pcap
+	${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    2.pcap
+	${r}    Run    capinfos -c 4.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    RemoveFiles    2.pcap
+	StartProcess    tshark -i ${port1_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 1.pcap
+    StartProcess    tshark -i ${port2_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 2.pcap
+    StartProcess    tshark -i ${port4_host_if} -f 'ether src 00:00:00:00:00:03 and ip src 192.168.1.3 and udp' -w 4.pcap
+    Sleep    10
+    excute_scapy_conmmand    p=Ether(dst='00:00:00:00:00:02', src='00:00:00:00:00:03')/IP(dst='192.168.1.2', src='192.168.1.3')/UDP(sport=1234,dport=5678)
+    excute_scapy_conmmand    sendp(p,iface='${port3_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    1.pcap
+	${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    RemoveFiles    2.pcap
+	${r}    Run    capinfos -c 4.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    RemoveFiles    2.pcap
+	${cmd}		Catenate  no monitor session destination 
+	Execute Command    ${cmd}
+	${cmd}		Catenate	no monitor session source interface gigabitethernet 0/2 both
+	Execute Command    ${cmd}
+	创建Access模式vlan	${port2}	1
+	创建Access模式vlan	${port3}	1
+
+
+
+
+
+
+
+
+
+
+

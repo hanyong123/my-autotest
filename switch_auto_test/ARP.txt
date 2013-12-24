@@ -1,0 +1,85 @@
+*** Settings ***
+Documentation     jlt
+Suite Setup       Telnet登录交换机
+Suite Teardown    退出登录
+Library           Collections
+Library           arp.py
+Resource          keyword.txt
+Resource          config.txt
+Library           OperatingSystem
+
+*** Variables ***
+${port1_host_if}    eth0
+${port2_host_if}    eth1
+${port3_host_if}    eth2
+${port4_host_if}    eth3
+
+*** Test Cases ***
+验证ARP表的学习和老化
+    创建Access模式vlan    ${port1}    1
+    创建Access模式vlan    ${port2}    1
+    配置IP地址    "192.168.1.2"    1
+    配置IP地址    "193.168.1.1"    2
+    ${d_mac}    获取MAC地址    ${port1_host_if}    "00:00:00:00:00:01"    "192.168.1.2"    "192.168.1.1"
+    ${out}    发送和接收UDP包    ${port1_host_if}    "00:00:00:00:00:01"    ${d_mac}    "192.168.1.2"    "193.168.1.1"
+    ...    ${port2_host_if}
+    Should Contain    ${out}    'OK'
+    sleep(1200)
+    ${out}    发送和接收UDP包    ${port1_host_if}    "00:00:00:00:00:01"    ${d_mac}    "192.168.1.2"    "193.168.1.1"
+    ...    ${port2_host_if}
+    Should Contain    ${out}    'fail'
+    [Teardown]    恢复默认vlan
+
+验证ARP表项最大数目
+    创建Access模式vlan    ${port1}    1
+    创建Access模式vlan    ${port2}    2
+    配置IP地址    ${ip1}    1
+    配置IP地址    ${ip2}    2
+    ${out}    循环获取MAC地址    ${network1}    "192.168.1.1"
+    Should Contain    ${out}    'OK'
+    ${d_mac}    获取MAC地址    ${netwrok2}    "00:00:00:00:00:02"    "193.168.1.1"    "193.168.1.1"
+    Should Not Contain    ${out}    'fail'
+    ${out1}    循环发送接收DUP包    ${netwrok2}    ${d_mac}    "193.168.1.1"    ${port1_host_if}    "192.168.1.2"
+    Should Contain    ${out1}    'OK'
+    sleep(1200)
+    ${out2}    循环发送不接收DUP包    ${netwrok2}    ${d_mac}    "193.168.1.1"    ${port1_host_if}    "192.168.1.2"
+    Should Contain    ${out2}    'OK'
+    [Teardown]    恢复默认vlan
+
+*** Keywords ***
+配置IP地址
+    [Arguments]    ${ip}    ${vlan_id}
+    Execute Command    configure terminal
+    ${cmd}    Catenate    interface    vlan    ${vlan_id}
+    Execute Command    ${cmd}
+    ${cmd1}    Catenate    ip adress    ${ip}/24
+    Execute Command    ${cmd1}
+    Execute:Command    no shutdown
+    Execute Command    exit
+    Execute Command    exit
+
+获取MAC地址
+    [Arguments]    ${network}    ${s_mac}    ${s_ip}    ${g_ip}
+    ${r}    get_mac    ${network}    "00:00:00:00:00:01"    "192.168.1.2"    ${g_ip}
+    [Return]    ${r}
+
+发送和接收UDP包
+    [Arguments]    ${network}    ${s_mac}    ${d_mac}    ${s_ip}    ${g_ip}    ${recv_net}
+    ${r}    send_and_recv_udp    ${network}    ${s_mac}    ${d_mac}    ${s_ip}    ${g_ip}
+    ...    ${recv_net}
+    [Return]    ${r}
+
+循环获取MAC地址
+    [Arguments]    ${network1}    "192.168.1.1"
+    ${r}    loop_get_mac    ${network1}    "192.168.1.1"
+    [Return]    ${r}
+
+循环发送接收DUP包
+    [Arguments]    ${network1}    ${d_mac}    ${s_ip}    ${d_ip}    ${port2_host_if}
+    ${r}    loop_send_and_recv_udp    ${network1}    ${d_mac}    ${s_ip}    ${d_ip}    ${port2_host_if}
+    [Return]    ${r}
+
+循环发送不接收DUP包
+    [Arguments]    ${network1}    ${d_mac}    ${s_ip}    ${d_ip}    ${port2_host_if}
+    ${r}    loop_send_and_not_recv_udp    ${network1}    ${d_mac}    ${s_ip}    ${d_ip}    ${port2_host_if}
+    [Return]    ${r}

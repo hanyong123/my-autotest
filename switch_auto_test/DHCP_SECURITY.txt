@@ -1,0 +1,114 @@
+*** Settings ***
+Documentation     陈美君
+Suite Setup       Telnet登录交换机
+Suite Teardown    退出登录
+Resource          keyword.txt
+Library           OperatingSystem
+Library           scapyLibary.py
+Library           dhcpsnooping.py
+
+*** Variables ***
+${host1_eth}      eth0
+${host2_eth}      eth1
+
+*** Test Cases ***
+非法用户禁止访问
+    [Setup]
+    ${mac1}    get_mac_by_iface    ${host1_eth}
+    ${mac2}    get_mac_by_iface    ${host2_eth}
+    启用dhcpsnooping
+    设置信任端口    ${port2}
+    启动arp安全特性    ${port1}
+    启动dhcpd进程    ${host2_eth}    192.168.2.45    dhcp_secure.conf
+    Run    dhclient ${host1_eth}
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='${mac1}',dst='${mac2}')/IP(src='192.168.2.30',dst='192.168.2.45')/ICMP()
+    Start Process    tshark -i ${host2_eth} -f 'ether src ${mac1} and icmp' -w 3.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 3.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 5
+    Run    ifconfig ${host1_eth} 192.168.2.32
+    excute_scapy_conmmand    p=Ether(src='${mac1}',dst='${mac2}')/IP(src='192.168.2.32',dst='192.168.2.45')/ICMP()
+    Start Process    tshark -i ${host2_eth} -f 'ether src ${mac1} and icmp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    Remove Files    3.pcap    2.pcap
+    [Teardown]    Run keywords    Run    killall dhcpd    AND    重启网卡    ${host1_eth}
+    ...    AND    取消dhcpsnooping    AND    取消信任端口    ${port2}    AND
+    ...    关闭arp安全特性    ${port1}    AND    取消dhcpsnooping    AND    Remove Files
+    ...    3.pcap    2.pcap
+
+*** Keywords ***
+启用dhcpsnooping
+    Execute Command    configure terminal
+    Execute Command    ip dhcp snooping
+    Execute Command    exit
+
+取消dhcpsnooping
+    Execute Command    configure terminal
+    Execute Command    no ip dhcp snooping
+    Execute Command    exit
+
+设置信任端口
+    [Arguments]    ${port}
+    Execute Command    configure terminal
+    Execute Command    interface ${port}
+    Execute Command    ip dhcp snooping information trust
+    Execute Command    exit
+    Execute Command    exit
+
+取消信任端口
+    [Arguments]    ${port}
+    Execute Command    configure terminal
+    Execute Command    interface ${port}
+    Execute Command    no ip dhcp snooping information trust
+    Execute Command    exit
+    Execute Command    exit
+
+启动arp安全特性
+    [Arguments]    ${port}
+    Execute Command    configure terminal
+    Execute Command    interface ${port}
+    Execute Command    ip dhcp snooping information trust
+    Execute Command    arp filter
+    Execute Command    ip filter
+    Execute Command    dynamic-arp-inspection
+    Execute Command    ip-source-guard
+    Execute Command    exit
+    Execute Command    exit
+
+启动dhcpd进程
+    [Arguments]    ${iface}    ${server_ip}    ${dhcp_file}
+    Run    ifconfig ${iface} ${server_ip}
+    Run    cp ${dhcp_file} -rf /etc/dhcp/
+    Run    cd /etc/dhcp/
+    Run    chmod 777 ${dhcp_file}
+    Start Process    dhcpd -cf \ \ /etc/dhcp/${dhcp_file} \ -s ${server_ip}
+
+关闭arp安全特性
+    [Arguments]    ${port}
+    Execute Command    configure terminal
+    Execute Command    interface ${port}
+    Execute Command    no ip dhcp snooping information trust
+    Execute Command    no arp filter
+    Execute Command    no ip filter
+    Execute Command    no dynamic-arp-inspection
+    Execute Command    no ip-source-guard
+    Execute Command    exit
+    Execute Command    exit
+
+重启网卡
+    [Arguments]    ${eth}
+    Run    ifconfig ${eth} down
+    Sleep    2
+    Run    ifconfig ${eth} up
+    Sleep    5

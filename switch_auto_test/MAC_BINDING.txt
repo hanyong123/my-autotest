@@ -1,0 +1,172 @@
+*** Settings ***
+Documentation     陈美君
+Suite Setup       Telnet登录交换机
+Suite Teardown    退出登录
+Resource          keyword.txt
+Library           Collections
+Library           OperatingSystem
+Library           scapyLibary.py
+
+*** Variables ***
+${host1_eth}      eth0
+${host2_eth}      eth1
+${host3_eth}      eth2
+@{hosts}          ${host1_eth}    ${host2_eth}    ${host3_eth}
+
+*** Test Cases ***
+验证限制MC地址学习数目
+    ${l}    CreateList
+    ${mac}    get_mac_by_iface    ${host1_eth}
+    配置静态MAC地址    ${mac}    1    ${port2}
+    AppendToList    ${l}    ${mac}
+    Sleep    2
+    ${mac}    get_mac_by_iface    ${host2_eth}
+    配置静态MAC地址    ${mac}    1    ${port2}
+    AppendToList    ${l}    ${mac}
+    Sleep    2
+    配置MAC地址最大学习个数    ${port2}    2
+    删除动态mac地址表    1
+    Sleep    3
+    配置系统MAC地址老化时间    30
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:03')/IP()/ICMP()
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    3
+    ${out}    Execute Command    show mac-address-table
+    ShouldContain    ${out}    1 \ \ \ \ \ \ 0000.0000.0001 \ \ \
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:02',dst='00:00:00:00:00:03')/IP()/ICMP()
+    excute_scapy_conmmand    sendp(p,iface='${host2_eth}',count=1)
+    Sleep    3
+    ${out}    Execute Command    show mac-address-table
+    ShouldContain    ${out}    1 \ \ \ \ \ \ 0000.0000.0002 \ \ \
+    Sleep    35
+    配置MAC地址最大学习个数    ${port2}    1
+    删除动态mac地址表    1
+    Sleep    3
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:03')/IP()/ICMP()
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    3
+    ${out}    Execute Command    show mac-address-table
+    ShouldContain    ${out}    1 \ \ \ \ \ \ 0000.0000.0001 \ \ \
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:02',dst='00:00:00:00:00:03')/IP()/ICMP()
+    excute_scapy_conmmand    sendp(p,iface='${host2_eth}',count=1)
+    Sleep    3
+    ${out}    Execute Command    show mac-address-table
+    ShouldNotContain    ${out}    1 \ \ \ \ \ \ 0000.0000.0002 \ \ \
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:03',dst='00:00:00:00:00:02')/IP()/ICMP()/'dstMacB'
+    Start Process    tshark -i ${host1_eth} -f 'ether src 00:00:00:00:00:03 and icmp' -w 1.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host3_eth}',count=1)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 1
+    Remove Files    1.pcap
+    [Teardown]    Run Keywords    删除多个静态MAC地址    ${l}    AND    close_scapy_session
+
+验证MAC地址静态绑定
+    ${a}    获取多个本地MAC    @{hosts}
+    删除多个静态MAC地址    ${a}
+    禁止指定端口的MAC地址学习    ${port2}
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:03')/IP()/ICMP()
+    Start Process    tshark -i ${host3_eth} -f 'ether src 00:00:00:00:00:01 and icmp' -w 1.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    Sleep    3
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:02',dst='00:00:00:00:00:03')/IP()/ICMP()
+    Start Process    tshark -i ${host3_eth} -f 'ether src 00:00:00:00:00:02 and icmp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host2_eth}',count=1)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    Remove Files    1.pcap    2.pcap
+    配置静态MAC地址    0000.0000.0001    1    ${port2}
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:03')/IP()/ICMP()
+    Start Process    tshark -i ${host3_eth} -f 'ether src 00:00:00:00:00:01 and icmp' -w 1.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 5
+    Sleep    3
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:02',dst='00:00:00:00:00:03')/IP()/ICMP()
+    Start Process    tshark -i ${host3_eth} -f 'ether src 00:00:00:00:00:02 and icmp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host2_eth}',count=1)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    Remove Files    1.pcap    2.pcap
+    配置静态MAC地址    0000.0000.0002    1    ${port2}
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:03')/IP()/ICMP()
+    Start Process    tshark -i ${host3_eth} -f 'ether src 00:00:00:00:00:01 and icmp' -w 1.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 5
+    Sleep    3
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:02',dst='00:00:00:00:00:03')/IP()/ICMP()
+    Start Process    tshark -i ${host3_eth} -f 'ether src 00:00:00:00:00:02 and icmp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host2_eth}',count=1)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 1
+    Remove Files    1.pcap    2.pcap
+    删除静态MAC地址    0000.0000.0001    1
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:03')/IP()/ICMP()
+    Start Process    tshark -i ${host3_eth} -f 'ether src 00:00:00:00:00:01 and icmp' -w 1.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    Sleep    3
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:02',dst='00:00:00:00:00:03')/IP()/ICMP()
+    Start Process    tshark -i ${host3_eth} -f 'ether src 00:00:00:00:00:02 and icmp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host2_eth}',count=1)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 1
+    Remove Files    1.pcap    2.pcap
+    [Teardown]    Run Keyword    close_scapy_session
+
+*** Keywords ***
+删除多个静态MAC地址
+    [Arguments]    ${l}
+    @{a}    ConvertToList    ${l}
+    : FOR    ${mac}    IN    @{a}
+    \    删除静态MAC地址    ${mac}    1
+    [Teardown]
+
+获取多个本地MAC
+    [Arguments]    @{h}
+    ${a}    CreateList
+    : FOR    ${eth}    IN    @{h}
+    \    ${mac}    get_mac_by_iface    ${eth}
+    \    AppendToList    ${a}    ${mac}
+    [Return]    ${a}

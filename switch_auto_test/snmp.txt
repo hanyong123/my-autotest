@@ -1,0 +1,146 @@
+*** Settings ***
+Documentation     jlt
+Suite Setup       Telnet登录交换机
+Suite Teardown    退出登录
+Resource          keyword.txt
+Library           Collections
+Library           arp.py
+Library           common.py
+Library           OperatingSystem
+Library           scapyLibary.py
+
+*** Variables ***
+${port1_host_if}    eth0
+${port2_host_if}    eth1
+${port3_host_if}    eth2
+${port4_host_if}    eth3
+${switc_manage_ip1}    192.168.2.12
+${ip}	192.168.2.60
+*** Test Cases ***
+snmpget/getnext
+    Execute Command    configure terminal
+    Execute Command		snmp-server
+    ${cmd}		Catenate   snmp-server community ro public default 1.3.6.1.2.1
+	Execute Command    ${cmd}
+    ${cmd}	Catenate	snmp-server community rw private default 1.3.6.1.2.1
+	Execute Command    ${cmd}
+	${out}	Run		snmpget -v1 -c public 192.168.2.11 1.3.6.1.2.1.2.2.1.1.1 
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.1 = INTEGER: 1
+	${out1}	Run		snmpgetnext -v1 -c public 192.168.2.11 1.3.6.1.2.1.2.2.1.1.1
+    Should Contain    ${out1}	iso.3.6.1.2.1.2.2.1.1.2 = INTEGER: 2
+    Execute Command		exit
+
+snmpset
+    Execute Command    configure terminal
+    Execute Command		snmp-server
+	${cmd}		Catenate   snmp-server community ro public default 1.3.6.1.2.1
+	Execute Command    ${cmd}
+    ${cmd}	Catenate	snmp-server community rw private default 1.3.6.1.2.1
+	Execute Command    ${cmd}
+	${out}	Run		snmpset -v1 -c private 192.168.2.11 1.3.6.1.2.1.1.5.0 sysName.0= "12345"
+    Should Contain    ${out}	iso.3.6.1.2.1.1.5.0 = STRING: "12345"
+	${out1}	Run		snmpget -v1 -c public 192.168.2.11 1.3.6.1.2.1.1.5.0     
+    Should Contain    ${out1}	iso.3.6.1.2.1.1.5.0 = STRING: "12345"
+    Execute Command		exit
+
+
+v2c/v3getbulk
+	Execute Command		configure terminal
+    Execute Command		snmp-server
+	${cmd}		Catenate   snmp-server community ro public default 1.3.6.1.2.1
+	Execute Command    ${cmd}
+    ${cmd}	Catenate	snmp-server community rw private default 1.3.6.1.2.1
+	Execute Command    ${cmd}
+	${out}	get_ip_address	${port1_host_if}
+    Sleep    1
+    ${cmd}	Catenate	snmp-server host ${out} traps public
+	Execute Command    ${cmd}
+	${cmd}	Catenate	snmp-server group g1 v3 noauth read v1 write v1		
+	Execute Command    ${cmd}
+	${cmd}	Catenate	snmp-server group g2 v3 noauth read v1 write v1		
+	Execute Command    ${cmd}
+	${cmd}	Catenate	snmp-server group g3 v3 noauth read v1 write v1		
+	Execute Command    ${cmd}
+	${cmd}	Catenate	snmp-server view v1 1.3.6.1.2.1 included
+	Execute Command    ${cmd}
+	${cmd}	Catenate	snmp-server user u1 g1 v3
+	Execute Command    ${cmd}
+	${cmd}	Catenate	snmp-server user u2 g2 v3 auth md5 123456789	
+	Execute Command    ${cmd}
+	${cmd}	Catenate	snmp-server user u21 g2 v3 auth sha 123456789	
+	Execute Command    ${cmd}
+	${cmd}	Catenate	snmp-server user u3 g3 v3 auth sha 123456789 priv 987654321
+    Sleep	5
+	Execute Command    ${cmd}
+    Sleep	10
+	${out}	Run			snmpget -v3 -l noAuthNoPriv -u u1 192.168.2.11 1.3.6.1.2.1.2.2.1.1.1 
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.1 = INTEGER: 1
+	${out}	Run	snmpget -v3 -a MD5 -A 123456789 -l authNoPriv -u u2 192.168.2.11 1.3.6.1.2.1.2.2.1.1.1
+	Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.1 = INTEGER: 1
+	${out}	Run	snmpget -v3 -a SHA -A 123456789 -l authNoPriv -u u21 192.168.2.11 1.3.6.1.2.1.2.2.1.1.1
+	Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.1 = INTEGER: 1
+	${out}	Run	snmpget -v3 -a SHA -A 123456789 -l authPriv -u u3 -X 987654321 192.168.2.11 1.3.6.1.2.1.2.2.1.1.1
+	Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.1 = INTEGER: 1
+	${out}	Run		snmpbulkget -v3 -l noAuthNoPriv -u u1 192.168.2.11 1.3.6.1.2.1.2.2.1.1
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.1 = INTEGER: 1
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.2 = INTEGER: 2
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.3 = INTEGER: 3 
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.4 = INTEGER: 4
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.5 = INTEGER: 5
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.6 = INTEGER: 6
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.7 = INTEGER: 7
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.8 = INTEGER: 8 
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.9 = INTEGER: 9
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.10 = INTEGER: 10
+	${out}	Run	snmpbulkget -v3 -a MD5 -A 123456789 -l authNoPriv -u u2 192.168.2.11 1.3.6.1.2.1.2.2.1.1
+	Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.1 = INTEGER: 1
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.2 = INTEGER: 2
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.3 = INTEGER: 3 
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.4 = INTEGER: 4
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.5 = INTEGER: 5
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.6 = INTEGER: 6
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.7 = INTEGER: 7
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.8 = INTEGER: 8 
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.9 = INTEGER: 9
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.10 = INTEGER: 10
+	${out}	Run	snmpbulkget -v3 -a SHA -A 123456789 -l authNoPriv -u u21 192.168.2.11 1.3.6.1.2.1.2.2.1.1
+	Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.1 = INTEGER: 1
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.2 = INTEGER: 2
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.3 = INTEGER: 3 
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.4 = INTEGER: 4
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.5 = INTEGER: 5
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.6 = INTEGER: 6
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.7 = INTEGER: 7
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.8 = INTEGER: 8 
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.9 = INTEGER: 9
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.10 = INTEGER: 10
+	${out}	Run	snmpbulkget -v3 -a SHA -A 123456789 -l authPriv -u u3 -X 987654321 192.168.2.11 1.3.6.1.2.1.2.2.1.1
+	Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.1 = INTEGER: 1
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.2 = INTEGER: 2
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.3 = INTEGER: 3 
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.4 = INTEGER: 4
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.5 = INTEGER: 5
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.6 = INTEGER: 6
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.7 = INTEGER: 7
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.8 = INTEGER: 8 
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.9 = INTEGER: 9
+    Should Contain    ${out}	iso.3.6.1.2.1.2.2.1.1.10 = INTEGER: 10
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

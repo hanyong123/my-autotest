@@ -1,0 +1,229 @@
+*** Settings ***
+Documentation     @author \ zhaohy
+...               @date 2013.11.06
+Suite Setup       Telnet登录交换机
+Suite Teardown    Run keywords    退出登录
+Library           OperatingSystem
+Library           dhcpsnooping.py
+Resource          keyword.txt
+Library           scapyLibary.py
+
+*** Variables ***
+${port1_host_if}    eth1
+${port2_host_if}    eth2
+${alloc_ip}       ${EMPTY}
+${dhcp_file}      dhcpsnooping_autotest.conf
+${server_ip}      192.168.2.122
+${expected_alloc_ip}    192.168.2.20
+@{proto_filter_set}    no ip filter    no arp filter
+
+*** Test Cases ***
+验证DHCP snooping隔离非法服务器
+    [Timeout]
+    启用dhcpsnooping
+    启动dhcpd进程    ${port1_host_if}    ${server_ip}    ${dhcp_file}
+    Sleep    3
+    设置非信任端口    ${port1}
+    ${p}    pkt_dhcp_discover
+    ${ans}    发送L2包带回复    ${p}    ${port2_host_if}    4
+    Should be equal    ${ans}    ${None}
+    ${output}    Execute Command    show arp
+    should not contain    ${output}    0011.2233.4455
+    设置信任端口    ${port1}
+    ${p}    pkt_dhcp_discover
+    ${ans}    发送L2包带回复    ${p}    ${port2_host_if}    10
+    Should Not be equal    ${ans}    ${None}
+    ${alloc_ip}    ${server_id}    解析dhcp_offer报文    ${ans}
+    ${p}    构建dhcp_request_offer报文    ${alloc_ip}    ${server_id}
+    ${ans}    发送L2包带回复    ${p}    ${port2_host_if}    3
+    Should not Be equal    ${ans}    ${None}
+    ${re}    解析dhcp_ack报文    ${ans}
+    Should Be Equal    ${re}    ${0}
+    ${output}    Execute Command    show arp
+    Should Contain    ${output}    ${alloc_ip}
+    Should Contain    ${output}    0011.2233.4455
+    [Teardown]    Run keywords    删除arp dhcp记录    ${alloc_ip}    AND    Run    killall dhcpd
+    ...    AND    Remove Files    /etc/dhcp/${dhcp_file}    AND    取消dhcpsnooping
+
+验证DHCP Snooping对非法ARP，IP报文的防护功能
+    启用dhcpsnooping
+    启动dhcpd进程    ${port1_host_if}    ${server_ip}    ${dhcp_file}
+    Sleep    3
+    设置信任端口    ${port1}
+    ${p}    pkt_dhcp_discover
+    ${ans}    发送L2包带回复    ${p}    ${port2_host_if}    3
+    Should Not be equal    ${ans}    ${None}
+    ${alloc_ip}    ${server_id}    解析dhcp_offer报文    ${ans}
+    ${p}    构建dhcp_request_offer报文    ${alloc_ip}    ${server_id}
+    ${ans}    发送L2包带回复    ${p}    ${port2_host_if}    3
+    Should not Be equal    ${ans}    ${None}
+    ${re}    解析dhcp_ack报文    ${ans}
+    Should Be Equal    ${re}    ${0}
+    ${output}    Execute Command    show arp
+    Should Contain    ${output}    ${alloc_ip}
+    Should Contain    ${output}    0011.2233.4455
+    @{port_cmd}    Create List    ip filter    arp filter    dynamic-arp-inspection    ip-source-guard
+    对端口执行指定命令    ${port2}    @{port_cmd}
+    Start Process    tshark -i ${port1_host_if} \ -f 'ether src 00:00:00:00:00:03 and (arp or ip)' -w 3.3.2.pcap
+    Sleep    1
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:03')/ARP(hwsrc='00:00:00:00:00:03', psrc='10.0.0.20', pdst='10.0.0.1')
+    excute_scapy_conmmand    sendp(p, iface='${port2_host_if}')
+    Sleep    1
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:03')/IP()
+    excute_scapy_conmmand    sendp(p, iface='${port2_host_if}')
+    Sleep    1
+    Run    killall tshark
+    ${r}    Run    capinfos -c 3.3.2.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    Remove Files    3.3.2.pcap
+    [Teardown]    Run keywords    删除arp dhcp记录    ${alloc_ip}    AND    Run    killall dhcpd
+    ...    AND    Remove Files    /etc/dhcp/${dhcp_file}    AND    取消dhcpsnooping    AND
+    ...    close_scapy_session    AND    对端口执行指定命令    ${port2}    @{proto_filter_set}
+
+验证DHCP RELAY功能
+    [Timeout]
+    启动dhcpd进程    ${port1_host_if}    ${server_ip}    ${dhcp_file}
+    Sleep    3
+    创建Access模式vlan    ${port1}    1
+    创建Access模式vlan    ${port2}    2
+    启用dhcp relay
+    配置服务器地址    192.168.2.122
+    ${p}    pkt_dhcp_discover
+    ${ans}    发送L2包带回复    ${p}    ${port2_host_if}    3
+    Should Not be equal    ${ans}    ${None}
+    ${alloc_ip}    ${server_id}    解析dhcp_offer报文    ${ans}
+    ${p}    构建dhcp_request_offer报文    ${alloc_ip}    ${server_id}
+    ${ans}    发送L2包带回复    ${p}    ${port2_host_if}    3
+    Should not Be equal    ${ans}    ${None}
+    ${re}    解析dhcp_ack报文    ${ans}
+    Should Be Equal    ${re}    ${0}
+    [Teardown]    Run keywords    删除arp dhcp记录    ${alloc_ip}    AND    Run    killall dhcpd
+    ...    AND    Remove Files    /etc/dhcp/${dhcp_file}    AND    恢复默认vlan    AND
+    ...    取消dhcp relay
+
+验证DHCP CLIENT功能
+    [Timeout]
+    启动dhcpd进程    ${port1_host_if}    ${server_ip}    ${dhcp_file}
+    Sleep    3
+    促发交换机发起dhcp请求
+    sleep    3
+    Telnet登录交换机2    ${expected_alloc_ip}
+    交换机恢复缺省并重启
+    [Teardown]    Run keywords    删除arp dhcp记录    ${alloc_ip}    AND    Run    killall dhcpd
+    ...    AND    Remove Files    /etc/dhcp/${dhcp_file}    AND    恢复默认vlan    AND
+    ...    取消dhcp relay
+
+*** Keywords ***
+发送L2包带回复
+    [Arguments]    ${p}    ${iface}    ${timeout}
+    ${ans}    send_l2_pkt    ${p}    ${iface}    ${timeout}
+    [Return]    ${ans}
+
+删除arp dhcp记录
+    [Arguments]    ${alloc_ip}
+    Execute Command    configure terminal
+    Run keyword If    '${alloc_ip}' != '${EMPTY}'    Execute Command    no arp dhcp ${alloc_ip}
+    Execute Command    exit
+
+启动dhcpd进程
+    [Arguments]    ${iface}    ${server_ip}    ${dhcp_file}
+    Run    ifconfig ${iface} ${server_ip}
+    Run    cp ${dhcp_file} -rf /etc/dhcp/
+    Run    cd /etc/dhcp/
+    Run    chmod 777 ${dhcp_file}
+    Start Process    dhcpd -cf \ \ /etc/dhcp/${dhcp_file} \ -s ${server_ip}
+
+构建dhcp_request_offer报文
+    [Arguments]    ${alloc_ip}    ${server_id}
+    ${p}    pkt_dhcp_request    ${alloc_ip}    ${server_id}
+    [Return]    ${p}
+
+构建dhcp_discover报文
+    ${p}    pkt_dhcp_discover
+    [Return]    ${p}
+
+设置信任端口
+    [Arguments]    ${port}
+    Execute Command    configure terminal
+    Execute Command    ip dhcp snooping
+    ${cmd}    Catenate    interface    ${port}
+    Execute Command    ${cmd}
+    Execute Command    ip dhcp snooping information trust
+    Execute Command    exit
+    Execute Command    exit
+
+解析dhcp_ack报文
+    [Arguments]    ${p}
+    ${re}    resolve_dhcp_ack    ${p}
+    [Return]    ${re}
+
+解析dhcp_offer报文
+    [Arguments]    ${p}
+    ${alloc_ip}    ${server_id}    resolve_dhcp_offer    ${p}
+    [Return]    ${alloc_ip}    ${server_id}
+
+设置非信任端口
+    [Arguments]    ${port}
+    Execute Command    configure terminal
+    Execute Command    ip dhcp snooping
+    ${cmd}    Catenate    interface    ${port}
+    Execute Command    ${cmd}
+    Execute Command    no ip dhcp snooping information trust
+    Execute Command    exit
+    Execute Command    exit
+
+设置端口协议过滤
+    [Arguments]    ${port}    @{protocols}
+    Execute Command    configure terminal
+    ${cmd}    Catenate    interface    ${port}
+    Execute Command    ${cmd}
+    : FOR    ${pro}    IN    @{protocols}
+    \    Execute Command    ${pro} filter
+    Execute Command    exit
+    Execute Command    exit
+
+对端口执行指定命令
+    [Arguments]    ${port}    @{cmds}
+    Execute Command    configure terminal
+    ${port_cmd}    Catenate    interface    ${port}
+    Execute Command    ${port_cmd}
+    : FOR    ${cmd}    IN    @{cmds}
+    \    Execute Command    ${cmd}
+    Execute Command    exit
+    Execute Command    exit
+
+启用dhcp relay
+    Execute Command    configure terminal
+    Execute Command    ip dhcp relay
+    Execute Command    exit
+
+配置服务器地址
+    [Arguments]    ${ip}
+    Execute Command    configure terminal
+    Execute Command    ip dhcp relay helper-address ${ip}
+    Execute Command    exit
+
+恢复默认vlan
+    创建Access模式vlan    ${port2}    1
+
+取消dhcp relay
+    Execute Command    configure terminal
+    Execute Command    no ip dhcp relay
+    Execute Command    exit
+
+启用dhcpsnooping
+    Execute Command    configure terminal
+    Execute Command    ip dhcp snooping
+    Execute Command    exit
+
+取消dhcpsnooping
+    Execute Command    configure terminal
+    Execute Command    no ip dhcp snooping
+    Execute Command    exit
+
+促发交换机发起dhcp请求
+    Execute Command    configure terminal
+    Execute Command    ip address dhcp-alloc
+    Execute Command    exit

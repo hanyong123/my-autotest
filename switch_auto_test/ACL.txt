@@ -1,0 +1,339 @@
+*** Settings ***
+Documentation     陈美君
+Suite Setup       telnet登录交换机
+Suite Teardown    退出登录
+Resource          keyword.txt
+Library           Collections
+Library           OperatingSystem
+Library           scapyLibary.py
+
+*** Variables ***
+${host1_eth}      eth0
+${host2_eth}      eth1
+${port_range}     Gi 0/01 - 0/02
+
+*** Test Cases ***
+验证L2 filtering基于802.1P
+    [Setup]    Run Keywords    恢复端口为Access口    ${port_range}    AND    取消ACL准则    1
+    ...    AND    close_scapy_session    ${EMPTY}
+    配置端口为trunk口    ${port_range}    2
+    Sleep    2
+    配置ACL拒绝准则    1    host 192.168.1.1 cos 7
+    Sleep    2
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:02')/IP(src='192.168.1.1',dst='192.168.1.5',tos=7)/ICMP()
+    StartProcess    tshark -i ${host2_eth} -f 'ip src 192.168.1.1 and icmp' -w 1.pcap
+    Sleep    5
+    excute_scapy_conmmand    sendp(p,iface=${host1_eth},count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 1.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 0
+    RemoveFiles    1.pcap
+
+验证L2 filtering基于MAC
+    [Setup]
+    配置ACL拒绝准则    1100    00e0.fc02.f00e 00e0.fc02.f00f
+    Sleep    5
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='00:e0:fc:02:f0:0e',dst='00:e0:fc:02:f0:0f')/IP()/ICMP()
+    StartProcess    tshark -i ${host2_eth} -f 'ether src 00:e0:fc:02:f0:0e and icmp' -w 1.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 1.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 0
+    Sleep    5
+    excute_scapy_conmmand    p=Ether(src='00:e0:fc:02:f0:0f',dst='00:e0:fc:02:f0:01')/IP()/ICMP()
+    StartProcess    tshark -i ${host2_eth} -f 'ether src 00:e0:fc:02:f0:0f and icmp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 2.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 5
+    RemoveFiles    1.pcap    2.pcap
+    [Teardown]    Run Keywords    取消ACL准则    1100    AND    close_scapy_session
+
+验证L2 filtering基于L2 Protocol
+    [Setup]
+    配置ACL拒绝准则    200    7812
+    Sleep    2
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:02',type=0x7812)
+    StartProcess    tshark -i ${host2_eth} -f 'ether src 00:00:00:00:00:01' -w 1.pcap
+    Sleep    5
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 1.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 0
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:02',type=0x0000)
+    StartProcess    tshark -i ${host2_eth} -f 'ether src 00:00:00:00:00:01' -w 2.pcap
+    Sleep    5
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 2.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 5
+    RemoveFiles    1.pcap    2.pcap
+    [Teardown]    Run Keywords    取消ACL准则    200    AND    close_scapy_session
+
+验证L2 filtering基于IP
+    [Setup]
+    配置ACL拒绝准则    1    host 1.1.1.1
+    Sleep    2
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:02')/IP(src='1.1.1.1',dst='1.1.1.15',tos=7)/ICMP()
+    StartProcess    tshark -i ${host2_eth} -f 'ip src 1.1.1.1 and icmp' -w 1.pcap
+    Sleep    5
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 1.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 0
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:02')/IP(src='1.1.1.2',dst='1.1.1.15')/ICMP()
+    StartProcess    tshark -i ${host2_eth} -f 'ip src 1.1.1.2 and icmp' -w 2.pcap
+    Sleep    5
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 2.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 5
+    RemoveFiles    1.pcap    2.pcap
+    取消ACL准则    1
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:02')/IP(src='1.1.1.1',dst='1.1.1.15',tos=7)/ICMP()
+    StartProcess    tshark -i ${host2_eth} -f 'ip src 1.1.1.1 and icmp' -w 1.pcap
+    Sleep    5
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 1.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 5
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:02')/IP(src='1.1.1.2',dst='1.1.1.15')/ICMP()
+    StartProcess    tshark -i ${host2_eth} -f 'ip src 1.1.1.2 and icmp' -w 2.pcap
+    Sleep    5
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 2.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 5
+    RemoveFiles    1.pcap    2.pcap
+    [Teardown]    Run Keywords    取消ACL准则    1    AND    close_scapy_session
+
+验证L3 filtering基于TOS
+    配置ACL拒绝准则    100    host 2.2.2.2 host 1,1.1.1 dscp 34
+    Sleep    2
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:02')/IP(src='2.2.2.2',dst='1.1.1.1',tos=0x34)/ICMP()
+    StartProcess    tshark -i ${host2_eth} -f 'ip src 2.2.2.2 and icmp' -w 1.pcap
+    Sleep    5
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 1.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 0
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:02')/IP(src='2.2.2.3',dst='1.1.1.1',tos=0x34)/ICMP()
+    StartProcess    tshark -i ${host2_eth} -f 'ip src 2.2.2.3 and icmp' -w 2.pcap
+    Sleep    5
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 2.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 5
+    RemoveFiles    1.pcap    2.pcap
+    取消ACL准则    100
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:02')/IP(src='2.2.2.2',dst='1.1.1.1',tos=0x34)/ICMP()
+    StartProcess    tshark -i ${host2_eth} -f 'ip src 2.2.2.2 and icmp' -w 1.pcap
+    Sleep    5
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 1.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 5
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:02')/IP(src='2.2.2.3',dst='1.1.1.1',tos=0x34)/ICMP()
+    StartProcess    tshark -i ${host2_eth} -f 'ip src 2.2.2.3 and icmp' -w 2.pcap
+    Sleep    5
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 2.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 5
+    RemoveFiles    1.pcap    2.pcap
+    [Teardown]    Run Keywords    取消ACL准则    100    AND    close_scapy_session
+
+验证L3 filtering基于L3 protocol
+    [Setup]    Run Keywords    取消ACL准则    100    AND    close_scapy_session
+    配置ACL拒绝准则    100    ip host 2.2.2.2 host 1.1.1.1
+    Sleep    2
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:02')/IP(src='2.2.2.2',dst='1.1.1.1',proto=1)
+    StartProcess    tshark -i ${host2_eth} -f 'ip src 2.2.2.2 and icmp' -w 1.pcap
+    Sleep    5
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 1.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 0
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:02')/IP(src='2.2.2.3',dst='1.1.1.1',proto=2)
+    StartProcess    tshark -i ${host2_eth} -f 'ip src 2.2.2.3' -w 2.pcap
+    Sleep    5
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 2.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 5
+    RemoveFiles    1.pcap    2.pcap
+    取消ACL准则    100
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:02')/IP(src='2.2.2.2',dst='1.1.1.1',proto=1)
+    StartProcess    tshark -i ${host2_eth} -f 'ip src 2.2.2.2 and icmp' -w 1.pcap
+    Sleep    5
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 1.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 5
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:02')/IP(src='2.2.2.3',dst='1.1.1.1',proto=2)
+    StartProcess    tshark -i ${host2_eth} -f 'ip src 2.2.2.3' -w 2.pcap
+    Sleep    5
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 2.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 5
+    RemoveFiles    1.pcap    2.pcap
+
+验证L4 filtering基于L4 Port
+    [Setup]    Run Keywords    取消ACL准则    100    AND    close_scapy_session
+    配置ACL拒绝准则    100    tcp host 2.2.2.2 eq 2001 host 1.1.1.1 eq 59
+    Sleep    2
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:02')/IP(src='2.2.2.2',dst='1.1.1.1')/TCP(sport=2001,dport=59)
+    StartProcess    tshark -i ${host2_eth} -f 'ip src 2.2.2.2 and tcp' -w 1.pcap
+    Sleep    5
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 1.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 0
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:02')/IP(src='2.2.2.2',dst='1.1.1.1')/TCP(sport=2000,dport=59)
+    StartProcess    tshark -i ${host2_eth} -f 'ip src 2.2.2.2 and tcp' -w 2.pcap
+    Sleep    5
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 2.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 5
+    RemoveFiles    1.pcap    2.pcap
+    取消ACL准则    100
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:02')/IP(src='2.2.2.2',dst='1.1.1.1')/TCP(sport=2001,dport=59)
+    StartProcess    tshark -i ${host2_eth} -f 'ip src 2.2.2.2 and tcp' -w 1.pcap
+    Sleep    5
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 1.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 5
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:02')/IP(src='2.2.2.2',dst='1.1.1.1')/TCP(sport=2000,dport=59)
+    StartProcess    tshark -i ${host2_eth} -f 'ip src 2.2.2.2 and tcp' -w 2.pcap
+    Sleep    5
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 2.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 5
+    RemoveFiles    1.pcap    2.pcap
+
+验证时间段功能测试
+    [Setup]    Run Keywords    取消ACL准则    1    AND    close_scapy_session
+    配置时间段    test    periodic weekdays 9:00 to 9:02
+    Sleep    2
+    配置ACL拒绝准则    1    time-range test
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:02')/IP(src='2.2.2.2',dst='1.1.1.1')/ICMP()
+    StartProcess    tshark -i ${host2_eth} -f 'ether src 00:00:00:00:00:01 and icmp' -w 1.pcap
+    Sleep    5
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 1.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 0
+    Sleep    2 minutes
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:02')/IP(src='2.2.2.2',dst='1.1.1.1')/ICMP()
+    StartProcess    tshark -i ${host2_eth} -f 'ether src 00:00:00:00:00:01 and icmp' -w 2.pcap
+    Sleep    5
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${out}    Run    capinfos -c 2.pcap
+    Log    ${out}
+    ShouldContain    ${out}    Number of packets: \ \ 5
+    RemoveFiles    1.pcap    2.pcap
+
+*** Keywords ***
+配置端口为trunk口
+    [Arguments]    ${ports}    ${id}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    interface ${ports}
+    ExecuteCommand    switchport mode trunk
+    ExecuteCommand    switchport trunk allowed vlan add ${id}
+    ExecuteCommand    exit
+    ExecuteCommand    exit
+
+配置ACL拒绝准则
+    [Arguments]    ${num}    ${acl}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    access-list ${num} deny ${acl}
+    ExecuteCommand    commit
+    ExecuteCommand    exit
+
+恢复端口为Access口
+    [Arguments]    ${p}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    interface ${p}
+    ExecuteCommand    switchport mode access
+    ExecuteCommand    exit
+    ExecuteCommand    exit
+
+取消ACL准则
+    [Arguments]    ${num}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    no access-list ${num}
+    ExecuteCommand    exit
+
+配置ACL允许准则
+    [Arguments]    ${num}    ${acl}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    access-list ${num} permit ${acl}
+    ExecuteCommand    commit
+    ExecuteCommand    exit
+
+配置时间段
+    [Arguments]    ${name}    ${time}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    time-range ${test}
+    ExecuteCommand    periodic ${time}
+    ExecuteCommand    exit

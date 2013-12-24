@@ -1,0 +1,127 @@
+*** Settings ***
+Documentation     陈美君
+Suite Setup       Run Keywords    Telnet登录交换机    AND    开启ssh服务
+Suite Teardown    Run Keywords    退出登录    AND    关闭ssh服务
+Resource          keyword.txt
+Library           Collections
+Library           OperatingSystem
+Library           sshLib.py
+
+*** Variables ***
+${tftp_directory}    /home/nicole/tftpboot
+
+*** Test Cases ***
+验证口令身份认证
+    [Setup]
+    配置ssh登录用户    netcore    cipher    test
+    ${r}    ExecuteCommand    show ssh user
+    ${out}    open_ssh_session    192.168.2.11    netcore    test
+    Sleep    10
+    ShouldContain    ${out}    Press RETURN to get started.
+    close_ssh_session
+    Run    killall ssh
+    配置ssh登录用户    netcore    simple    test
+    ${r}    ExecuteCommand    show ssh user
+    ${out}    open_ssh_session    192.168.2.11    netcore    test
+    Sleep    10
+    ShouldContain    ${out}    Press RETURN to get started.
+    close_ssh_session
+    Run    killall ssh
+    ${out}    open_ssh_session    192.168.2.11    netcore    1111
+    Sleep    10
+    ShouldContain    ${out}    Permission denied, please try again.
+    Run    killall ssh
+    [Teardown]    RunKeywords    close_ssh_session    AND    删除ssh登录用户    netcore
+
+验证RSA和DSA身份认证
+    [Setup]    Run Keywords    Run    rm -rf /root/.ssh    AND    Run    rm -rf ${tftp_directory}
+    配置ssh登录用户    netcore    simple    test
+    Run    mkdir /root/.ssh
+    Run    cp tftpd-hpa /etc/default/tftpd-hpa
+    Run    service tftpd-hpa restart
+    Run    mkdir ${tftp_directory}
+    Run    chmod 777 ${tftp_directory}
+    ssh_key_generate    dsa
+    Sleep    2
+    Run    chmod 666 /root/.ssh/id_dsa.pub
+    Run    cp /root/.ssh/id_dsa.pub ${tftp_directory}
+    上传密钥    netcore    id_dsa.pub    dsa    192.168.2.16
+    Sleep    2
+    ExecuteCommand    show ssh user
+    Run    ssh-add /root/.ssh/id_dsa
+    ${out}    open_ssh_session    192.168.2.11    netcore    ${EMPTY}
+    Sleep    2
+    ShouldContain    ${out}    Press RETURN to get started.
+    close_ssh_session
+    取消密钥认证    netcore
+    Run    rm /root/.ssh/known_hosts
+    ssh_key_generate    rsa
+    Sleep    2
+    Run    chmod 666 /root/.ssh/id_rsa.pub
+    Run    cp /root/.ssh/id_rsa.pub ${tftp_directory}
+    上传密钥    netcore    id_rsa.pub    rsa    192.168.2.16
+    Sleep    2
+    ExecuteCommand    show ssh user
+    Run    ssh-add /root/.ssh/id_rsa
+    ${out}    open_ssh_session    192.168.2.11    netcore    ${EMPTY}
+    Sleep    2
+    ShouldContain    ${out}    Press RETURN to get started.
+    [Teardown]    Run Keywords    close_ssh_session    AND    删除ssh登录用户    netcore
+
+验证SSH的RSA身份和密码认证功能相互兼容
+    [Setup]    Run Keywords    Run    rm -rf /root/.ssh    AND    Run    rm -rf ${tftp_directory}
+    配置ssh登录用户    netcore    simple    test
+    Run    mkdir /root/.ssh
+    Run    cp tftpd-hpa /etc/default/tftpd-hpa
+    Run    service tftpd-hpa restart
+    Run    mkdir ${tftp_directory}
+    Run    chmod 777 ${tftp_directory}
+    ssh_key_generate    dsa
+    Sleep    2
+    Run    chmod 666 /root/.ssh/id_dsa.pub
+    Run    cp /root/.ssh/id_dsa.pub ${tftp_directory}
+    上传密钥    netcore    id_dsa.pub    dsa    192.168.2.16
+    Sleep    2
+    ExecuteCommand    show ssh user
+    ${out}    open_ssh_session    192.168.2.11    netcore    test
+    Sleep    2
+    ShouldContain    ${out}    Press RETURN to get started.
+    [Teardown]    Run Keywords    close_ssh_session    AND    删除ssh登录用户    netcore
+
+*** Keywords ***
+配置ssh登录用户
+    [Arguments]    ${user}    ${type}    ${pwd}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    ssh username ${user} password ${type} ${pwd}
+    ExecuteCommand    ssh allow-users ${user}
+    ExecuteCommand    exit
+
+开启ssh服务
+    ExecuteCommand    configure terminal
+    ExecuteCommand    ssh
+    ExecuteCommand    exit
+
+删除ssh登录用户
+    [Arguments]    ${user}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    ssh
+    ExecuteCommand    no ssh username ${user}
+    ExecuteCommand    exit
+
+关闭ssh服务
+    ExecuteCommand    configure terminal
+    ExecuteCommand    no ssh
+    ExecuteCommand    exit
+
+上传密钥
+    [Arguments]    ${user}    ${key}    ${t}    ${ip}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    ssh tftp-publickey ${user} ${key} ${t} ${ip}
+    Sleep    15
+    ExecuteCommand    exit
+
+取消密钥认证
+    [Arguments]    ${user}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    no ssh publickkey ${user}
+    ExecuteCommand    exit

@@ -1,0 +1,415 @@
+*** Settings ***
+Documentation     陈美君
+Suite Setup       Telnet登录交换机
+Suite Teardown    退出登录
+Resource          keyword.txt
+Library           scapyLibary.py
+Library           Collections
+Library           OperatingSystem
+
+*** Variables ***
+${host1_eth}      eth0
+${host2_eth}      eth1
+${host3_eth}      eth2
+
+*** Test Cases ***
+验证本地认证
+    [Setup]
+    ${mac1}    get_mac_by_iface    ${host1_eth}
+    ${mac2}    get_mac_by_iface    ${host2_eth}
+    创建本地认证用户    test    test
+    Sleep    2
+    全局启动dot1x
+    Sleep    2
+    启动常开模式    ${port2}
+    Sleep    2
+    Run    cp wpa_supplicant_local.conf /etc/wpa_supplicant_local.conf
+    Sleep    1
+    Run    wpa_supplicant -B -i ${host1_eth} -c /etc/wpa_supplicant_local.conf -D wired
+    Comment    Sleep    5
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='${mac1}',dst='${mac2}')/IP(src='192.168.1.16',dst='192.168.2.45')/ICMP()
+    Start Process    tshark -i ${host2_eth} -f 'ether src ${mac1} and icmp' -w 1.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    Comment    Remove Files    1.pcap
+    ShouldContain    ${r}    Number of packets: \ \ 5
+    logoff认证
+    结束认证进程
+    Sleep    5
+    excute_scapy_conmmand    p=Ether(src='${mac1}',dst='${mac2}')/IP(src='192.168.1.16',dst='192.168.2.45')/ICMP()
+    Start Process    tshark -i ${host2_eth} -f 'ether src ${mac1} and icmp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    Remove Files    1.pcap    2.pcap
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    [Teardown]    Run Keywords    logoff认证    AND    结束认证进程    AND    删除本地认证用户
+    ...    test    AND    close_scapy_session    AND    恢复Auto认证    ${port2}
+    ...    AND    RemoveFiles    1.pcap    2.pcap
+
+验证远程认证(Radius认证)
+    [Setup]    重启radius服务器
+    ${mac1}    get_mac_by_iface    ${host1_eth}
+    ${mac2}    get_mac_by_iface    ${host2_eth}
+    全局启动dot1x
+    开启远程认证
+    恢复Auto认证    ${port1}
+    启动常开模式    ${port2}
+    配置radius服务器    192.168.2.45
+    Sleep    2
+    Run    cp wpa_supplicant_radius.conf /etc/wpa_supplicant_radius.conf
+    Sleep    1
+    Run    wpa_supplicant -B -i ${host1_eth} -c /etc/wpa_supplicant_radius.conf -D wired
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='${mac1}',dst='${mac2}')/IP(src='192.168.1.16',dst='192.168.2.45')/ICMP()
+    Start Process    tshark -i ${host2_eth} -f 'ether src ${mac1} and icmp' -w 1.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    Comment    Remove Files    1.pcap
+    ShouldContain    ${r}    Number of packets: \ \ 5
+    Comment    Run    killall wpa_supplicant
+    logoff认证    ${host1_eth}
+    结束认证进程    ${host1_eth}
+    Sleep    5
+    excute_scapy_conmmand    p=Ether(src='${mac1}',dst='${mac2}')/IP(src='192.168.1.16',dst='192.168.2.45')/ICMP()
+    Start Process    tshark -i ${host2_eth} -f 'ether src ${mac1} and icmp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    Remove Files    1.pcap    2.pcap
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    [Teardown]    Run Keywords    logoff认证    ${host1_eth}    AND    结束认证进程    ${host1_eth}
+    ...    AND    close_scapy_session    AND    恢复Auto认证    ${port2}    AND
+    ...    Remove Files    1.pcap    2.pcap
+
+验证端口认证模式(MAC-based/Port-based)
+    [Setup]    重启radius服务器
+    ${mac1}    get_mac_by_iface    ${host1_eth}
+    ${mac2}    get_mac_by_iface    ${host2_eth}
+    ${mac3}    get_mac_by_iface    ${host3_eth}
+    全局启动dot1x
+    开启远程认证
+    恢复Auto认证    ${port1}
+    启动常开模式    ${port2}
+    配置radius服务器    192.168.2.45
+    配置端口认证模式    mac
+    Sleep    2
+    Run    cp wpa_supplicant_radius.conf /etc/wpa_supplicant_radius.conf
+    Sleep    1
+    Run    wpa_supplicant -B -i ${host1_eth} -c /etc/wpa_supplicant_radius.conf -D wired
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='${mac1}',dst='${mac2}')/IP(src='192.168.1.16',dst='192.168.2.45')/ICMP()
+    Start Process    tshark -i ${host2_eth} -f 'ether src ${mac1} and icmp' -w 1.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    Comment    Remove Files    1.pcap
+    ShouldContain    ${r}    Number of packets: \ \ 5
+    Comment    Run    killall wpa_supplicant
+    excute_scapy_conmmand    p=Ether(src='${mac3}',dst='${mac2}')/IP(src='192.168.1.85',dst='192.168.2.45')/ICMP()
+    Start Process    tshark -i ${host2_eth} -f 'ether src ${mac3} and icmp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host3_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    Remove Files    1.pcap    2.pcap
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    logoff认证    ${host1_eth}
+    结束认证进程    ${host1_eth}
+    Sleep    5
+    全局启动dot1x
+    开启远程认证
+    恢复Auto认证    ${port1}
+    启动常开模式    ${port2}
+    配置radius服务器    192.168.2.45
+    配置端口认证模式    port
+    Sleep    2
+    Run    cp wpa_supplicant_radius.conf /etc/wpa_supplicant_radius.conf
+    Sleep    1
+    Run    wpa_supplicant -B -i ${host1_eth} -c /etc/wpa_supplicant_radius.conf -D wired
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='${mac1}',dst='${mac2}')/IP(src='192.168.1.16',dst='192.168.2.45')/ICMP()
+    Start Process    tshark -i ${host2_eth} -f 'ether src ${mac1} and icmp' -w 1.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    Comment    Remove Files    1.pcap
+    ShouldContain    ${r}    Number of packets: \ \ 5
+    Comment    Run    killall wpa_supplicant
+    excute_scapy_conmmand    p=Ether(src='${mac3}',dst='${mac2}')/IP(src='192.168.1.85',dst='192.168.2.45')/ICMP()
+    Start Process    tshark -i ${host2_eth} -f 'ether src ${mac3} and icmp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host3_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    Remove Files    1.pcap    2.pcap
+    ShouldContain    ${r}    Number of packets: \ \ 5
+    [Teardown]    Run Keywords    logoff认证    ${host1_eth}    AND    结束认证进程    ${host1_eth}
+    ...    AND    close_scapy_session    AND    恢复Auto认证    ${port2}    AND
+    ...    Remove Files    1.pcap    2.pcap    AND    配置端口认证模式    mac
+
+验证端口控制方式
+    [Documentation]    AND | 恢复Auto认证 | ${port2} |
+    [Setup]    重启radius服务器
+    ${mac1}    get_mac_by_iface    ${host1_eth}
+    ${mac2}    get_mac_by_iface    ${host2_eth}
+    全局启动dot1x
+    开启远程认证
+    启动常开模式    ${port1}
+    启动常开模式    ${port2}
+    配置radius服务器    192.168.2.45
+    Sleep    2
+    Run    cp wpa_supplicant_radius.conf /etc/wpa_supplicant_radius.conf
+    Sleep    1
+    Run    wpa_supplicant -B -i ${host1_eth} -c /etc/wpa_supplicant_radius.conf -D wired
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='${mac1}',dst='${mac2}')/IP(src='192.168.1.16',dst='192.168.2.45')/ICMP()
+    Start Process    tshark -i ${host2_eth} -f 'ether src ${mac1} and icmp' -w 1.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    Remove Files    1.pcap
+    ShouldContain    ${r}    Number of packets: \ \ 5
+    Comment    Run    killall wpa_supplicant
+    logoff认证    ${host1_eth}
+    结束认证进程    ${host1_eth}
+    Sleep    5
+    启动非授权模式    ${port1}
+    Run    wpa_supplicant -B -i ${host1_eth} -c /etc/wpa_supplicant_radius.conf -D wired
+    excute_scapy_conmmand    p=Ether(src='${mac1}',dst='${mac2}')/IP(src='192.168.1.16',dst='192.168.2.45')/ICMP()
+    Start Process    tshark -i ${host2_eth} -f 'ether src ${mac1} and icmp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    Remove Files    2.pcap
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    logoff认证    ${host1_eth}
+    结束认证进程    ${host1_eth}
+    Sleep    5
+    恢复Auto认证    ${port1}
+    Run    wpa_supplicant -B -i ${host1_eth} -c /etc/wpa_supplicant_radius.conf -D wired
+    excute_scapy_conmmand    p=Ether(src='${mac1}',dst='${mac2}')/IP(src='192.168.1.16',dst='192.168.2.45')/ICMP()
+    Start Process    tshark -i ${host2_eth} -f 'ether src ${mac1} and icmp' -w 3.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 3.pcap
+    Log    ${r}
+    Remove Files    3.pcap
+    ShouldContain    ${r}    Number of packets: \ \ 5
+    logoff认证    ${host1_eth}
+    结束认证进程    ${host1_eth}
+    [Teardown]    Run Keywords    logoff认证    ${host1_eth}    AND    结束认证进程    ${host1_eth}
+    ...    AND    close_scapy_session    AND    Remove Files    1.pcap    2.pcap
+
+验证端口认证用户数量限制
+    [Setup]    重启radius服务器
+    ${mac1}    get_mac_by_iface    ${host1_eth}
+    ${mac2}    get_mac_by_iface    ${host2_eth}
+    ${mac3}    get_mac_by_iface    ${host3_eth}
+    全局启动dot1x
+    开启远程认证
+    恢复Auto认证    ${port1}
+    启动常开模式    ${port2}
+    Comment    恢复Auto认证    ${port3}
+    配置radius服务器    192.168.2.45
+    配置端口认证模式    mac
+    Sleep    2
+    Run    cp wpa_supplicant_radius.conf /etc/wpa_supplicant_radius.conf
+    Sleep    1
+    Run    wpa_supplicant -B -i ${host1_eth} -c /etc/wpa_supplicant_radius.conf -D wired
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='${mac1}',dst='${mac2}')/IP(src='192.168.1.16',dst='192.168.2.45')/ICMP()
+    Start Process    tshark -i ${host2_eth} -f 'ether src ${mac1} and icmp' -w 1.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    Run    killall wpa_supplicant
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 5
+    Run    cp wpa_supplicant_radius2.conf /etc/wpa_supplicant_radius2.conf
+    Sleep    1
+    Run    wpa_supplicant -B -i ${host3_eth} -c /etc/wpa_supplicant_radius2.conf -D wired
+    excute_scapy_conmmand    p=Ether(src='${mac3}',dst='${mac2}')/IP(src='192.168.1.85',dst='192.168.2.45')/ICMP()
+    Start Process    tshark -i ${host2_eth} -f 'ether src ${mac3} and icmp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host3_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    Run    killall wpa_supplicant
+    ${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    Remove Files    1.pcap    2.pcap
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    logoff认证    ${host1_eth}
+    结束认证进程    ${host1_eth}
+    logoff认证    ${host3_eth}
+    结束认证进程    ${host3_eth}
+    Sleep    10
+    配置端口认证数量    ${port1}    2
+    Sleep    2
+    Run    cp wpa_supplicant_radius.conf /etc/wpa_supplicant_radius.conf
+    Sleep    1
+    Run    wpa_supplicant -B -i ${host1_eth} -c /etc/wpa_supplicant_radius.conf -D wired
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='${mac1}',dst='${mac2}')/IP(src='192.168.1.16',dst='192.168.2.45')/ICMP()
+    Start Process    tshark -i ${host2_eth} -f 'ether src ${mac1} and icmp' -w 1.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host1_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    Run    killall wpa_supplicant
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 5
+    Run    cp wpa_supplicant_radius2.conf /etc/wpa_supplicant_radius2.conf
+    Sleep    1
+    Run    wpa_supplicant -B -i ${host3_eth} -c /etc/wpa_supplicant_radius2.conf -D wired
+    excute_scapy_conmmand    p=Ether(src='${mac3}',dst='${mac2}')/IP(src='192.168.1.85',dst='192.168.2.45')/ICMP()
+    Start Process    tshark -i ${host2_eth} -f 'ether src ${mac3} and icmp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${host3_eth}',count=5)
+    Sleep    10
+    Run    killall tshark
+    Run    killall wpa_supplicant
+    ${r}    Run    capinfos -c 2.pcap
+    Log    ${r}
+    Remove Files    1.pcap    2.pcap
+    ShouldContain    ${r}    Number of packets: \ \ 5
+    Comment    logoff认证    ${host1_eth}
+    Comment    结束认证进程    ${host1_eth}
+    Comment    logoff认证    ${host3_eth}
+    Comment    结束认证进程    ${host3_eth}
+    [Teardown]    Run Keywords    logoff认证    ${host1_eth}    AND    结束认证进程    ${host1_eth}
+    ...    AND    logoff认证    ${host3_eth}    AND    结束认证进程    ${host3_eth}
+    ...    AND    close_scapy_session    AND    恢复Auto认证    ${port2}    AND
+    ...    恢复默认端口认证数量    ${port1}    AND    Remove Files    1.pcap    2.pcap
+    ...    AND    配置端口认证模式    mac
+
+*** Keywords ***
+删除本地认证用户
+    [Arguments]    ${user}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    no dot1x local-userInfo ${user}
+    ExecuteCommand    exit
+
+创建本地认证用户
+    [Arguments]    ${user}    ${pwd}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    dot1x auth-mode local
+    ExecuteCommand    dot1x local-userInfo ${user} ${pwd}
+    ExecuteCommand    exit
+
+全局启动dot1x
+    ExecuteCommand    configure terminal
+    ExecuteCommand    dot1x system-auth-control
+    ExecuteCommand    exit
+
+启动常开模式
+    [Arguments]    ${port}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    interface ${port}
+    ExecuteCommand    dot1x port-control force-authorized
+    ExecuteCommand    exit
+    ExecuteCommand    exit
+
+恢复Auto认证
+    [Arguments]    ${port}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    interface ${port}
+    ExecuteCommand    dot1x port-control auto
+    ExecuteCommand    exit
+    ExecuteCommand    exit
+
+启动非授权模式
+    [Arguments]    ${port}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    interface ${port}
+    ExecuteCommand    dot1x port-control force-unauthorized
+    ExecuteCommand    exit
+    ExecuteCommand    exit
+
+开启远程认证
+    ExecuteCommand    configure terminal
+    ExecuteCommand    dot1x auth-mode radius
+    ExecuteCommand    exit
+
+配置radius服务器
+    [Arguments]    ${ip}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    radius-server host ${ip} acct-port 1813
+    ExecuteCommand    radius-server host ${ip} auth-port 1812
+    ExecuteCommand    radius-server key testing123
+    ExecuteCommand    exit
+
+logoff认证
+    [Arguments]    ${host_eth}
+    Run    wpa_cli -i ${host_eth} logoff
+
+结束认证进程
+    [Arguments]    ${host_eth}
+    Run    wpa_cli -i ${host_eth} terminate
+
+重启radius服务器
+    Run    service freeradius restart
+
+配置端口认证模式
+    [Arguments]    ${mode}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    dot1x authorized-work-mode ${mode}
+    ExecuteCommand    exit
+
+全局关闭dot1x
+    ExecuteCommand    configure terminal
+    ExecuteCommand    no dot1x system-auth-control
+    ExecuteCommand    exit
+
+配置端口认证数量
+    [Arguments]    ${port}    ${num}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    interface ${port}
+    ExecuteCommand    dot1x host-mode multi-host 2
+    ExecuteCommand    exit
+    ExecuteCommand    exit
+
+恢复默认端口认证数量
+    [Arguments]    ${port}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    interface ${port}
+    ExecuteCommand    dot1x host-mode single-host
+    ExecuteCommand    exit
+    ExecuteCommand    exit

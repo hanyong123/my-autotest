@@ -1,0 +1,195 @@
+*** Settings ***
+Documentation     jlt
+Suite Setup       Telnet登录交换机
+Suite Teardown    退出登录
+Resource          keyword.txt
+Library           Collections
+Library           arp.py
+Library           common.py
+Library           OperatingSystem
+Library           scapyLibary.py
+
+*** Variables ***
+${port1_host_if}    eth0
+${port2_host_if}    eth1
+${port3_host_if}    eth2
+${port4_host_if}    eth3
+${switc_manage_ip1}    192.168.2.12
+
+*** Test Cases ***
+验证vlan内互通
+    创建Access模式vlan    ${port1}    1
+    创建Access模式vlan    ${port2}    1
+    创建Access模式vlan    ${port3}    1
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(src='00:00:00:00:00:01',dst='00:00:00:00:00:03')/IP()/ICMP()
+    excute_scapy_conmmand    sendp{p,iface='${port1_host_if}',count=1)
+    excute_scapy_conmmand    p1=Ether(src='00:00:00:00:00:02',dst='00:00:00:00:00:03')/IP()/ICMP()
+    excute_scapy_conmmand    sendp{p1,iface='${port2_host_if}',count=1)
+    ${out}    send_and_recv_icmp    ${port3_host_if}    00:00:00:00:00:03    00:00:00:00:00:01    192.168.1.4    192.168.1.2
+    ...    ${port1_host_if}
+    Should Contain    ${out}    OK
+    ${out}    send_and_recv_icmp    ${port3_host_if}    00:00:00:00:00:03    00:00:00:00:00:02    192.168.1.4    192.168.1.2
+    ...    ${port1_host_if}
+    Should Contain    ${out}    OK
+
+验证vlan隔离
+    创建Access模式vlan    ${port1}    1
+    创建Access模式vlan    ${port2}    2
+    创建Access模式vlan    ${port3}    3
+    open_scapy_session
+    ${out}    send_and_recv_icmp    ${port1_host_if}    00:00:00:00:00:03    00:00:00:00:00:01    192.168.1.4    192.168.1.2
+    ...    ${port2_host_if}
+    Should Contain    ${out}    fail
+    ${out}    send_and_recv_icmp    ${port1_host_if}    00:00:00:00:00:03    00:00:00:00:00:02    192.168.1.4    192.168.1.2
+    ...    ${port3_host_if}
+    Should Contain    ${out}    fail
+    ${out}    send_and_recv_icmp    ${port1_host_if}    00:00:00:00:00:03    ff:ff:ff:ff:ff:ff    192.168.1.4    192.168.1.255
+    ...    ${port2_host_if}
+    Should Contain    ${out}    fail
+    ${out}    send_and_recv_icmp    ${port1_host_if}    00:00:00:00:00:03    ff:ff:ff:ff:ff:ff    192.168.1.4    192.168.1.255
+    ...    ${port3_host_if}
+    Should Contain    ${out}    fail
+    ${out}    send_and_recv_icmp    ${port1_host_if}    00:00:00:00:00:03    ff:ff:ff:ff:ff:ff    192.168.1.4    255.255.255.255
+    ...    ${port2_host_if}
+    Should Contain    ${out}    fail
+    ${out}    send_and_recv_icmp    ${port1_host_if}    00:00:00:00:00:03    ff:ff:ff:ff:ff:ff    192.168.1.4    255.255.255.255
+    ...    ${port3_host_if}
+    Should Contain    ${out}    fail
+
+验证vlan支持的数目和范围
+    创建最大数目Trunk模式vlan    ${port3}    4094
+    查询端口所有模式Trunk模式vlan    ${port3}    4094
+    删除最大数目Trunk模式vlan    ${port3}    4094
+    @{vid_id}    get_rand_vid    4094
+    : FOR    ${vid}    IN    @{vid_id}
+    \    ${cmd}    Catenate    show vlan    ${vid}
+    \    ${out}    Execute Command    ${cmd}
+    \    Should Contain    ${out}    invalid vlan id!
+
+验证跨设备的VLAN互通
+    Close All Connections
+    登录指定交换机    ${switc_manage_ip}    DUT1
+    创建Trunk模式vlan    ${port1}    10
+    创建Trunk模式vlan    ${port1}    20
+    创建Trunk模式vlan    ${port2}    10
+    创建Trunk模式vlan    ${port2}    20
+    登录指定交换机    ${switc_manage_ip1}    DUT2
+    创建Trunk模式vlan    ${port2}    10
+    创建Trunk模式vlan    ${port2}    20
+    创建Access模式vlan    ${port1}    10
+    open_scapy_session
+    excute_scapy_conmmand    p=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:02')/Dot1Q(vlan=10)/IP(dst='255.255.255.255', src='192.168.1.2')/ICMP()
+    excute_scapy_conmmand    p1=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:03')/Dot1Q(vlan=20)/IP(dst='255.255.255.255', src='192.168.1.3')/ICMP()
+    StartProcess    tshark -i ${port2_host_if} -f 'ether src 00:00:00:00:00:02 and icmp' -w 1.pcap
+    StartProcess    tshark -i ${port2_host_if} -f 'ether src 00:00:00:00:00:03 and icmp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${port1_host_if}',count=3)
+    excute_scapy_conmmand    sendp(p1,iface='${port1_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 3
+    ${r1}    Run    capinfos -c 2.pcap
+    Log    ${r1}
+    ShouldContain    ${r1}    Number of packets: \ \ 0
+    RemoveFiles    1.pcap    2.pcap
+    创建Access模式vlan    ${port1}    20
+    excute_scapy_conmmand    p=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:02')/Dot1Q(vlan=10)/IP(dst='255.255.255.255', src='192.168.1.2')/ICMP()
+    excute_scapy_conmmand    p1=Ether(dst='ff:ff:ff:ff:ff:ff', src='00:00:00:00:00:03')/Dot1Q(vlan=20)/IP(dst='255.255.255.255', src='192.168.1.3')/ICMP()
+    StartProcess    tshark -i ${port2_host_if} -f 'ether src 00:00:00:00:00:02 and icmp' -w 1.pcap
+    StartProcess    tshark -i ${port2_host_if} -f 'ether src 00:00:00:00:00:03 and icmp' -w 2.pcap
+    Sleep    10
+    excute_scapy_conmmand    sendp(p,iface='${port1_host_if}',count=3)
+    excute_scapy_conmmand    sendp(p1,iface='${port1_host_if}',count=3)
+    Sleep    10
+    Run    killall tshark
+    ${r}    Run    capinfos -c 1.pcap
+    Log    ${r}
+    ShouldContain    ${r}    Number of packets: \ \ 0
+    ${r1}    Run    capinfos -c 2.pcap
+    Log    ${r1}
+    ShouldContain    ${r1}    Number of packets: \ \ 3
+    RemoveFiles    1.pcap    2.pcap
+
+*** Keywords ***
+创建Trunk模式vlan
+    [Arguments]    ${port}    ${vlan_id}
+    Execute Command    configure terminal
+    ${cmd}    Catenate    interface    ${port}
+    Execute Command    ${cmd}
+    Execute Command    switchport mode trunk
+    ${cmd}    Catenate    switchport trunk    allowed    vlan    add    ${vlan_id}
+    Execute Command    ${cmd}
+    Execute Command    exit
+    Execute Command    exit
+
+删除runk模式vlan
+    [Arguments]    ${port}    ${vlan_id}
+    Execute Command    configure terminal
+    ${cmd}    Catenate    interface    ${port}
+    Execute Command    ${cmd}
+    Execute Command    switchport mode trunk
+    ${cmd}    Catenate    switchport trunk    allowed    vlan    remove    ${vlan_id}
+    Execute Command    ${cmd}
+    Execute Command    exit
+    Execute Command    exit
+
+创建最大数目Trunk模式vlan
+    [Arguments]    ${port}    ${vid_max}
+    @{vid_id}    get_rand_vid    ${vid_max}
+    Execute Command    configure terminal
+    ${cmd}    Catenate    interface    ${port}
+    Execute Command    ${cmd}
+    Execute Command    switchport mode trunk
+    : FOR    ${vid}    IN    @{vid_id}
+    \    ${cmd}    Catenate    switchport trunk    allowed    vlan    add
+    \    ...    ${vid}
+    \    Execute Command    ${cmd}
+    Execute Command    exit
+    Execute Command    exit
+
+删除最大数目Trunk模式vlan
+    [Arguments]    ${port}    ${vid_max}
+    @{vid_id}    get_rand_vid    ${vid_max}
+    Execute Command    configure terminal
+    ${cmd}    Catenate    interface    ${port}
+    Execute Command    ${cmd}
+    Execute Command    switchport mode trunk
+    : FOR    ${vid}    IN    @{vid_id}
+    \    ${cmd}    Catenate    switchport trunk    allowed    vlan    remove
+    \    ...    ${vid}
+    \    Execute Command    ${cmd}
+    Execute Command    exit
+    Execute Command    exit
+
+查询端口所有模式Trunk模式vlan
+    [Arguments]    ${port}    ${vid_max}
+    @{vid_id}    get_rand_vid    ${vid_max}
+    : FOR    ${vid}    IN    @{vid_id}
+    \    ${cmd}    Catenate    show vlan    ${vid}
+    \    ${out}    Execute Command    ${cmd}
+    \    Should Contain    ${out}    VID VLAN_Name
+
+登录指定交换机
+    [Arguments]    ${switch_ip}    ${name}
+    Open Connection    ${switch_ip}    ${name}    prompt=#
+    Log    ${name}
+    Sleep    1
+    Write    ${EMPTY}
+    Sleep    1
+    Write    ${login_user}
+    Sleep    1
+    Write    ${login_passwd}
+    Sleep    1
+    Write    ena
+    Sleep    1
+    Write    ${login_passwd}
+    Sleep    1
+    ${out}    Read
+    Execute Command    configure terminal
+    Execute Command    line vty
+    Execute Command    no exec-timeout
+    Execute Command    exit
+    Execute Command    exit

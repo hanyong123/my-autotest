@@ -123,3 +123,89 @@ Telnet登录交换机
     Execute Command    configure terminal
     Execute Command    mls qos queue type strict
     Execute Command    exit
+
+删除动态mac地址表
+    [Arguments]    ${id}
+    ExecuteCommand    configure terminal
+    Execute Command    del dynamic-mac-table vlan ${id}
+    Execute Command    exit
+
+配置MAC地址最大学习个数
+    [Arguments]    ${port}    ${num}
+    ExecuteCommand    configure terminal
+    Execute Command    interface ${port}
+    Execute Command    mac dynamic-mac limit ${num}
+    Execute Command    exit
+    Execute Command    exit
+
+禁止指定端口的MAC地址学习
+    [Arguments]    ${port}
+    ExecuteCommand    configure terminal
+    ExecuteCommand    interface ${port}
+    ExecuteCommand    switchport port-security
+    ExecuteCommand    exit
+    ExecuteCommand    exit
+
+交换机恢复缺省并重启
+    Execute Command    copy default start
+    Run Keyword And Ignore Error    write    system reboot
+    sleep    20
+
+Telnet登录交换机2
+    [Arguments]    ${switc_manage_ip}
+    Open Connection    ${switc_manage_ip}    prompt=#
+    Sleep    1
+    Write    ${EMPTY}
+    Sleep    1
+    Write    ${login_user}
+    Sleep    1
+    Write    ${login_passwd}
+    Sleep    1
+    Write    ena
+    Sleep    1
+    Write    ${login_passwd}
+    Sleep    1
+    ${out}    Read
+    Execute Command    configure terminal
+    Execute Command    line vty
+    Execute Command    no exec-timeout
+    Execute Command    exit
+    Execute Command    exit
+    [Teardown]
+
+取消igmpsnooping
+    Execute Command    configure terminal
+    Execute Command    no ip igmp snooping
+    Execute Command    exit
+
+启用igmp snooping
+    Execute Command    configure terminal
+    Execute Command    ip igmp snooping
+    Execute Command    exit
+
+设置组播路由器端口老化时间
+    [Arguments]    ${time}
+    Execute Command    configure terminal
+    Execute Command    ip igmp snooping router-port-aged-timer ${time}
+    Execute Command    exit
+
+设置组播成员端口老化时间
+    [Arguments]    ${time}
+    Execute Command    configure terminal
+    Execute Command    ip ig snooping member-aged-timer ${time}
+    Execute Command    exit
+
+设置组播禁止地址
+    [Arguments]    ${ip}
+    Execute Command    configure terminal
+    Execute Command    ip igmp policy 1 deny \ \ ${ip}
+    Execute Command    exit
+
+对端口应用多播组禁止策略
+    [Arguments]    ${port}
+    Execute Command    configure terminal
+    ${cmd}    Catenate    interface    ${port}
+    Execute Command    ${cmd}
+    Execute Command    ip ig filter 1 vlan 1
+    Execute Command    exit
+    Execute Command    exit
