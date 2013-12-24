@@ -1,0 +1,24 @@
+*** Settings ***
+Suite Setup       初始化测试
+Resource          keyword.txt
+
+*** Test Cases ***
+WAN->WLAN 加密:None 20M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=0
+    无线安全配置
+    无线高级配置    shortGi=1
+    rlib1.wirelessConnect    ${ssid}    ${EMPTY}    none    ${EMPTY}    open
+    wirelessConnect    ${ssid}    ${EMPTY}    none    ${EMPTY}    open
+    executChariotTest
+    writeToExcel    111    11
+    [Teardown]    清理测试
+
+WAN->WLAN 加密:None 40M短间隙Throughput
+    无线基本配置    ssid=${ssid}    channel_width=1
+    无线安全配置
+    无线高级配置    shortGi=1
+    rlib1.wirelessConnect    ${ssid}    ${EMPTY}    none    ${EMPTY}    open
+    wirelessConnect    ${ssid}    ${EMPTY}    none    ${EMPTY}    open
+    executChariotTest
+    writeToExcel    112    11
+    [Teardown]    清理测试

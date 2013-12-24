@@ -1,0 +1,18 @@
+*** Variables ***
+${router_lan_ip}    192.168.1.1
+${login_user}     guest
+${login_passwd}    guest
+${netcore_set_cgi_url}    /cgi-bin-igd/netcore_set.cgi
+${response_success_string}    SUCCESS
+${wlan_host1_ip}    192.168.1.103
+${wlan_host2_ip}    192.168.1.104
+${remote_lib_ip}    192.168.1.3
+${remote_lib_port}    8028
+${wire_iface_name}    本地连接
+${ssid}           hany123
+${wep_passwd_64_asc}    12345
+${wep_passwd_64_hex}    3132333435
+${wep_passwd_128_asc}    1234567890abc
+${wep_passwd_128_hex}    31323334353637383930616263
+${wpa_passwd_asc}    123456789
+${wpa_passwd_hex}    3132333435363738393132333435363738393132333435363738393132333435
