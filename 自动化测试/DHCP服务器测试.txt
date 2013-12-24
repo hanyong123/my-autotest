@@ -1,0 +1,205 @@
+*** Settings ***
+Resource          keyword.txt
+Library           dhcpServerTestLib.py    ${host_lan_ip}    ${router_lan_ip}    WITH NAME    dhcpServerTestLib
+
+*** Test Cases ***
+DHCP服务器地址池实现获取测试
+    [Documentation]    DHCP client未指定IP和DHCP server完成协商，DHCP server分配地址池中的未占用IP给DHCP client
+    ...    @['dhcp_start_ip','dhcp_end_ip','save_dhcp_server']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=dhcp_start_ip
+    设置LAN口DHCP服务器    ${None}    192.168.1.100    192.168.1.110
+    设置应该成功
+    host_get_ip_should_be_right    192.168.1.100    192.168.1.110
+    ${client_ip}    get_dhcp_client_ip
+    客户端显示在列表里    ${client_ip}
+    [Teardown]    测试清理
+
+DHCP服务器地址池实现获取指定IP测试
+    [Documentation]    @['dhcp_start_ip','dhcp_end_ip','save_dhcp_server']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=dhcp_start_ip
+    设置LAN口DHCP服务器    ${None}    192.168.1.100    192.168.1.110
+    设置应该成功
+    host_get_spefic_ip    192.168.1.105
+    [Teardown]    测试清理
+
+DHCP服务器地址池实现获取LAN口IP测试
+    [Documentation]    DHCP SERVER不会将路由器LAN口IP分配给DHCP client
+    ...    @['dhcp_start_ip','dhcp_end_ip','save_dhcp_server']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=dhcp_start_ip
+    设置LAN口DHCP服务器    ${None}    192.168.1.1    192.168.1.10
+    设置应该成功
+    start_dhcp_client    192.168.1.1
+    ${client_ip}    get_dhcp_client_ip
+    Should Not Be Equal    ${client_ip}    192.168.1.1
+    [Teardown]    测试清理
+
+DHCP服务器地址池实现获取网段地址测试
+    [Documentation]    DHCP SERVER不会将路由器LAN口IP所在网段的网段地址分配给DHCP client
+    ...    @['dhcp_start_ip','dhcp_end_ip','save_dhcp_server']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=dhcp_start_ip
+    设置LAN口DHCP服务器    ${None}    192.168.0.250    192.168.1.10
+    设置应该成功
+    start_dhcp_client    192.168.1.0
+    ${client_ip}    get_dhcp_client_ip
+    Should Not Be Equal    ${client_ip}    192.168.1.0
+    [Teardown]    测试清理
+
+DHCP服务器地址池实现获取广播地址测试
+    [Documentation]    DHCP SERVER不会将路由器LAN口IP所在网段的广播地址分配给DHCP client
+    ...    @['dhcp_start_ip','dhcp_end_ip','save_dhcp_server']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=dhcp_start_ip
+    设置LAN口DHCP服务器    ${None}    192.168.1.250    192.168.2.10
+    设置应该成功
+    start_dhcp_client    192.168.1.255
+    ${client_ip}    get_dhcp_client_ip
+    Should Not Be Equal    ${client_ip}    192.168.1.255
+    [Teardown]    测试清理
+
+DHCP服务器地址池实现获取已分配地址测试
+    [Documentation]    DHCP SERVER不会将已分配的IP地址分配给DHCP client
+    ...    @['dhcp_start_ip','dhcp_end_ip','save_dhcp_server']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=dhcp_start_ip
+    设置LAN口DHCP服务器    ${None}    192.168.1.100    192.168.1.110
+    设置应该成功
+    start_dhcp_client2    192.168.1.100
+    ${client_ip}    get_dhcp_client_ip2
+    Should Be Equal    ${client_ip}    192.168.1.100
+    start_dhcp_client    192.168.1.100
+    ${client_ip}    get_dhcp_client_ip
+    Should Not Be Equal    ${client_ip}    192.168.1.100
+    dhcp_release2
+    [Teardown]    测试清理
+
+DHCP服务器地址池实现获取地址池外的地址测试
+    [Documentation]    DHCP SERVER不会将地址池之外的IP地址分配给DHCP client
+    ...    @['dhcp_start_ip','dhcp_end_ip','save_dhcp_server']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=dhcp_start_ip
+    设置LAN口DHCP服务器    ${None}    192.168.1.100    192.168.1.110
+    设置应该成功
+    start_dhcp_client    192.168.1.200
+    ${client_ip}    get_dhcp_client_ip
+    Should Not Be Equal    ${client_ip}    192.168.1.200
+    [Teardown]    测试清理
+
+DHCP服务器地址池实现释放IP地址测试
+    [Documentation]    DHCP SERVER收到来自DHCP client的release报文后，释放已分配的IP为可用IP
+    ...    @['dhcp_start_ip','dhcp_end_ip','save_dhcp_server']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=dhcp_start_ip
+    设置LAN口DHCP服务器    ${None}    192.168.1.100    192.168.1.110
+    设置应该成功
+    start_dhcp_client2    192.168.1.100
+    ${client_ip}    get_dhcp_client_ip2
+    Should Be Equal    ${client_ip}    192.168.1.100
+    start_dhcp_client    192.168.1.100
+    ${client_ip}    get_dhcp_client_ip
+    Should Not Be Equal    ${client_ip}    192.168.1.100
+    dhcp_release2
+    dhcp_release
+    start_dhcp_client    192.168.1.100
+    ${client_ip}    get_dhcp_client_ip
+    Should Be Equal    ${client_ip}    192.168.1.100
+    [Teardown]    测试清理
+
+DHCP服务器地址池实现处理DECLIEN包测试
+    [Documentation]    DHCP SERVER收到来自DHCP client的DECLINE报文后，释放已分配的IP为可用IP
+    ...    @['dhcp_start_ip','dhcp_end_ip','save_dhcp_server']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=dhcp_start_ip
+    设置LAN口DHCP服务器    ${None}    192.168.1.100    192.168.1.110
+    设置应该成功
+    start_dhcp_client    192.168.1.100
+    ${client_ip}    get_dhcp_client_ip
+    Should Be Equal    ${client_ip}    192.168.1.100
+    dhcp_decline
+    start_dhcp_client    ${None}
+    ${client_ip}    get_dhcp_client_ip
+    Should Not Be Equal    ${client_ip}    192.168.1.100
+    [Teardown]    恢复系统缺省
+
+DHCP服务器地址池实现无可用地址时进行获取测试
+    [Documentation]    DHCP server地址池已耗尽时，DHCP client发起DHCP协商，路由器不回应DHCP offer，表明地址池已满
+    ...    @['dhcp_start_ip','dhcp_end_ip','save_dhcp_server']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=dhcp_start_ip
+    设置LAN口DHCP服务器    ${None}    192.168.1.100    192.168.1.100
+    设置应该成功
+    start_dhcp_client2    192.168.1.100
+    ${client_ip}    get_dhcp_client_ip2
+    Should Be Equal    ${client_ip}    192.168.1.100
+    Run Keyword And Expect Error    DHCP Server No Response offer    start_dhcp_client    192.168.1.100
+    dhcp_release2
+    [Teardown]    恢复系统缺省
+
+DHCP服务器协议实现协议长度测试1
+    [Documentation]    路由器收到选项字段长度为0字节的DHCP DISCOVER包，不做响应，不会导致DHCP协议栈崩溃。
+    ...    @['dhcp_start_ip','dhcp_end_ip','save_dhcp_server']
+    [Tags]    include
+    send_dhcp_discovery_zero_len_dhcp_server_should_not_reply_offer
+    start_dhcp_client    ${None}
+    [Teardown]    dhcp_release
+
+DHCP服务器协议实现协议长度测试2
+    [Documentation]    路由器收到选项字段长度超过312字节的DHCP DISCOVER包，不做响应，不会导致DHCP协议栈崩溃。
+    ...    @['dhcp_start_ip','dhcp_end_ip','save_dhcp_server']
+    [Tags]    include
+    send_too_long_discovery_dhcp_server_should_not_reply_offer
+    start_dhcp_client    ${None}
+    [Teardown]    dhcp_release
+
+DHCP服务器协议实现协议格式测试
+    [Documentation]    路由器收到没有结束选项“255”的DHCP DISCOVER包，不做响应，不会导致DHCP协议栈崩溃
+    ...    @['dhcp_start_ip','dhcp_end_ip','save_dhcp_server']
+    [Tags]    include
+    no_end_option_should_not_reply_dhcp_offer
+    start_dhcp_client    ${None}
+    [Teardown]    dhcp_release
+
+DHCP服务器协议实现magic number测试
+    [Documentation]    @['dhcp_start_ip','dhcp_end_ip','save_dhcp_server']
+    [Tags]    include
+    dhcp_magic_num_test
+
+*** Keywords ***
+测试清理
+    dhcp_release
+    Close Browser
+
+客户端显示在列表里
+    [Arguments]    ${ip}
+    Reload Page
+    goto_test_case_page
+    Wait Until Page Contains Element    xpath=//table[@class="df_tab"]
+    Table Should Contain    xpath=//table[@class="df_tab"]    ${ip}
+
+恢复系统缺省
+    转到系统恢复缺省页面
+    恢复缺省
+    Close Browser

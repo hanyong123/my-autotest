@@ -1,0 +1,547 @@
+*** Settings ***
+Suite Setup       清空pcap目录
+Force Tags
+Resource          keyword.txt
+Library           PPPoETestLib
+Library           Remote    http://${remote_lib_ip}:${remote_pppoe_lib_port}    WITH NAME    remotePPPoETestLib
+
+*** Variables ***
+${pppoe_server_iface}    eth0
+${pppoe_server_ip}    100.0.0.109
+${pppoe_server_security}    chap
+${pppoe_server_ac_name}    netcoreac
+${pppoe_server_service_name}    netcore
+${pppoe_server_session_num}    1
+${pppoe_server_dns1}    219.141.140.10
+${pppoe_server_dns2}    8.8.8.8
+
+*** Test Cases ***
+PPPOE接入认证测试1
+    [Documentation]    使用自动连接模式，使用无效PPPOE用户名进行PPPOE拨号连接，日志提示PPPOE连接认证错误，帐号或密码有误
+    ...    @['pppoe_username','pppoe_pwd','ppp_connect_mode_auto','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    12345    969090    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    转到日志页面
+    清空全部日志
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    ${msg}    Run Keyword And Expect Error    *    PPPoEConnectWait
+    Should Be Equal    ${msg}    PPPoE connect Error
+    Wait Until Keyword Succeeds    20    5    日志显示帐号密码错误
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    0.0.0.0
+    [Teardown]    清理测试
+
+PPPOE接入认证测试2
+    [Documentation]    PPPOE接入认证实现 使用自动连接模式，使用有效PPPOE用户名、错误密码进行PPPOE拨号连接，日志提示PPPOE连接认证错误，帐号或密码有误
+    ...    @['pppoe_username','pppoe_pwd','ppp_connect_mode_auto','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    12345    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    转到日志页面
+    清空全部日志
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    ${msg}    Run Keyword And Expect Error    *    PPPoEConnectWait
+    Should Be Equal    ${msg}    PPPoE connect Error
+    Wait Until Keyword Succeeds    20    5    日志显示帐号密码错误
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    0.0.0.0
+    [Teardown]    清理测试
+
+PPPOE自动连接测试1
+    [Documentation]    PPPOE自动连接实现 配置WAN口为PPPOE自动连接模式，保存生效后，路由器WAN口自动发起PPPOE拨号连接
+    ...    @['ppp_connect_mode_auto','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    PPPoEConnectWait
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    ${router_wan_ip}
+    [Teardown]    清理测试
+
+PPPOE自动连接测试2
+    [Documentation]    PPPOE自动连接实现 在PPPOE链路自动连接成功的情况下，逻辑断开WAN口，路由器WAN口自动发起PPPOE拨号连接
+    ...    @['ppp_connect_mode_auto','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    PPPoEConnectWait
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    ${router_wan_ip}
+    断开路由器WAN口连接
+    PPPoEConnectWait
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    ${router_wan_ip}
+    [Teardown]    清理测试
+
+PPPOE按需连接测试1
+    [Documentation]    PPPOE按需连接实现 在PPPOE链路断开的情况下，从内网往外网发送数据包，路由器WAN口发起PPPOE拨号连接
+    ...    @['ppp_connect_mode_time','ppp_time','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    block_all_out_lan_data    ${router_lan_ip}    ${host_lan_ip}
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    connect_mode_radio=ppp_connect_mode_time
+    设置应该成功
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    转到日志页面
+    清空全部日志
+    等待一段时间日志里应该没有WAN口发送PADI包的日志
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    10.64.64.64
+    线路状态为断开
+    ping_from_lan_to_wan    ${host_lan_ip}    ${remote_lib_ip}
+    PPPoEConnectWait
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    ${router_wan_ip}
+    ping_reply_should_ok
+    [Teardown]    按需连接测试清理
+
+PPPOE按需连接测试2
+    [Documentation]    PPPOE按需连接实现 在PPPOE链路连接的情况下，停止从内网往外网发送数据包，到达超时时间后，路由器WAN口断开PPPOE拨号连接
+    ...    @['ppp_connect_mode_time','ppp_time','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    block_all_out_lan_data    ${router_lan_ip}    ${host_lan_ip}
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    connect_mode_radio=ppp_connect_mode_time    outtime=3
+    设置应该成功
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    转到日志页面
+    清空全部日志
+    等待一段时间日志里应该没有WAN口发送PADI包的日志
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    10.64.64.64
+    线路状态为断开
+    ping_from_lan_to_wan    ${host_lan_ip}    ${remote_lib_ip}
+    PPPoEConnectWait
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    ${router_wan_ip}
+    ping_reply_should_ok
+    stop_ping
+    Wait Until Keyword Succeeds    300    10    线路状态为断开
+    WAN口IP应该是    ${router_wan_ip}
+    [Teardown]    按需连接测试清理
+
+PPPOE按需连接测试3
+    [Documentation]    在PPPOE链路按需连接成功的情况下，逻辑断开WAN口，接口断开，不再响应按需连接的触发；当重新启用接口后，再次响应按需连接的触发
+    ...    @['ppp_connect_mode_time','ppp_time','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    block_all_out_lan_data    ${router_lan_ip}    ${host_lan_ip}
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    connect_mode_radio=ppp_connect_mode_time
+    设置应该成功
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    转到日志页面
+    清空全部日志
+    等待一段时间日志里应该没有WAN口发送PADI包的日志
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    10.64.64.64
+    线路状态为断开
+    ping_from_lan_to_wan    ${host_lan_ip}    ${remote_lib_ip}
+    PPPoEConnectWait
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    ${router_wan_ip}
+    ping_reply_should_ok
+    stop_ping
+    断开路由器WAN口连接
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    0.0.0.0
+    线路状态为断开
+    转到日志页面
+    清空全部日志
+    ping_from_lan_to_wan    ${host_lan_ip}    ${remote_lib_ip}
+    等待一段时间日志里应该没有WAN口发送PADI包的日志
+    stop_ping
+    转到接口状态页面
+    启用路由器WAN口连接
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    10.64.64.64
+    线路状态为断开
+    转到日志页面
+    等待一段时间日志里应该没有WAN口发送PADI包的日志
+    ping_from_lan_to_wan    ${host_lan_ip}    ${remote_lib_ip}
+    PPPoEConnectWait
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    ${router_wan_ip}
+    ping_reply_should_ok
+    [Teardown]    按需连接测试清理
+
+PPPOE手动连接测试1
+    [Documentation]    PPPOE手动连接实现 配置WAN口为PPPOE手动连接模式，保存生效后，路由器WAN口自动发起PPPOE拨号连接
+    ...    @['ppp_connect_mode_hand','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    配置PPPoE参数    hany    969090    connect_mode_radio=ppp_connect_mode_hand
+    设置应该成功
+    PPPoEConnectWait
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    ${router_wan_ip}
+    [Teardown]    清理测试
+
+PPPOE手动连接测试2
+    [Documentation]    PPPOE手动连接实现 在PPPOE链路连接的情况下，逻辑断开WAN口，路由器WAN口不会自动发起PPPOE拨号连接
+    ...    @['ppp_connect_mode_hand','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    配置PPPoE参数    hany    969090    connect_mode_radio=ppp_connect_mode_hand
+    设置应该成功
+    PPPoEConnectWait
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    ${router_wan_ip}
+    断开路由器WAN口连接
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    0.0.0.0
+    线路状态为断开
+    转到日志页面
+    清空全部日志
+    等待一段时间日志里应该没有WAN口发送PADI包的日志    60
+    [Teardown]    清理测试
+
+PPPOE手动连接测试3
+    [Documentation]    PPPOE手动连接实现 在PPPOE链路断开的情况下，点击连接WAN口，路由器WAN口发起PPPOE拨号连接
+    ...    @['ppp_connect_mode_hand','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    配置PPPoE参数    hany    969090    connect_mode_radio=ppp_connect_mode_hand
+    设置应该成功
+    PPPoEConnectWait
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    ${router_wan_ip}
+    断开路由器WAN口连接
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    0.0.0.0
+    线路状态为断开
+    启用路由器WAN口连接
+    PPPoEConnectWait
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    ${router_wan_ip}
+    [Teardown]    清理测试
+
+PPPOE服务名测试1
+    [Documentation]    PPPOE服务名实现 PPPOE拨号设置服务器名，在PPPOE链路协商过程中，PADI包带有服务器名，目的在于让只有对应服务名的PPPOE服务器响应PADO
+    ...    @['pppoe_service_name','pppoe_username','pppoe_pwd','ppp_connect_mode_auto','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    ${pppoe_server_service_name}    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    PADIContainServiceName    ${pppoe_server_service_name}
+    [Teardown]    清理测试
+
+PPPOE服务名测试2
+    [Documentation]    PPPOE服务名实现 PPPOE拨号未设置服务器名，在PPPOE链路协商过程中，PADI包不带有服务器名，所有PPPOE服务器均会响应PADO
+    ...    @['pppoe_service_name','pppoe_username','pppoe_pwd','ppp_connect_mode_auto','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    ${EMPTY}    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    PADIShouldNotContainServiceName    ${pppoe_server_service_name}
+    [Teardown]    清理测试
+
+PPPOE服务名测试3
+    [Documentation]    PPPOE AC名实现 设置错误的服务名 PPPoE服务器不会回应PADO
+    ...    @['pppoe_service_name','pppoe_username','pppoe_pwd','ppp_connect_mode_auto','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    hauwei    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    shouldNotResponsePADO    hauwei
+    [Teardown]    清理测试
+
+PPPOE AC名测试1
+    [Documentation]    PPPOE AC名实现 设置的AC名和PPPOE服务器的AC名不同 路由器不会对相应的AC回应PADR包
+    ...    @['pppoe_service_name','pppoe_ac_name','pppoe_username','pppoe_pwd','ppp_connect_mode_auto','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    ${pppoe_server_service_name}    ${pppoe_server_ac_name}    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    huawei
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    PADOShouldContainerrorServiceNmae    ${pppoe_server_service_name}
+    [Teardown]    清理测试
+
+PPPOE AC名测试2
+    [Documentation]    PPPOE AC名实现 没有设置AC名 路由器对所有PPPOE服务器返回的PADO回应PADR
+    ...    @['pppoe_service_name','pppoe_ac_name','pppoe_username','pppoe_pwd','ppp_connect_mode_auto','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    ${pppoe_server_service_name}    ${EMPTY}    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    huawei
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    reponseallPADOtoPADR    ${pppoe_server_service_name}
+    [Teardown]    清理测试
+
+PPPOE DNS测试1
+    [Documentation]    PPPOE DNS服务器实现 只设置备用DNS服务器，DNS解析包发往备用DNS服务器
+    ...    @['dns_a','dns_b','pppoe_username','pppoe_pwd','ppp_connect_mode_auto','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    DNS1=${pppoe_server_dns1}    DNS2=${EMPTY}    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${EMPTY}
+    PPPoEConnectWait
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    ${router_wan_ip}
+    PPPoETestLib.nslookup    www.baidu.com
+    DNSTestOK    ${pppoe_server_dns1}    ${EMPTY}    ${router_wan_ip}    www.baidu.com
+    [Teardown]    清理测试
+
+PPPOE DNS测试2
+    [Documentation]    PPPOE DNS服务器实现 只设置首选DNS服务器，DNS解析包发往首选DNS服务器
+    ...    @['dns_a','dns_b','pppoe_username','pppoe_pwd','ppp_connect_mode_auto','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    DNS1=${EMPTY}    DNS2=${pppoe_server_dns2}    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${EMPTY}    ${pppoe_server_dns2}
+    PPPoEConnectWait
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    ${router_wan_ip}
+    PPPoETestLib.nslookup    www.baidu.com
+    DNSTestOK    ${EMPTY}    ${pppoe_server_dns2}    ${router_wan_ip}    www.baidu.com
+    [Teardown]    清理测试
+
+PPPOE DNS测试3
+    [Documentation]    PPPOE DNS服务器实现 同时设置首选DNS服务器和备用DNS服务器，DNS解析包发往首选DNS服务器和备用DNS服务器
+    ...    @['dns_a','dns_b','pppoe_username','pppoe_pwd','ppp_connect_mode_auto','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    DNS1=${pppoe_server_dns1}    DNS2=${pppoe_server_dns2}    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    PPPoEConnectWait
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    ${router_wan_ip}
+    PPPoETestLib.nslookup    www.baidu.com
+    DNSTestOK    ${pppoe_server_dns1}    ${pppoe_server_dns2}    ${router_wan_ip}    www.baidu.com
+    [Teardown]    清理测试
+
+PPPOE DNS测试4
+    [Documentation]    PPPOE DNS服务器实现 未设置DNS服务器，DNS解析包发往PPPOE协商过程中PPPOE服务器指定的DNS服务器
+    ...    @['dns_a','dns_b','pppoe_username','pppoe_pwd','ppp_connect_mode_auto','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    DNS1=${EMPTY}    DNS2=${EMPTY}    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    PPPoEConnectWait
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    ${router_wan_ip}
+    PPPoETestLib.nslookup    www.baidu.com
+    DNSTestOK    ${EMPTY}    ${EMPTY}    ${router_wan_ip}    www.baidu.com
+    [Teardown]    清理测试
+
+PPPOE 数据流通信测试1
+    [Documentation]    PPPOE 数据流通信实现 在NAT模式下，PPPOE链路建立成功后，从该WAN口发出的数据包均带有PPPOE协议头
+    ...    @['pppoe_username','pppoe_pwd','ppp_connect_mode_auto','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    PPPoEConnectWait
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    ${router_wan_ip}
+    ping_from_lan_to_wan    ${host_lan_ip}    ${remote_lib_ip}
+    ping_test_lan_side_ok    ${host_lan_ip}    ${remote_lib_ip}
+    ping_test_wan_side_ok    ${router_wan_ip}    ${remote_lib_ip}
+    [Teardown]    PPPOE 数据流通信测试清理
+
+PPPOE重连清空测试
+    [Documentation]    PPPOE 重连清空机制 PPPOE链路重新建立拨号连接，会在发送PADI前，先发送PADT包尝试断开上一次的链接，用来解决PPPOE链接异常断开带来的链路超时异常问题
+    ...    @['pppoe_username','pppoe_pwd','ppp_connect_mode_auto','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    PPPoEConnectWait
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    1    WAN口IP应该是    ${router_wan_ip}
+    断开路由器WAN口连接
+    reconCheck
+    [Teardown]    清理测试
+
+PPPOE链路维护测试1
+    [Documentation]    PPPOE 链路维护实现 PPPOE链路建立后，PPPOE client每隔6秒发送一个链路维护报文
+    ...    @['pppoe_username','pppoe_pwd','ppp_connect_mode_auto','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    PPPoEConnectWait
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    1    WAN口IP应该是    ${router_wan_ip}
+    IntervalCheck
+    [Teardown]    清理测试
+
+PPPOE链路维护测试2
+    [Documentation]    PPPOE 链路维护实现 链路层通断故障的情况下，PPPOE client会先后发送10个链路维护报文，每隔6秒一个；超时完毕后，发送链路中断报文 链路超时后，PPPOE client会先后发送2个链路中断报文，每隔3秒一个；超时完毕后，发送PADT
+    ...    @['pppoe_username','pppoe_pwd','ppp_connect_mode_auto','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    PPPoEConnectWait
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    1    WAN口IP应该是    ${router_wan_ip}
+    vm_ifconfig_down    ${vm_user}    ${vm_passwd}    ${vm_path}    ${pppoe_server_iface}
+    link_faul_lcp_check
+    [Teardown]    清理PPPOE链路维护测试2
+
+PPPOE链路探测测试
+    [Documentation]    链路探测实现 在没有PPPOE服务器的情况下，PPPOE client会一直发送PADI，时间间隔分别为5秒、10秒、20秒
+    ...    @['pppoe_username','pppoe_pwd','ppp_connect_mode_auto','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    padi_check
+    [Teardown]    清理测试
+
+PPPOE链路中断测试
+    [Documentation]    链路中断 在PPPOE链路建立后，收到服务器发来的PADT包，路由器WAN口能进行正常断开
+    ...    @['pppoe_username','pppoe_pwd','ppp_connect_mode_auto','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    PPPoEConnectWait
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    1    WAN口IP应该是    ${router_wan_ip}
+    Sleep    10
+    PADT_check
+    [Teardown]    清理测试
+
+PPPOE接入MAC克隆测试
+    [Documentation]    WAN口MAC地址修改前后，WAN口和外网通信的数据流在MAC地址上发生变化
+    ...    @['mac_addr','pppoe_username','pppoe_pwd','ppp_connect_mode_auto','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    Mac=${default_wan_mac}    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    PPPoEConnectWait
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    ${router_wan_ip}
+    remotePPPoETestLib.mac_clone_check    ${default_wan_mac}    ${router_wan_ip}    ${pppoe_server_iface}
+    remotePPPoETestLib.terminate_pppoe_server
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    Mac=08-10-74-05-00-1F    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    PPPoEConnectWait
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    ${router_wan_ip}
+    remotePPPoETestLib.mac_clone_check    08-10-74-05-00-1F    ${router_wan_ip}    ${pppoe_server_iface}
+    [Teardown]    清理测试
+
+PPPOE接入MTU测试
+    [Documentation]    在WAN口为PPPOE模式下，WAN口MTU修改前后，WAN口和外网通信的数据流在IP层内容长度上发生变化
+    ...    @['pppoe_mtu','pppoe_username','pppoe_pwd','ppp_connect_mode_auto','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    MTU=1000    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    remotePPPoETestLib.start_pppoe_server    hany    969090    ${pppoe_server_iface}    ${pppoe_server_ip}    ${pppoe_server_security}    ${pppoe_server_ac_name}
+    ...    ${pppoe_server_service_name}    ${router_wan_ip}    ${pppoe_server_session_num}    ${pppoe_server_dns1}    ${pppoe_server_dns2}
+    PPPoEConnectWait
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    ${router_wan_ip}
+    ${mtu}    remotePPPoETestLib.ping_router_wan_get_mtu    ${router_wan_ip}    ${pppoe_server_ip}    ${pppoe_server_iface}
+    Should Be Equal    ${mtu}    996
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    MTU=576    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    ${router_wan_ip}
+    ${mtu}    remotePPPoETestLib.ping_router_wan_get_mtu    ${router_wan_ip}    ${pppoe_server_ip}    ${pppoe_server_iface}
+    Should Be Equal    ${mtu}    576
+    转到PPPoE配置页面
+    配置PPPoE参数    hany    969090    MTU=1492    connect_mode_radio=ppp_connect_mode_auto
+    设置应该成功
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    5    WAN口IP应该是    ${router_wan_ip}
+    ${mtu}    remotePPPoETestLib.ping_router_wan_get_mtu    ${router_wan_ip}    ${pppoe_server_ip}    ${pppoe_server_iface}
+    Should Be Equal    ${mtu}    1492
+    [Teardown]    清理测试
+
+*** Keywords ***
+清理测试
+    remotePPPoETestLib.terminate_pppoe_server
+    Close Browser
+
+清理PPPOE链路维护测试2
+    vm_ifconfig_up    ${vm_user}    ${vm_passwd}    ${vm_path}    ${pppoe_server_iface}
+    remotePPPoETestLib.terminate_pppoe_server
+    Close Browser
+
+按需连接测试清理
+    stop_ping
+    disable_block    ${router_lan_ip}    ${host_lan_ip}
+    remotePPPoETestLib.terminate_pppoe_server
+    Close Browser
+
+PPPOE 数据流通信测试清理
+    stop_ping
+    remotePPPoETestLib.terminate_pppoe_server
+    Close Browser
+
+清空pcap目录
+    Remove Files    pppoe_pcap/*

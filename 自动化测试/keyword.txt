@@ -1,0 +1,229 @@
+*** Settings ***
+Library           Selenium2Library
+Resource          config.txt
+Resource          htmlelement.txt
+Resource          testdata.txt
+Library           OperatingSystem
+Library           common.py
+Resource          lang_var.txt
+Resource          log_var.txt
+
+*** Keywords ***
+打开浏览器
+    Open Browser    ${base_url}    ${browser}    hany
+    Wait Until Page Contains Element    id=f_main_bg    15
+
+弹出对话框消失
+    ${style}    Get Element Attribute    xpath=//div[@class="df_lock_load"]@style
+    Should Contain    ${style}    display: none
+
+设置应该成功
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+
+转到接口状态页面
+    goto_spec_page    interface
+    Wait Until Page Contains Element    id=connected
+
+断开路由器WAN口连接
+    Click Button    id=connected
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_disconnect_tip}
+    Choose Ok On Next Confirmation
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+
+启用路由器WAN口连接
+    Click Button    id=connected
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_disconnect_tip}
+    Choose Ok On Next Confirmation
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+
+关闭浏览器
+    Close Browser
+
+设置静态接入的参数
+    [Arguments]    ${wan_ip}    ${mask}    ${gateway}    ${mac}=${None}    ${mtu}=${None}    ${dns1}=${None}
+    ...    ${dns2}=${None}
+    Input Text    id=wan_ip    ${wan_ip}
+    Input Text    id=wan_mask    ${mask}
+    Input Text    id=wan_gw    ${gateway}
+    Run Keyword If    '${mac}'!='${None}'    Input Text    id=mac_addr    ${mac}
+    Run Keyword If    '${mtu}'!='${None}'    Input Text    id=static_mtu    ${mtu}
+    Run Keyword If    '${dns1}'!='${None}'    Input Text    id=dns_a    ${dns1}
+    Run Keyword If    '${dns2}'!='${None}'    Input Text    id=dns_b    ${dns2}
+    Click Button    id=save_wan_set
+
+转到到静态配置页面
+    Click Element    ${network_param_menu}
+    Wait Until Page Contains Element    ${wan_iface_config_menu}    15
+    Click Element    ${wan_iface_config_menu}
+    Wait Until Page Contains Element    ${wan_connect_type_box}    15
+    Select From List By Label    ${wan_connect_type_box}    ${staic_con_type_label}
+    Wait Until Page Contains Element    ${static_wan_ip_box}    15
+
+转到DHCP设置页面
+    goto_test_case_page
+    Select From List By Value    id=conntype    2
+    Wait Until Page Contains Element    id=save_wan_set    15
+
+设置dhcp接入的参数
+    [Arguments]    ${mac_clone}=${None}    ${mtu}=${None}    ${dns1}=${None}    ${dns2}=${None}
+    Run Keyword If    '${mac_clone}'!='${None}'    Input Text    id=mac_addr    ${mac_clone}
+    Run Keyword If    '${mtu}'!='${None}'    Input Text    id=dhcp_mtu    ${mtu}
+    Run Keyword If    '${dns1}' != '${None}'    Input Text    id=dns_a    ${dns1}
+    Run Keyword If    '${dns2}' != '${None}'    Input Text    id=dns_b    ${dns2}
+    Click Button    id=save_wan_set
+
+转到PPPoE配置页面
+    goto_test_case_page
+    Wait Until Page Contains Element    id=pppoe_username
+
+配置PPPoE参数
+    [Arguments]    ${user}    ${passwd}    ${servicename}=${None}    ${acname}=${None}    ${Mac}=${None}    ${MTU}=${None}
+    ...    ${DNS1}=${None}    ${DNS2}=${None}    ${connect_mode_radio}=${None}    ${outtime}=5
+    Input Text    ${pppoe_user_box}    ${user}
+    Input Password    ${pppoe_passwd_box}    ${passwd}
+    Run Keyword If    '${servicename}'!='${None}'    Input Text    id=pppoe_service_name    ${servicename}
+    Run Keyword If    '${acname}'!='${None}'    Input Text    id=pppoe_ac_name    ${acname}
+    Run Keyword If    '${Mac}' != '${None}'    Input Text    id=mac_addr    ${Mac}
+    Run Keyword If    '${MTU}'!='${None}'    Input Text    id=pppoe_mtu    ${MTU}
+    Run Keyword If    '${DNS1}'!='${None}'    Input Text    id=dns_a    ${DNS1}
+    Run Keyword If    '${DNS2}'!='${None}'    Input Text    id=dns_b    ${DNS2}
+    Run Keyword If    '${connect_mode_radio}'!='${None}'    Click Element    ${connect_mode_radio}
+    Run Keyword If    '${connect_mode_radio}' == 'ppp_connect_mode_time'    Input Text    id=ppp_time    ${outtime}
+    Click Button    id=save_wan_set
+
+转到日志页面
+    goto_spec_page    sys_log
+    Wait Until Page Contains Element    id=del_all_sys_log
+
+清空全部日志
+    Click Button    id=del_all_sys_log
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_del_tip}
+    Choose Ok On Next Confirmation
+    Wait Until Keyword Succeeds    15    5    弹出对话框消失
+
+日志显示帐号密码错误
+    goto_spec_page    sys_log
+    Page Should Contain    ${LOG_CONNECT_STANDARD_PPP_action_1}
+
+线路状态为断开
+    ${s}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[9]/span/span
+    Should Be Equal    ${s}    ${common_disconnected}
+
+等待一段时间日志里应该没有WAN口发送PADI包的日志
+    [Arguments]    ${waitTime}=25
+    Sleep    ${waitTime}
+    goto_spec_page    sys_log
+    Sleep    2
+    Input Text    id=page_size    100
+    Click Button    id=sys_log
+    Sleep    2
+    Page Should Not Contain    ${LOG_CONNECT_STANDARD_PPPOE_action_0}
+
+弹出设置失败消息对话框
+    ${string}    Get Text    xpath=//div[@class="df_lock_load"]
+    Should Not Be Equal    ${string}    ${common_lock_save}
+    Should Not Be Equal    ${string}    ${common_unlock_save}
+    ${style}    Get Element Attribute    xpath=//div[@class="df_lock_load"]@style
+    Should Contain    ${style}    display: block;
+
+日志显示无法获取到IP
+    Input Text    ${log_number_box}    100
+    Click Button    ${log_number_set_btn}
+    Sleep    2
+    Page Should Not Contain    无法获取到IP，正在重试
+
+转到内网配置页面
+    Click Element    ${network_param_menu}
+    Wait Until Page Contains Element    ${lan_iface_config_menu}    15
+    Click Element    ${lan_iface_config_menu}
+    Wait Until Page Contains Element    ${lan_mac_input_box}    15
+
+设置LAN口MAC
+    [Arguments]    ${mac}
+    Input Text    id=lan_mac    ${mac}
+    Click Button    id=save_lan_mac
+
+设置LAN口IP和MASK
+    [Arguments]    ${IP}    ${MASK}
+    Input Text    id=lan_ip    ${IP}
+    Input Text    id=lan_mask    ${MASK}
+    Click Button    id=save_lan_set
+
+设置LAN口DHCP服务器
+    [Arguments]    ${status_radio}    ${start_ip}    ${end_ip}
+    Run Keyword If    '${status_radio}'!='${None}'    Click Element    ${status_radio}
+    Input Text    id=dhcp_start_ip    ${start_ip}
+    Input Text    id=dhcp_end_ip    ${end_ip}
+    Click Button    id=save_dhcp_server
+
+弹出无效IP消息
+    ${string}    Get Text    ${display_dialog_locator}
+    Should Be Equal    ${string}    ${invalid_ip_string}
+
+弹出对话框
+    [Arguments]    ${dlg_string}
+    ${string}    Get Text    xpath=//div[@class="df_lock_load"]
+    Should Contain    ${string}    ${dlg_string}
+
+转到系统恢复缺省页面
+    Click Element    ${system_misc_menu}
+    Click Element    ${restore_system_default_menu}
+
+恢复缺省
+    Click Button    ${restore_system_default_btn}
+    ${message}    Confirm Action
+    Wait Until Keyword Succeeds    120    10    Page Should Not Contain Element    ${lock_bg_locator}
+
+转到DHCP保留地址配置页面
+    goto_test_case_page
+    Wait Until Page Contains Element    id=reserve_ip    15
+
+添加保留地址
+    [Arguments]    ${name}    ${ip}    ${mac}
+    Input Text    id=descrip    ${name}
+    Input Text    id=reserve_ip    ${ip}
+    Input Text    id=reserve_mac    ${mac}
+    Click Button    id=add_reservation
+
+删除全部保留Ip地址
+    Click Button    id=del_all_reservation
+    ${message}    Confirm Action
+    Choose Ok On Next Confirmation
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+
+转到IP/MAC绑定页面
+    Click Element    ${netwoek_sec_menu}
+    Wait Until Page Contains Element    ${ip_mac_bind_menu}    15
+    Click Element    ${ip_mac_bind_menu}
+    Wait Until Page Contains Element    ${ip_mac_bind_rule_name_box}    15
+
+添加IP/MAC绑定
+    [Arguments]    ${name}    ${ip}    ${mac}    ${port_label}
+    Input Text    ${ip_mac_bind_rule_name_box}    ${name}
+    Input Text    ${ip_mac_bind_ip_box}    ${ip}
+    Input Text    ${ip_mac_bind_mac_box}    ${mac}
+    Select From List By Label    ${ip_mac_bind_port_box}    ${port_label}
+    Click Button    ${ip_mac_bind_save_btn}
+
+删除所有的IPMAC绑定
+    Click Button    ${ip_mac_bind_list_tab_del_btn}
+    ${message}    Confirm Action
+    Choose Ok On Next Confirmation
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${delete_suc_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+
+转到攻击防御设置页面
+    Click Element    ${netwoek_sec_menu}
+    Wait Until Page Contains Element    ${attack_defnse_menu}    15
+    Click Element    ${attack_defnse_menu}
+    Wait Until Page Contains Element    ${attack_defense_save_btn}    15
+
+WAN口IP应该是
+    [Arguments]    ${ip}
+    goto_spec_page    interface
+    ${s}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
+    Should Be Equal    ${s}    ${ip}

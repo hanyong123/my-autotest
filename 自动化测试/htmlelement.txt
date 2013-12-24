@@ -1,0 +1,126 @@
+*** Variables ***
+${network_param_menu}    id=p_menu_network
+${run_status_menu}    css=div.m_p_txt
+${wan_iface_config_menu}    css=#c_menu_wan > div.m_c_txt
+${iface_info_menu}    css=#c_menu_interface > div.m_c_txt
+${log_menu}       css=#c_menu_sys_log > div.m_c_txt
+${wan_connect_type_box}    id=conntype
+${staic_con_type_label}    静态IP 用户
+${static_wan_ip_box}    id=wan_ip
+${staic_wan_mask_box}    id=wan_mask
+${static_wan_gw_box}    id=wan_gw
+${static_wan_mac_clone_box}    id=mac_addr
+${static_wan_mtu_box}    id=static_mtu
+${static_wan_dns1_box}    id=dns_a
+${static_wan_dns2_box}    id=dns_b
+${save_but}       id=save_wan_set
+${display_dialog_locator}    xpath=//div[@class="df_lock_load"]
+${set_success_string}    保存成功！
+${display_dialog_show_flag}    display: block
+${display_dialog_hide_flag}    display: none
+${mac_clone_btn}    xpath=(//input[@id='mac_addr'])[2]
+${recover_def_mac_btn}    xpath=(//input[@id='mac_addr'])[3]
+${pppoe_connect_label}    PPPoE 用户
+${pppoe_user_box}    id=pppoe_username
+${pppoe_passwd_box}    id=pppoe_pwd
+${pppoe_servce_name_box}    id=pppoe_service_name
+${pppoe_ac_name_box}    id=pppoe_ac_name
+${clone_mac_addr_box}    id=mac_addr
+${pppoe_mtu_box}    id=pppoe_mtu
+${pppoe_dns1_box}    id=dns_a
+${pppoe_dns2_box}    id=dns_b
+${auto_connect_mode_radio}    id=auto
+${require_connect_mode_radio}    id=time
+${maual_connect_mode_radio}    id=hand
+${pppoe_out_time_box}    id=ppp_time
+${log_table_title_string}    系统日志
+${delete_log_btn}    id=save
+${delete_log_dialog_string}    是否确定全部删除
+${wan_info_tiltle_string}    WAN 线路信息
+${log_auth_fail_string}    WAN [PPP] 帐号、密码 认证失败
+${wan_discon_btn}    id=connected
+${wan_discon_dlg_string}    是否确定断开网络
+${wan_ip_addr_lacator}    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
+${wan_con_status_locator}    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[9]/span/span
+${discon_status_string}    未连接
+${log_wan_send_padi_string}    WAN [PPPoE] 发送PADI
+${wan_con_btn}    id=connected
+${wan_con_dlg_string}    是否确定连接网络
+${log_number_box}    id=page_size
+${log_number_set_btn}    id=sys_log
+${dhcp_con_type_label}    动态IP用户(Cable Modem)
+${dhcp_mac_clone_box}    id=mac_addr
+${dhcp_mtu_box}    id=dhcp_mtu
+${dhcp_dns1_box}    ${EMPTY}
+${dhcp_dns2_box}    ${EMPTY}
+${seting_string}    正在保存
+${lan_iface_config_menu}    css=#c_menu_lan > div.m_c_txt
+${lan_mac_input_box}    id=lan_mac
+${lan_mac_save_btn}    id=save
+${lan_ip_input_box}    id=lan_ip
+${lan_mask_input_box}    id=lan_mask
+${lan_ip_mask_save_btn}    xpath=(//input[@id="save"])[2]
+${lock_bg_locator}    id=lock_bg
+${reboot_system_string}    你想要重启系统吗？
+${system_booting_string}    路由器正在重启
+${home_page_title_string}    Welcome
+${lan_dhcp_server_on_radio}    id=on
+${lan_dhcp_server_off_radio}    id=off
+${lan_dhcp_server_start_ip_box}    id=dhcp_start_ip
+${lan_dhcp_server_end_ip_box}    id=dhcp_end_ip
+${lan_dhcp_server_save_btn}    xpath=(//input[@id="save"])[3]
+${invalid_ip_string}    IP地址为无效地址!
+${dhcp_start_ip_big_end_ip_string}    结束地址应该大于或等于起始地址！
+${dhcp_client_list_tab}    xpath=//table[@class="df_tab"]
+${system_misc_menu}    css=#p_menu_misc > div.m_p_txt
+${restore_system_default_menu}    css=#c_menu_default > div.m_c_txt
+${restore_system_default_btn}    id=save
+${reserve_address_menu}    css=#c_menu_address_reservation > div.m_c_txt
+${reserve_adress_rule_name_box}    id=descrip
+${reserve_address_ip_box}    id=reserve_ip
+${reserve_adress_mac_box}    id=reserve_mac
+${reserve_adress_add_btn}    id=save
+${invalid_mac_string}    MAC 地址为无效地址
+${invalid_string}    不能含有特殊字符
+${reserve_address_list_del_btn}    xpath=(//input[@id='save'])[2]
+${operate_success_string}    操作成功！
+${reserve_address_list_tab}    xpath=//table[@class="df_tab"]
+${exist_ip_string}    IP地址已存在
+${reserve_address_table_row_modf_btn}    xpath=//div[@class="tab_mod_btn"]
+${delete_suc_string}    删除成功
+${reserve_address_table_row_del_btn}    xpath=//div[@class="tab_del_btn"]
+${operate_fail_string}    操作失败
+${netwoek_sec_menu}    css=#p_menu_management > div.m_p_txt
+${ip_mac_bind_menu}    css=#c_menu_binds > div.m_c_txt
+${ip_mac_bind_rule_name_box}    id=binds_des
+${ip_mac_bind_ip_box}    id=binds_ip
+${ip_mac_bind_mac_box}    id=binds_mac
+${ip_mac_bind_save_btn}    id=add_binds
+${ip_mac_bind_port_box}    id=binds_port
+${ip_mac_bind_lan_port_label}    LAN
+${ip_mac_bind_wan_port_label}    WAN
+${ip_mac_bind_list_tab}    xpath=//table[@class="df_tab"]
+${ip_mac_bind_list_tab_del_btn}    id=del_binds_all
+${ip_mac_bind_table_row_modf_btn}    xpath=//div[@class="tab_mod_btn"]
+${ip_mac_bind_table_row_del_btn}    xpath=//div[@class="tab_del_btn"]
+${attack_defnse_menu}    css=#c_menu_attack_defense > div.m_c_txt
+${attack_defense_ping_wan_on_radio}    id=ping_wan_on
+${attack_defense_ping_wan_off_radio}    id=ping_wan_off
+${attack_defense_ping_lan_on_radio}    id=ping_lan_on
+${attack_defense_ping_lan_off_radio}    id=ping_lan_off
+${attack_defense_port_paket_on_radio}    id=port_packet_on
+${attack_defense_port_paket_off_radio}    id=port_packet_off
+${attack_defense_icmp_flood_on_radio}    id=icmp_flood_on
+${attack_defense_icmp_flood_off_radio}    id=icmp_flood_off
+${attack_defense_tcp_flood_on_radio}    id=tcp_flood_on
+${attack_defense_tcp_flood_off_radio}    id=tcp_flood_off
+${attack_defense_udp_flood_on_radio}    id=udp_flood_on
+${attack_defense_udp_flood_off_radio}    id=udp_flood_off
+${attack_defense_virus_filter_on_radio}    id=virus_filter_on
+${attack_defense_virus_filter_off_radio}    id=virus_filter_off
+${attack_defense_arp_attack_on_radio}    id=arp_attack_on
+${attack_defense_arp_attack_off_radio}    id=arp_attack_off
+${attack_defense_save_btn}    id=save_attack
+${attack_defense_log_table}    xpath=//table[@class="df_tab"]
+${attack_defense_log_table_delete_all_btn}    id=attack_log_delAll
+${attack_defense_log_table_refresh_btn}    id=attack_log_refresh

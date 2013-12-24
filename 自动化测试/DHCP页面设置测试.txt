@@ -1,0 +1,94 @@
+*** Settings ***
+Suite Setup       初始化测试
+Suite Teardown    清理测试
+Resource          keyword.txt
+
+*** Variables ***
+
+*** Test Cases ***
+DHCP接入设置错误的MTU值会失败
+    [Documentation]    @['save_wan_set','conntype','dhcp_mtu']
+    [Tags]    include
+    [Template]    在页面设置非法的参数会显示设置失败消息
+    : FOR    ${mtu}    IN    @{invalid_mtu}
+    \    ${None}    ${mtu}    ${None}    ${None}
+
+DHCP接入向MTU输入框中输入字符长度超过4个之后，将不能输入
+    [Documentation]    @['save_wan_set','dhcp_mtu','conntype']
+    [Tags]    include
+    转到DHCP设置页面
+    Input Text    id=dhcp_mtu    444444444
+    ${mtu}    Get Value    id=dhcp_mtu
+    Length Should Be    ${mtu}    4
+
+DHCP接入设置非法的MAC地址会失败
+    [Documentation]    @['save_wan_set','dhcp_mtu','mac_addr']
+    [Tags]    include
+    [Template]    在页面设置非法的参数会显示设置失败消息
+    : FOR    ${mac}    IN    @{invalid_mac}
+    \    ${mac}    ${None}    ${None}    ${None}
+
+DHCP接入MAC配置输入框超出17个字符后无法输入
+    [Documentation]    @['save_wan_set','dhcp_mtu','mac_addr']
+    [Tags]    include
+    转到DHCP设置页面
+    Input Text    id=mac_addr    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    ${mac}    Get Value    id=mac_addr
+    Length Should Be    ${mac}    17
+
+DHCP接入使用MAC克隆，MAC地址框内容被填为当前登录路由器WEB系统的设备的MAC地址
+    [Documentation]    @['save_wan_set','dhcp_mtu','mac_addr']
+    [Tags]    include
+    转到DHCP设置页面
+    Click Button    xpath=(//input[@id='mac_addr'])[2]
+    Sleep    2
+    ${lan_mac}    DHCPTestLib.re_host_lan_mac
+    ${v}    Get Value    xpath=(//input[@id='mac_addr'])[1]
+    Should Be Equal    ${lan_mac}    ${v}
+
+DHCP接入使用缺省MAC地址恢复,缺省MAC地址符合规范
+    [Documentation]    @['save_wan_set','dhcp_mtu','mac_addr']
+    [Tags]    include
+    转到DHCP设置页面
+    Click Button    xpath=(//input[@id='mac_addr'])[2]
+    Sleep    2
+    Click Button    xpath=(//input[@id='mac_addr'])[3]
+    Sleep    2
+    ${default_mac}    Get Value    xpath=(//input[@id='mac_addr'])[1]
+    Should Be Equal    ${default_mac}    ${default_wan_mac}
+
+DHCP接入首选DNS服务器输入框超过15个字符后无法输入
+    [Documentation]    @['save_wan_set','dhcp_mtu','dns_a','dns_b']
+    转到DHCP设置页面
+    Input Text    id=dns_a    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    ${dns}    Get Value    id=dns_a
+    Length Should Be    ${dns}    15
+
+DHCP接入备用DNS服务器输入框超过15个字符后无法输入
+    [Documentation]    @['save_wan_set','dhcp_mtu','dns_a','dns_b']
+    转到DHCP设置页面
+    Input Text    id=dns_b    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    ${dns}    Get Value    id=dns_b
+    Length Should Be    ${dns}    15
+
+DHCP接入不能设置非法的DNS地址
+    [Documentation]    @['save_wan_set','dhcp_mtu','dns_a','dns_b']
+    [Template]    在页面设置非法的参数会显示设置失败消息
+    : FOR    ${item}    IN    @{invalid_dns}
+    \    ${None}    ${None}    ${item}    ${None}
+    : FOR    ${item}    IN    @{invalid_dns}
+    \    ${None}    ${None}    8.8.8.8    ${item}
+
+*** Keywords ***
+在页面设置非法的参数会显示设置失败消息
+    [Arguments]    ${mac_clone}    ${mtu}    ${dns1}    ${dns2}
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${mac_clone}    ${mtu}    ${dns1}    ${dns2}
+    Wait Until Keyword Succeeds    15    0    弹出设置失败消息对话框
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+
+初始化测试
+    打开浏览器
+
+清理测试
+    Close Browser

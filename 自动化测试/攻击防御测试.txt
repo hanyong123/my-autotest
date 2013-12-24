@@ -1,0 +1,201 @@
+*** Settings ***
+Resource          keyword.txt
+Library           attackDefenseTestLib.py    ${host_lan_ip}    ${host_wan_ip}    ${router_lan_ip}    ${router_wan_ip}    WITH NAME    attackDefenseTestLib
+
+*** Test Cases ***
+禁止PING网关测试
+    [Documentation]    @['ping_lan_on','ping_lan_off','save_attack']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=ping_lan_on
+    Click Element    id=ping_lan_on
+    Click Button    id=save_attack
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    ${ping_cmd}    Catenate    ping \    ${router_lan_ip}
+    ${output} =    Run    ${ping_cmd}
+    Should Contain    ${output} =    Request timed out
+    Should Contain    ${output} =    Lost = 4 (100% loss)
+    Click Element    id=ping_lan_off
+    Click Button    id=save_attack
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    ${ping_cmd}    Catenate    ping \    ${router_lan_ip}
+    ${output} =    Run    ${ping_cmd}
+    ${re}    Catenate    Reply from    ${router_lan_ip}
+    Should Contain    ${output} =    ${re}
+    Should Contain    ${output} =    Lost = 0 (0% loss)
+    [Teardown]    关闭浏览器
+
+忽略UDP端口扫描报文测试1
+    [Documentation]    @['port_packet_off','port_packet_on','save_attack']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=port_packet_off
+    Click Element    id=port_packet_off
+    Click Button    id=save_attack
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    5    弹出对话框消失
+    lan_should_recv_icmp_port_unreachable
+    Click Element    id=port_packet_on
+    Click Button    id=save_attack
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Run Keyword And Expect Error    no response icmp port unreachable    lan_should_recv_icmp_port_unreachable
+    [Teardown]    关闭浏览器
+
+忽略UDP端口扫描报文测试2
+    [Documentation]    @['port_packet_off','port_packet_on','save_attack']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=port_packet_off
+    Click Element    id=port_packet_off
+    Click Button    id=save_attack
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    5    弹出对话框消失
+    wan_should_recv_icmp_port_unreachable
+    Click Element    id=port_packet_on
+    Click Button    id=save_attack
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Run Keyword And Expect Error    no response icmp port unreachable    wan_should_recv_icmp_port_unreachable
+    [Teardown]    关闭浏览器
+
+忽略TCP端口扫描报文测试
+    [Documentation]    @['port_packet_off','port_packet_on','save_attack']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=port_packet_off
+    Click Element    id=port_packet_off
+    Click Button    id=save_attack
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    should_rcv_tcp_rst
+    Click Element    id=port_packet_on
+    Click Button    id=save_attack
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Run Keyword And Expect Error    no recv tcp rst    should_rcv_tcp_rst
+    [Teardown]    关闭浏览器
+
+ICMP-FLOOD攻击防御
+    [Documentation]    @['icmp_flood_on','icmp_flood_off','save_attack']
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=icmp_flood_off
+    Click Element    id=icmp_flood_off
+    Click Button    id=save_attack
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    ${pps}    icmp_flood_atttck_test
+    Should Be Equal    ${pps}    100
+    Wait Until Page Contains Element    id=icmp_flood_on
+    Click Element    id=icmp_flood_on
+    Click Button    id=save_attack
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    ${pps}    icmp_flood_atttck_test
+    Should Not Be Equal    ${pps}    100
+
+TCP-FLOOD攻击防御
+    [Documentation]    @['tcp_flood_on','tcp_flood_off','save_attack']
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=tcp_flood_off
+    Click Element    id=tcp_flood_off
+    Click Button    id=save_attack
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    ${pps}    tcp_flood_attck_test
+    Should Be Equal    ${pps}    100
+    Wait Until Page Contains Element    id=tcp_flood_on
+    Click Element    id=tcp_flood_on
+    Click Button    id=save_attack
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    ${pps}    tcp_flood_attck_test
+    Should Not Be Equal    ${pps}    100
+
+UDP-FLOOD攻击防御
+    [Documentation]    @['udp_flood_on','udp_flood_off','save_attack']
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=udp_flood_off
+    Click Element    id=udp_flood_off
+    Click Button    id=save_attack
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    ${pps}    tcp_flood_attck_test
+    Should Be Equal    ${pps}    100
+    Wait Until Page Contains Element    id=udp_flood_on
+    Click Element    id=udp_flood_on
+    Click Button    id=save_attack
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    ${pps}    tcp_flood_attck_test
+    Should Not Be Equal    ${pps}    100
+
+病毒防御测试
+    [Documentation]    @['virus_filter_on','virus_filter_off','save_attack']
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=virus_filter_on
+    Click Element    id=virus_filter_off
+    Click Button    id=save_attack
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    virus_filter_test    off
+    Click Element    id=virus_filter_on
+    Click Button    id=save_attack
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    virus_filter_test    on
+
+arp攻击测试
+    [Documentation]    @['arp_attack_on','arp_attack_off','save_attack']
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=arp_attack_off
+    Click Element    id=arp_attack_off
+    Click Button    id=save_attack
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    arp_attack_test    off
+    Click Element    id=arp_attack_on
+    Click Button    id=save_attack
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    arp_attack_test    on
+
+禁止WAN口响应Ping包测试
+    [Documentation]    @['ping_wan_on','ping_wan_off','save_attack']
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=ping_wan_on
+    Click Element    id=ping_wan_on
+    Click Button    id=save_attack
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    ${ping_cmd}    Catenate    ping \    ${router_wan_ip}
+    ${output} =    Run    ${ping_cmd}
+    Should Contain    ${output} =    Request timed out
+    Should Contain    ${output} =    Lost = 4 (100% loss)
+    Click Element    id=ping_wan_off
+    Click Button    id=save_attack
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    ${ping_cmd}    Catenate    ping \    ${router_wan_ip}
+    ${output} =    Run    ${ping_cmd}
+    ${re}    Catenate    Reply from    ${router_wan_ip}
+    Should Contain    ${output} =    ${re}
+    Should Contain    ${output} =    Lost = 0 (0% loss)
+
+*** Keywords ***
+初始化测试
+    goto_spec_page    wan_static_set_page
+    Wait Until Page Contains Element    id=wan_ip
+    设置静态接入的参数    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}

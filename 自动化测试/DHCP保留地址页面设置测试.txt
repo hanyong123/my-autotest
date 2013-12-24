@@ -1,0 +1,246 @@
+*** Settings ***
+Suite Setup       初始化测试套件
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
+*** Variables ***
+@{invalid_name}    aa,aa    aa.aa    aa:aa    aa;aa    aa'aa    aa"aa    aa~aa
+...               aa`aa    aa@aa    aa#aa    aa$aa    aa%aa    aa^aa    aa&aa
+...               aa*aa    aa(aa    aa)aa    aa{aa    aa}aa    aa[aa    aa]aa
+...               aa<aa    aa>aa    aa?aa    aa/aa    aa\\aa    aa aa
+
+*** Test Cases ***
+DHCP保留地址IP地址输入框超过15个字符后无法输入
+    [Documentation]    @['reserve_ip','add_reservation']
+    [Tags]    include
+    转到DHCP保留地址配置页面
+    Input Text    id=reserve_ip    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    ${ip}    Get Value    id=reserve_ip
+    Length Should Be    ${ip}    15
+
+DHCP保留地址设置错误的IP会提示地址无效
+    [Documentation]    @['descrip','reserve_ip','reserve_mac','add_reservation','del_all_reservation']
+    [Tags]    include
+    [Template]    设置错误的IP会提示地址无效
+    : FOR    ${ip}    IN    @{invalid_ip}
+    \    ${ip}
+    [Teardown]    删除全部保留Ip地址
+
+DHCP保留地址设置错误的MAC会提示地址无效
+    [Documentation]    @['descrip','reserve_ip','reserve_mac','add_reservation','del_all_reservation']
+    [Tags]    include
+    [Template]    设置错误的mac地址会提示mac地址无效
+    : FOR    ${mac}    IN    @{invalid_mac}
+    \    ${mac}
+    [Teardown]    删除全部保留Ip地址
+
+DHCP保留地址规则名长度最大31个字符，超过31字符无法输入
+    [Documentation]    @['descrip','add_reservation']
+    [Tags]    include
+    转到DHCP保留地址配置页面
+    Input Text    ${reserve_adress_rule_name_box}    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    ${name}    Get Value    ${reserve_adress_rule_name_box}
+    Length Should Be    ${name}    31
+
+DHCP保留地址设置规则名有特殊字符会提示
+    [Documentation]    @['descrip','reserve_ip','reserve_mac','add_reservation','del_all_reservation']
+    [Tags]    include
+    [Template]    设置规则名称有特俗字符会提示名称不能有特殊字符
+    : FOR    ${name}    IN    @{invalid_name}
+    \    ${name}
+    [Teardown]    删除全部保留Ip地址
+
+DHCP保留地址规则名输入30个字符，再输入一个中文，导致超过31个字符，提示“已对规则名自动截短”
+    [Documentation]    @['descrip','reserve_ip','reserve_mac','add_reservation','del_all_reservation']
+    [Tags]    include
+    转到DHCP保留地址配置页面
+    添加保留地址    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa韩    192.168.1.12    0a:01:02:de:23:78
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_add}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Table Should Contain    xpath=//table[@class="df_tab"]    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    [Teardown]    删除全部保留Ip地址
+
+DHCP保留地址输入正确的IP地址、MAC地址、规则名，点击“增加”按钮；提示“操作成功！”，并刷新列表
+    [Documentation]    @['descrip','reserve_ip','reserve_mac','add_reservation','del_all_reservation']
+    [Tags]    include
+    转到DHCP保留地址配置页面
+    添加保留地址    aa    192.168.1.12    0a:01:02:de:23:78
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_add}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Table Should Contain    xpath=//table[@class="df_tab"]    aa
+    [Teardown]    删除全部保留Ip地址
+
+DHCP保留地址添加条目，IP地址和已有条目的地址重复，提示已有相同DHCP保留地址条目
+    [Documentation]    @['descrip','reserve_ip','reserve_mac','add_reservation','del_all_reservation']
+    [Tags]    include
+    转到DHCP保留地址配置页面
+    添加保留地址    aa    192.168.1.12    0a:01:02:de:23:78
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_add}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    添加保留地址    ab    192.168.1.12    0a:01:02:de:23:79
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_ip_occupy_err}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    [Teardown]    删除全部保留Ip地址
+
+DHCP保留地址添加条目，MAC地址和已有条目的地址重复，提示已有相同DHCP保留地址条目
+    [Documentation]    @['descrip','reserve_ip','reserve_mac','add_reservation','del_all_reservation']
+    [Tags]    include
+    转到DHCP保留地址配置页面
+    添加保留地址    aa    192.168.1.12    0a:01:02:de:23:78
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_add}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    添加保留地址    ab    192.168.1.13    0a:01:02:de:23:78
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_ip_occupy_err}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    [Teardown]    删除全部保留Ip地址
+
+DHCP保留地址成功修改一条DHCP保留地址条目
+    [Documentation]    @['descrip','reserve_ip','reserve_mac','add_reservation','del_all_reservation']
+    [Tags]    include
+    转到DHCP保留地址配置页面
+    添加保留地址    aa    192.168.1.12    0a:01:02:de:23:78
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_add}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Click Element    xpath=//div[@class="tab_mod_btn"]
+    ${name}    Get Value    id=descrip
+    Should Be Equal    ${name}    aa
+    ${ip}    Get Value    id=reserve_ip
+    Should Be Equal    ${ip}    192.168.1.12
+    ${mac}    Get Value    id=reserve_mac
+    Should Be Equal    ${mac}    0A-01-02-DE-23-78
+    Input Text    id=reserve_ip    192.168.1.13
+    Click Button    id=add_reservation
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_add}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Table Should Contain    xpath=//table[@class="df_tab"]    192.168.1.13
+    ${message}    Run Keyword And Expect Error    *    Table Should Contain    xpath=//table[@class="df_tab"]    192.168.1.12
+    [Teardown]    删除全部保留Ip地址
+
+DHCP保留地址修改条目，IP地址和已有条目的地址重复，提示已有相同DHCP保留地址条目
+    [Documentation]    @['descrip','reserve_ip','reserve_mac','add_reservation','del_all_reservation']
+    [Tags]    include
+    转到DHCP保留地址配置页面
+    添加保留地址    aa    192.168.1.12    0a:01:02:de:23:78
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_add}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    添加保留地址    bb    192.168.1.13    0a:01:02:de:23:79
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_add}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Click Element    xpath=//div[@class="tab_mod_btn"]
+    ${name}    Get Value    id=descrip
+    Should Be Equal    ${name}    aa
+    ${ip}    Get Value    id=reserve_ip
+    Should Be Equal    ${ip}    192.168.1.12
+    ${mac}    Get Value    id=reserve_mac
+    Should Be Equal    ${mac}    0A-01-02-DE-23-78
+    Input Text    id=reserve_ip    192.168.1.13
+    Click Button    id=add_reservation
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_ip_occupy_err}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    [Teardown]    删除全部保留Ip地址
+
+DHCP保留地址修改条目，MAC地址和已有条目的地址重复，提示已有相同DHCP保留地址条目
+    [Documentation]    @['descrip','reserve_ip','reserve_mac','add_reservation','del_all_reservation']
+    [Tags]    include
+    转到DHCP保留地址配置页面
+    添加保留地址    aa    192.168.1.12    0a:01:02:de:23:78
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_add}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    添加保留地址    bb    192.168.1.13    0a:01:02:de:23:79
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_add}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Click Element    xpath=//div[@class="tab_mod_btn"]
+    ${name}    Get Value    id=descrip
+    Should Be Equal    ${name}    aa
+    ${ip}    Get Value    id=reserve_ip
+    Should Be Equal    ${ip}    192.168.1.12
+    ${mac}    Get Value    id=reserve_mac
+    Should Be Equal    ${mac}    0A-01-02-DE-23-78
+    Input Text    id=reserve_mac    0a:01:02:de:23:79
+    Click Button    id=add_reservation
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_ip_occupy_err}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    [Teardown]    删除全部保留Ip地址
+
+DHCP保留地址点击条目对应的删除按钮，成功删除一条DHCP保留地址条目，提示“操作成功！”，并刷新列表
+    [Documentation]    @['descrip','reserve_ip','reserve_mac','add_reservation','del_all_reservation']
+    [Tags]    include
+    转到DHCP保留地址配置页面
+    添加保留地址    aa    192.168.1.12    0a:01:02:de:23:78
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_add}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Click Element    xpath=//div[@class="tab_del_btn"]
+    ${message}    Confirm Action
+    Choose Ok On Next Confirmation
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    ${message}    Run Keyword And Expect Error    *    Table Should Contain    xpath=//table[@class="df_tab"]    192.168.1.12
+    [Teardown]    删除全部保留Ip地址
+
+DHCP保留地址点击删除全部按钮，成功删除所有DHCP保留地址条目，提示“操作成功！”，并刷新列表
+    [Documentation]    @['descrip','reserve_ip','reserve_mac','add_reservation']
+    [Tags]    include
+    转到DHCP保留地址配置页面
+    添加保留地址    aa    192.168.1.12    0a:01:02:de:23:78
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_add}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Click Button    id=del_all_reservation
+    ${message}    Confirm Action
+    Choose Ok On Next Confirmation
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_delete}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    ${message}    Run Keyword And Expect Error    *    Table Should Contain    xpath=//table[@class="df_tab"]    192.168.1.12
+
+DHCP保留地址测一送一法，在A浏览器上修改在B浏览器上已经删除的DHCP保留地址条目，提示条目不存在并刷新列表
+    [Documentation]    @['descrip','reserve_ip','reserve_mac','add_reservation']
+    [Tags]    include
+    转到DHCP保留地址配置页面
+    添加保留地址    aa    192.168.1.12    0a:01:02:de:23:78
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_add}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Open Browser    ${base_url}    chrome
+    Wait Until Page Contains Element    id=f_main_bg
+    转到DHCP保留地址配置页面
+    Table Should Contain    xpath=//table[@class="df_tab"]    192.168.1.12
+    Click Button    id=del_all_reservation
+    ${message}    Confirm Action
+    Choose Ok On Next Confirmation
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_add}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Switch Browser    hany
+    Table Should Contain    xpath=//table[@class="df_tab"]    192.168.1.12
+    Click Element    xpath=//div[@class="tab_del_btn"]
+    ${message}    Confirm Action
+    Choose Ok On Next Confirmation
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_error}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    [Teardown]    Close All Browsers
+
+*** Keywords ***
+初始化测试套件
+    打开浏览器
+    goto_spec_page    lan_dhcp_serer_set
+    Wait Until Page Contains Element    dhcp_start_ip
+    设置LAN口DHCP服务器    ${None}    192.168.1.2    192.168.1.33
+    设置应该成功
+
+设置错误的IP会提示地址无效
+    [Arguments]    ${ip}
+    转到DHCP保留地址配置页面
+    添加保留地址    aaaa    ${ip}    0a:01:02:de:23:78
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+
+设置错误的mac地址会提示mac地址无效
+    [Arguments]    ${mac}
+    转到DHCP保留地址配置页面
+    添加保留地址    aaaa    192.168.1.10    ${mac}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_mac_addr_err}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+
+设置规则名称有特俗字符会提示名称不能有特殊字符
+    [Arguments]    ${name}
+    转到DHCP保留地址配置页面
+    添加保留地址    ${name}    192.168.1.12    0a:01:02:de:23:78
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_string_err}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失

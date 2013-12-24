@@ -1,0 +1,196 @@
+*** Settings ***
+Suite Setup       初始化测试套件
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
+*** Variables ***
+@{invalid_rule_name}    aa'aa    aa"aa    aa\\aa    aa \ aa
+
+*** Test Cases ***
+IP地址输入框超过15个字符后，无法输入
+    Input Text    ${ip_mac_bind_ip_box}    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    ${ip}    Get Value    ${ip_mac_bind_ip_box}
+    Length Should Be    ${ip}    15
+
+设置错误的IP地址会提示无效的地址
+    [Template]    设置错误的IP地址提示无效的地址
+    : FOR    ${ip}    IN    @{invalid_ip}
+    \    ${ip}
+    [Teardown]    删除所有的IPMAC绑定
+
+设置错误的MAC会提示地址无效
+    [Template]    设置错误的MAC会提示地址无效
+    : FOR    ${mac}    IN    @{invalid_mac}
+    \    ${mac}
+    [Teardown]    删除所有的IPMAC绑定
+
+规则名称允许为空，为空时能够保存成功；规则列表中展示出的该条规则的规则名为空
+    添加IP/MAC绑定    ${EMPTY}    192.168.1.20    de:8e:3f:06:7f:fc    ${ip_mac_bind_lan_port_label}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${operate_success_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Table Cell Should Contain    ${ip_mac_bind_list_tab}    2    2    ${EMPTY}
+    [Teardown]    删除所有的IPMAC绑定
+
+设置特殊字符的规则名会提示错误
+    [Template]    设置带特殊字符的规则名会提示错误
+    : FOR    ${name}    IN    @{invalid_rule_name}
+    \    ${name}
+    [Teardown]    删除所有的IPMAC绑定
+
+规则名长度最大31个字符，超过31字符无法输入
+    Input Text    ${ip_mac_bind_rule_name_box}    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    ${name}    Get Value    ${ip_mac_bind_rule_name_box}
+    Length Should Be    ${name}    31
+
+输入正确的IP地址、MAC地址、规则名，点击“增加”按钮；提示“操作成功！”，并刷新列表
+    添加IP/MAC绑定    ${EMPTY}    192.168.1.30    de:8e:3f:06:7f:fc    ${ip_mac_bind_lan_port_label}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${operate_success_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Table Should Contain    ${ip_mac_bind_list_tab}    192.168.1.30
+    [Teardown]    删除所有的IPMAC绑定
+
+添加条目，IP地址和已有条目的地址重复，提示已有相同IP/MAC绑定条目
+    添加IP/MAC绑定    aa    192.168.1.30    de:8e:3f:08:7f:fc    ${ip_mac_bind_lan_port_label}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${operate_success_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    添加IP/MAC绑定    ab    192.168.1.30    de:8e:3f:09:7f:fc    ${ip_mac_bind_lan_port_label}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${exist_ip_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    [Teardown]    删除所有的IPMAC绑定
+
+添加条目，MAC地址和已有条目的地址重复，提示已有相同IP/MAC绑定条目
+    添加IP/MAC绑定    aa    192.168.1.30    de:8e:3f:08:7f:fc    ${ip_mac_bind_lan_port_label}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${operate_success_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    添加IP/MAC绑定    ab    192.168.1.31    de:8e:3f:08:7f:fc    ${ip_mac_bind_lan_port_label}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${operate_fail_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    [Teardown]    删除所有的IPMAC绑定
+
+成功修改一条IP/MAC绑定条目
+    添加IP/MAC绑定    aa    192.168.1.30    de:8e:3f:08:7f:fc    ${ip_mac_bind_lan_port_label}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${operate_success_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Table Should Contain    ${ip_mac_bind_list_tab}    192.168.1.30
+    Click Element    ${ip_mac_bind_table_row_modf_btn}
+    ${name}    Get Value    ${ip_mac_bind_rule_name_box}
+    Should Be Equal    ${name}    aa
+    ${ip}    Get Value    ${ip_mac_bind_ip_box}
+    Should Be Equal    ${ip}    192.168.1.30
+    ${mac}    Get Value    ${ip_mac_bind_mac_box}
+    Should Be Equal    ${mac}    DE-8E-3F-08-7F-FC
+    Input Text    ${ip_mac_bind_ip_box}    192.168.1.20
+    Click Button    ${ip_mac_bind_save_btn}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${operate_success_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Table Should Contain    ${ip_mac_bind_list_tab}    192.168.1.20
+    ${message}    Run Keyword And Expect Error    *    Table Should Contain    ${reserve_address_list_tab}    192.168.1.30
+    [Teardown]    删除所有的IPMAC绑定
+
+修改条目，IP地址和已有条目的地址重复，提示已有相同IP/MAC绑定条目
+    添加IP/MAC绑定    aa    192.168.1.30    de:8e:3f:08:7f:fc    ${ip_mac_bind_lan_port_label}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${operate_success_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Table Should Contain    ${ip_mac_bind_list_tab}    192.168.1.30
+    添加IP/MAC绑定    ab    192.168.1.20    58:1e:4e:3e:f4:a3    ${ip_mac_bind_lan_port_label}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${operate_success_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Table Should Contain    ${ip_mac_bind_list_tab}    192.168.1.20
+    Click Element    ${ip_mac_bind_table_row_modf_btn}
+    ${name}    Get Value    ${ip_mac_bind_rule_name_box}
+    Should Be Equal    ${name}    ab
+    ${ip}    Get Value    ${ip_mac_bind_ip_box}
+    Should Be Equal    ${ip}    192.168.1.20
+    ${mac}    Get Value    ${ip_mac_bind_mac_box}
+    Should Be Equal    ${mac}    58-1E-4E-3E-F4-A3
+    Input Text    ${ip_mac_bind_ip_box}    192.168.1.30
+    Click Button    ${ip_mac_bind_save_btn}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${exist_ip_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    [Teardown]    删除所有的IPMAC绑定
+
+修改条目，MAC地址和已有条目的地址重复，提示已有相同IP/MAC绑定条目
+    添加IP/MAC绑定    aa    192.168.1.30    de:8e:3f:08:7f:fc    ${ip_mac_bind_lan_port_label}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${operate_success_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Table Should Contain    ${ip_mac_bind_list_tab}    192.168.1.30
+    添加IP/MAC绑定    ab    192.168.1.20    58:1e:4e:3e:f4:a3    ${ip_mac_bind_lan_port_label}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${operate_success_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Table Should Contain    ${ip_mac_bind_list_tab}    192.168.1.20
+    Click Element    ${ip_mac_bind_table_row_modf_btn}
+    ${name}    Get Value    ${ip_mac_bind_rule_name_box}
+    Should Be Equal    ${name}    ab
+    ${ip}    Get Value    ${ip_mac_bind_ip_box}
+    Should Be Equal    ${ip}    192.168.1.20
+    ${mac}    Get Value    ${ip_mac_bind_mac_box}
+    Should Be Equal    ${mac}    58-1E-4E-3E-F4-A3
+    Input Text    ${ip_mac_bind_mac_box}    de:8e:3f:08:7f:fc
+    Click Button    ${ip_mac_bind_save_btn}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${operate_fail_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    [Teardown]    删除所有的IPMAC绑定
+
+测一送一法，在A浏览器上修改在B浏览器上已经删除的IP/MAC绑定条目，提示条目不存在并刷新列表
+    添加IP/MAC绑定    aa    192.168.1.30    de:8e:3f:08:7f:fc    ${ip_mac_bind_lan_port_label}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${operate_success_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Table Should Contain    ${ip_mac_bind_list_tab}    192.168.1.30
+    Open Browser    ${base_url}    chrome
+    Wait Until Page Contains Element    ${network_param_menu}    15
+    Wait Until Page Contains Element    ${run_status_menu}    15
+    转到IP/MAC绑定页面
+    删除所有的IPMAC绑定
+    Switch Browser    hany
+    Table Should Contain    ${ip_mac_bind_list_tab}    192.168.1.30
+    Click Element    ${ip_mac_bind_table_row_del_btn}
+    ${message}    Confirm Action
+    Choose Ok On Next Confirmation
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${operate_fail_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    [Teardown]    Close All Browsers
+
+点击条目对应的删除按钮，成功删除一条IP/MAC绑定条目，提示“操作成功！”，并刷新列表
+    添加IP/MAC绑定    aa    192.168.1.30    de:8e:3f:08:7f:fc    ${ip_mac_bind_lan_port_label}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${operate_success_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Table Should Contain    ${ip_mac_bind_list_tab}    192.168.1.30
+    Click Element    ${reserve_address_table_row_del_btn}
+    ${message}    Confirm Action
+    Choose Ok On Next Confirmation
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${delete_suc_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    ${message}    Run Keyword And Expect Error    *    Table Should Contain    ${reserve_address_list_tab}    192.168.1.30
+    [Teardown]    删除所有的IPMAC绑定
+
+点击删除全部按钮，成功删除所有IP/MAC绑定条目，提示“操作成功！”，并刷新列表
+    添加IP/MAC绑定    aa    192.168.1.30    de:8e:3f:08:7f:fc    ${ip_mac_bind_lan_port_label}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${operate_success_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Table Should Contain    ${ip_mac_bind_list_tab}    192.168.1.30
+    删除所有的IPMAC绑定
+    ${message}    Run Keyword And Expect Error    *    Table Should Contain    ${reserve_address_list_tab}    192.168.1.30
+    [Teardown]    删除所有的IPMAC绑定
+
+*** Keywords ***
+初始化测试套件
+    打开浏览器
+    转到IP/MAC绑定页面
+
+设置错误的IP地址提示无效的地址
+    [Arguments]    ${ip}
+    添加IP/MAC绑定    aa    ${ip}    de:8e:3f:06:7f:fc    ${ip_mac_bind_lan_port_label}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${invalid_ip_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+
+设置错误的MAC会提示地址无效
+    [Arguments]    ${mac}
+    添加IP/MAC绑定    aa    192.168.1.20    ${mac}    ${ip_mac_bind_lan_port_label}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${invalid_mac_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+
+设置带特殊字符的规则名会提示错误
+    [Arguments]    ${name}
+    添加IP/MAC绑定    ${name}    192.168.1.26    de:8e:3f:06:7f:fc    ${ip_mac_bind_lan_port_label}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${invalid_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失

@@ -1,0 +1,135 @@
+*** Settings ***
+Suite Setup       清空pcap目录
+Resource          keyword.txt
+Library           staticTest    ${host_lan_ip}    ${host_wan_ip}    ${router_lan_ip}    ${router_wan_ip}
+
+*** Test Cases ***
+静态接入测试1
+    [Documentation]    路由器WAN口IP和B主机在同一个子网内，可以进行相互访问
+    ...    @['wan_ip','wan_mask','wan_gw','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=wan_ip
+    设置静态接入的参数    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}    ${None}    ${None}    ${None}
+    ...    ${None}
+    设置应该成功
+    ping_router_wan_should_reply
+    [Teardown]    关闭浏览器
+
+静态接入测试2
+    [Documentation]    路由器WAN口IP和B主机不在同一个子网内，无法进行相互访问
+    ...    @['wan_ip','wan_mask','wan_gw','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=wan_ip
+    设置静态接入的参数    100.0.0.99    255.255.255.0    100.0.0.100    ${None}    ${None}    ${None}
+    ...    ${None}
+    设置应该成功
+    ${message}    Run Keyword And Expect Error    *    ping_router_wan_should_reply
+    Should Be Equal    ${message}    No Recv Ping reply
+    [Teardown]    关闭浏览器
+
+静态接入DNS测试1
+    [Documentation]    只设置首选DNS服务器，DNS解析包发往首选DNS服务器
+    ...    @['wan_ip','wan_mask','wan_gw','save_wan_set','dns_a','dns_b']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=wan_ip
+    设置静态接入的参数    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}    ${None}    ${None}    8.8.8.8
+    ...    ${EMPTY}
+    设置应该成功
+    staticTest.nslookup    www.baidu.com
+    DNSCheck    8.8.8.8    ${EMPTY}    www.baidu.com
+    [Teardown]    关闭浏览器
+
+静态接入DNS测试2
+    [Documentation]    同时设置首选DNS服务器和备用DNS服务器，DNS解析包发往首选DNS服务器和备用DNS服务器
+    ...    @['wan_ip','wan_mask','wan_gw','save_wan_set','dns_a','dns_b']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=wan_ip
+    设置静态接入的参数    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}    ${None}    ${None}    8.8.8.8
+    ...    9.9.9.9
+    设置应该成功
+    staticTest.nslookup    www.baidu.com
+    DNSCheck    8.8.8.8    9.9.9.9    www.baidu.com
+    [Teardown]    关闭浏览器
+
+静态接入DNS测试3
+    [Documentation]    只设置备用DNS服务器，DNS解析包发往备用DNS服务器
+    ...    @['wan_ip','wan_mask','wan_gw','save_wan_set','dns_a','dns_b']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=wan_ip
+    设置静态接入的参数    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}    ${None}    ${None}    8.8.8.8
+    ...    ${EMPTY}
+    设置应该成功
+    staticTest.nslookup    www.baidu.com
+    DNSCheck    ${EMPTY}    8.8.8.8    www.baidu.com
+    [Teardown]    关闭浏览器
+
+静态接入网关测试
+    [Documentation]    静态接入配置成功后，路由器会根据默认网关，添加了一条缺省路由
+    ...    @['wan_ip','wan_mask','wan_gw','save_wan_set']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=wan_ip
+    设置静态接入的参数    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}    ${None}    ${None}    ${None}
+    ...    ${None}
+    设置应该成功
+    send_100_random_dstip_ping
+    ${count}    get_ping_req_count
+    Should Be Equal    ${count}    100
+    [Teardown]    关闭浏览器
+
+静态接入MTU测试
+    [Documentation]    在WAN口为静态接入模式下，WAN口MTU修改前后，WAN口和外网通信的数据流在IP层内容长度上发生变化
+    ...    @['wan_ip','wan_mask','wan_gw','save_wan_set','static_mtu']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=wan_ip
+    设置静态接入的参数    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}    ${None}    1500    ${None}
+    ...    ${None}
+    设置应该成功
+    ${mtu}    staticTest.ping_router_wan_get_mtu
+    Should Be Equal    ${mtu}    1500
+    设置静态接入的参数    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}    ${None}    576    ${None}
+    ...    ${None}
+    设置应该成功
+    ${mtu}    staticTest.ping_router_wan_get_mtu
+    Should Be Equal    ${mtu}    576
+    设置静态接入的参数    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}    ${None}    1000    ${None}
+    ...    ${None}
+    设置应该成功
+    ${mtu}    staticTest.ping_router_wan_get_mtu    2000
+    Should Be Equal    ${mtu}    996
+    [Teardown]    关闭浏览器
+
+静态接入MAC克隆测试
+    [Documentation]    WAN口MAC地址修改前后，WAN口和外网通信的数据流在MAC地址上发生变化
+    ...    @['wan_ip','wan_mask','wan_gw','save_wan_set','mac_addr']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=wan_ip
+    设置静态接入的参数    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}    ${default_wan_mac}    ${None}    ${None}
+    ...    ${None}
+    设置应该成功
+    staticTest.mac_clone_check    ${default_wan_mac}
+    转到到静态配置页面
+    设置静态接入的参数    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}    08-10-74-05-00-1F    ${None}    ${None}
+    ...    ${None}
+    设置应该成功
+    staticTest.mac_clone_check    08-10-74-05-00-1F
+    [Teardown]    关闭浏览器
+
+*** Keywords ***
+清空pcap目录
+    Remove Files    static_pcap/*

@@ -1,0 +1,431 @@
+*** Settings ***
+Suite Setup       清空pcap目录
+Resource          keyword.txt
+Library           DHCPTestLib    ${host_lan_ip}    ${host_wan_ip}    ${router_lan_ip}
+Library           Remote    http://${remote_lib_ip}:${remote_dhcp_lib_port}    WITH NAME    remoteDHCPTestLib
+
+*** Test Cases ***
+DHCP接入IP获取测试
+    [Documentation]    配置路由器WAN口为DHCP模式，路由器WAN口自动发起DHCP协商，并成功获取到IP
+    ...    @['save_wan_set','conntype']
+    [Tags]    include
+    打开浏览器
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    ${None}    ${None}    ${None}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    remoteDHCPTestLib.start_dhcp_server    100.0.0.200    100.0.0.210    100.0.0.0    255.255.0.0    ${remote_lib_ip}    8.8.8.8
+    ...    9.9.9.9    100.0.255.255    600    7200
+    转到接口状态页面
+    Wait Until Keyword Succeeds    25    5    页面显示DHCP分配到的WAN口IP    100.0.0.200    100.0.0.210
+    ping_wan_side_host_should_get_reply    ${remote_lib_ip}
+    [Teardown]    清理测试
+
+DHCP接入释放测试
+    [Documentation]    断开DHCP连接后，WAN口发送DHCP RELEASE报文释放IP地址
+    ...    @['save_wan_set','conntype']
+    [Tags]    include
+    打开浏览器
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    ${None}    ${None}    ${None}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    remoteDHCPTestLib.start_dhcp_server    100.0.0.200    100.0.0.210    100.0.0.0    255.255.0.0    ${remote_lib_ip}    8.8.8.8
+    ...    9.9.9.9    100.0.255.255    600    7200
+    转到接口状态页面
+    Wait Until Keyword Succeeds    25    5    页面显示DHCP分配到的WAN口IP    100.0.0.200    100.0.0.210
+    ping_wan_side_host_should_get_reply    ${remote_lib_ip}
+    start_dhcp_release_sniff_thread
+    断开路由器WAN口连接
+    Wait Until Keyword Succeeds    10    0    路由器WAN口IP为0.0.0.0
+    dhcp_release_should_ok
+    [Teardown]    清理测试
+
+DHCP接入获取指定地址测试
+    [Documentation]    WAN口使用DHCP重新获取IP地址成功，IP地址为DHCP client发送的DHCP discover中指定的IP地址
+    ...    @['save_wan_set','conntype']
+    [Tags]    include
+    打开浏览器
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    ${None}    ${None}    ${None}
+    设置应该成功
+    remoteDHCPTestLib.start_dhcp_server    100.0.0.200    100.0.0.210    100.0.0.0    255.255.0.0    ${remote_lib_ip}    8.8.8.8
+    ...    9.9.9.9    100.0.255.255    600    7200
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    2    页面显示DHCP分配到的WAN口IP    100.0.0.200    100.0.0.210
+    ${wan_ip}    Get Text    ${wan_ip_addr_lacator}
+    断开路由器WAN口连接
+    Wait Until Keyword Succeeds    20    0    路由器WAN口IP为0.0.0.0
+    start_dhcp_con_sniff_thread    ${wan_ip}
+    启用路由器WAN口连接
+    dhcp_con_should_ok
+    Wait Until Keyword Succeeds    20    2    页面显示DHCP分配到的WAN口IP    100.0.0.200    100.0.0.210
+    ping_wan_side_host_should_get_reply    ${remote_lib_ip}
+    [Teardown]    清理测试
+
+DHCP magic number 测试
+    [Documentation]    WAN口发送DHCP DISCOVER包，路由器回应的DHCP OFFER中的magic number和DHCP discover中的不同，不影响DHCP正常使用，完成DHCP协商
+    ...    @['save_wan_set','conntype']
+    [Tags]    include
+    打开浏览器
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    ${None}    ${None}    ${None}
+    设置应该成功
+    dhcp_magic_test
+    [Teardown]    关闭浏览器
+
+DHCP接入 格式错误 测试
+    [Documentation]    WAN口发送DHCP DISCOVER包，路由器回应DHCP OFFER，没有结束选项“255”
+    ...    @['save_wan_set','conntype']
+    [Tags]    include
+    打开浏览器
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    ${None}    ${None}    ${None}
+    设置应该成功
+    dhcp_request_no_end_opt
+    [Teardown]    关闭浏览器
+
+DHCP接入 协议长度 测试1
+    [Documentation]    WAN口发送DHCP DISCOVER包，路由器回应DHCP OFFER，选项字段长度超过312
+    ...    @['save_wan_set','conntype']
+    [Tags]    include
+    打开浏览器
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    ${None}    ${None}    ${None}
+    设置应该成功
+    dhcp_pkt_length_too_long_check
+    [Teardown]    关闭浏览器
+
+DHCP接入 协议长度 测试2
+    [Documentation]    WAN口发送DHCP DISCOVER包，路由器回应DHCP OFFER，选项字段长度为0
+    ...    @['save_wan_set','conntype']
+    [Tags]    include
+    打开浏览器
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    ${None}    ${None}    ${None}
+    设置应该成功
+    dhcp_options_len_zero_test
+    [Teardown]    关闭浏览器
+
+DHCP接入协议实现：可用服务器探测
+    [Documentation]    在没有DHCP服务器的情况下，DHCP client会一直发送DHCP discover，时间间隔分别为3秒、3秒、60秒
+    ...    @['save_wan_set','conntype']
+    [Tags]    include
+    打开浏览器
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    ${None}    ${None}    ${None}
+    start_dhcp_discovery_interval_check_thread
+    设置应该成功
+    dhcp_discovery_interval
+    [Teardown]    关闭浏览器
+
+DHCP维护协议实现：T1时间维护成功
+    [Documentation]    路由器WAN口通过DHCP获取到IP后，在T1时间发送链路维护报文；T1时间为DHCP协商过程中，IP超时时间的50%
+    ...    @['save_wan_set','conntype']
+    [Tags]    include
+    打开浏览器
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    ${None}    ${None}    ${None}
+    设置应该成功
+    start_dhcp_request_interval_check_thread
+    remoteDHCPTestLib.start_dhcp_server    100.0.0.200    100.0.0.210    100.0.0.0    255.255.0.0    ${remote_lib_ip}    8.8.8.8
+    ...    9.9.9.9    100.0.255.255    60    60
+    dhcp_req_interval_time_test
+    [Teardown]    清理测试
+
+DHCP维护协议实现：T1时间维护超时
+    [Documentation]    T1时间的数据包没有响应的时候，client会先后发送多个链路维护报文，间隔时间依次递减；未达到T2时间，收到链路维护响应，更新超时时间
+    ...    @['save_wan_set','conntype']
+    [Tags]    include
+    打开浏览器
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    ${None}    ${None}    ${None}
+    设置应该成功
+    remoteDHCPTestLib.start_dhcp_server    100.0.0.200    100.0.0.210    100.0.0.0    255.255.0.0    ${remote_lib_ip}    8.8.8.8
+    ...    9.9.9.9    100.0.255.255    60    60
+    dhcp_con_test
+    remoteDHCPTestLib.close_dhcp_server
+    start_fault_sniff_thread
+    Sleep    45
+    should_have_multi_dhcp_req
+    remoteDHCPTestLib.start_dhcp_server    100.0.0.200    100.0.0.210    100.0.0.0    255.255.0.0    ${remote_lib_ip}    8.8.8.8
+    ...    9.9.9.9    100.0.255.255    60    60
+    dhcp_server_should_response_ack
+    [Teardown]    清理测试
+
+DHCP维护协议实现：T2时间维护超时
+    [Documentation]    T2时间的数据包没有响应的时候，client会先后发送多个链路维护报文，间隔时间依次递减；达到IP超时时间，10秒内快速发送3个DHCP discover包
+    ...    @['save_wan_set','conntype']
+    [Tags]    include
+    打开浏览器
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    ${None}    ${None}    ${None}
+    设置应该成功
+    remoteDHCPTestLib.start_dhcp_server    100.0.0.200    100.0.0.210    100.0.0.0    255.255.0.0    ${remote_lib_ip}    8.8.8.8
+    ...    9.9.9.9    100.0.255.255    60    60
+    dhcp_con_test
+    remoteDHCPTestLib.close_dhcp_server
+    dhcp_ip_timeout_test
+    [Teardown]    清理测试
+
+DHCP维护协议实现：T2时间维护成功
+    [Documentation]    T2时间的数据包没有响应的时候，client会先后发送多个链路维护报文，间隔时间依次递减；未达到IP超时时间，收到链路维护响应，更新超时时间
+    ...    @['save_wan_set','conntype']
+    [Tags]    include
+    打开浏览器
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    ${None}    ${None}    ${None}
+    设置应该成功
+    remoteDHCPTestLib.start_dhcp_server    100.0.0.200    100.0.0.210    100.0.0.0    255.255.0.0    ${remote_lib_ip}    8.8.8.8
+    ...    9.9.9.9    100.0.255.255    60    60
+    dhcp_con_test
+    remoteDHCPTestLib.close_dhcp_server
+    start_fault_sniff_thread
+    Sleep    57
+    should_have_multi_dhcp_req
+    remoteDHCPTestLib.start_dhcp_server    100.0.0.200    100.0.0.210    100.0.0.0    255.255.0.0    ${remote_lib_ip}    8.8.8.8
+    ...    9.9.9.9    100.0.255.255    60    60
+    dhcp_server_should_response_ack
+    [Teardown]    清理测试
+
+DHCP接入MAC克隆测试
+    [Documentation]    WAN口MAC地址修改前后，WAN口和外网通信的数据流在MAC地址上发生变化
+    ...    @['save_wan_set','mac_addr','conntype']
+    [Tags]    include
+    打开浏览器
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${default_wan_mac}    ${None}    ${None}    ${None}
+    设置应该成功
+    remoteDHCPTestLib.start_dhcp_server    100.0.0.200    100.0.0.210    100.0.0.0    255.255.0.0    ${remote_lib_ip}    8.8.8.8
+    ...    9.9.9.9    100.0.255.255    600    7200
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    2    页面显示DHCP分配到的WAN口IP    100.0.0.200    100.0.0.210
+    ${dhcp_wan_ip}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
+    ping_wan_mac_check_should_ok    ${dhcp_wan_ip}    ${default_wan_mac}
+    转到DHCP设置页面
+    设置dhcp接入的参数    08-10-74-05-00-1F    ${None}    ${None}    ${None}
+    设置应该成功
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    2    页面显示DHCP分配到的WAN口IP    100.0.0.200    100.0.0.210
+    ${dhcp_wan_ip}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
+    ping_wan_mac_check_should_ok    ${dhcp_wan_ip}    08-10-74-05-00-1F
+    [Teardown]    清理测试
+
+DHCP接入MTU测试
+    [Documentation]    在WAN口为DHCP接入模式下，WAN口MTU修改前后，WAN口和外网通信的数据流在IP层内容长度上发生变化
+    ...    @['save_wan_set','dhcp_mtu','conntype']
+    [Tags]    include
+    打开浏览器
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    1000    ${None}    ${None}
+    设置应该成功
+    remoteDHCPTestLib.start_dhcp_server    100.0.0.200    100.0.0.210    100.0.0.0    255.255.0.0    ${remote_lib_ip}    8.8.8.8
+    ...    9.9.9.9    100.0.255.255    600    7200
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    2    页面显示DHCP分配到的WAN口IP    100.0.0.200    100.0.0.210
+    ${dhcp_wan_ip}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
+    ${length}    DHCPTestLib.ping_router_wan_get_mtu    ${dhcp_wan_ip}
+    Should Be Equal    ${length}    996
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    576    ${None}    ${None}
+    设置应该成功
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    2    页面显示DHCP分配到的WAN口IP    100.0.0.200    100.0.0.210
+    ${dhcp_wan_ip}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
+    ${length}    DHCPTestLib.ping_router_wan_get_mtu    ${dhcp_wan_ip}
+    Should Be Equal    ${length}    572
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    1500    ${None}    ${None}
+    设置应该成功
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    2    页面显示DHCP分配到的WAN口IP    100.0.0.200    100.0.0.210
+    ${dhcp_wan_ip}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
+    ${length}    DHCPTestLib.ping_router_wan_get_mtu    ${dhcp_wan_ip}
+    Should Be Equal    ${length}    1500
+    [Teardown]    清理测试
+
+DHCP接入获取已分配地址测试
+    [Documentation]    @['save_wan_set','conntype']
+    [Tags]    include
+    打开浏览器
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    ${None}    ${None}    ${None}
+    设置应该成功
+    remoteDHCPTestLib.start_dhcp_server    100.0.0.200    100.0.0.210    100.0.0.0    255.255.0.0    ${remote_lib_ip}    8.8.8.8
+    ...    9.9.9.9    100.0.255.255    600    7200
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    2    页面显示DHCP分配到的WAN口IP    100.0.0.200    100.0.0.210
+    ${wan_ip}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
+    断开路由器WAN口连接
+    Wait Until Keyword Succeeds    20    1    路由器WAN口IP为0.0.0.0
+    start_dhcp_client    ${wan_ip}
+    start_dhcp_con_sniff_thread    ${wan_ip}
+    启用路由器WAN口连接
+    dhcp_should_get_other_ip
+    Wait Until Keyword Succeeds    20    2    页面显示DHCP分配到的WAN口IP    100.0.0.200    100.0.0.210
+    ping_wan_side_host_should_get_reply    ${remote_lib_ip}
+    [Teardown]    清理测试
+
+DHCP接入获取地址池外的地址测试
+    [Documentation]    @['save_wan_set','conntype']
+    [Tags]    include
+    打开浏览器
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    ${None}    ${None}    ${None}
+    设置应该成功
+    remoteDHCPTestLib.start_dhcp_server    100.0.0.200    100.0.0.210    100.0.0.0    255.255.0.0    ${remote_lib_ip}    8.8.8.8
+    ...    9.9.9.9    100.0.255.255    600    7200
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    2    页面显示DHCP分配到的WAN口IP    100.0.0.200    100.0.0.210
+    ${wan_ip}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
+    断开路由器WAN口连接
+    Wait Until Keyword Succeeds    20    1    路由器WAN口IP为0.0.0.0
+    remoteDHCPTestLib.close_dhcp_server
+    remoteDHCPTestLib.start_dhcp_server    100.0.0.150    100.0.0.160    100.0.0.0    255.255.0.0    ${remote_lib_ip}    8.8.8.8
+    ...    9.9.9.9    100.0.255.255    600    7200
+    start_dhcp_con_sniff_thread    ${wan_ip}
+    启用路由器WAN口连接
+    dhcp_con_should_ok
+    Wait Until Keyword Succeeds    20    2    页面显示DHCP分配到的WAN口IP    100.0.0.150    100.0.0.160
+    ping_wan_side_host_should_get_reply    ${remote_lib_ip}
+    [Teardown]    清理测试
+
+DHCP接入无可用地址时进行获取测试
+    [Documentation]    @['save_wan_set','conntype']
+    [Tags]    include
+    打开浏览器
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    ${None}    ${None}    ${None}
+    设置应该成功
+    remoteDHCPTestLib.start_dhcp_server    100.0.0.200    100.0.0.201    100.0.0.0    255.255.0.0    ${remote_lib_ip}    8.8.8.8
+    ...    9.9.9.9    100.0.255.255    600    7200
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    2    页面显示DHCP分配到的WAN口IP    100.0.0.200    100.0.0.210
+    ${wan_ip}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
+    断开路由器WAN口连接
+    Wait Until Keyword Succeeds    20    1    路由器WAN口IP为0.0.0.0
+    转到日志页面
+    清空全部日志
+    start_dhcp_client    100.0.0.200
+    start_dhcp_client    100.0.0.201
+    start_dhcp_con_sniff_thread    ${wan_ip}
+    转到接口状态页面
+    启用路由器WAN口连接
+    dhcp_nak_should_ok
+    转到日志页面
+    日志显示无法获取到IP
+    [Teardown]    清理测试
+
+DHCP接入DNS配置测试1
+    [Documentation]    @['save_wan_set','conntype','dhcp_dns_a','dhcp_dns_b']
+    打开浏览器
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    ${None}    8.8.8.8    ${EMPTY}
+    设置应该成功
+    remoteDHCPTestLib.start_dhcp_server    100.0.0.200    100.0.0.210    100.0.0.0    255.255.0.0    ${remote_lib_ip}    8.8.8.8
+    ...    9.9.9.9    100.0.255.255    600    7200
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    2    页面显示DHCP分配到的WAN口IP    100.0.0.200    100.0.0.210
+    ${wan_ip}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
+    DHCPTestLib.nslookup    www.163.com
+    dns_test    8.8.8.8    ${EMPTY}    ${wan_ip}    www.163.com
+    [Teardown]    清理测试
+
+DHCP接入DNS配置测试2
+    [Documentation]    @['save_wan_set','conntype','dhcp_dns_a','dhcp_dns_b']
+    打开浏览器
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    ${None}    ${EMPTY}    9.9.9.9
+    设置应该成功
+    remoteDHCPTestLib.start_dhcp_server    100.0.0.200    100.0.0.210    100.0.0.0    255.255.0.0    ${remote_lib_ip}    8.8.8.8
+    ...    9.9.9.9    100.0.255.255    600    7200
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    2    页面显示DHCP分配到的WAN口IP    100.0.0.200    100.0.0.210
+    ${wan_ip}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
+    DHCPTestLib.nslookup    www.163.com
+    dns_test    ${EMPTY}    9.9.9.9    ${wan_ip}    www.163.com
+    [Teardown]    清理测试
+
+DHCP接入DNS配置测试3
+    [Documentation]    @['save_wan_set','conntype','dhcp_dns_a','dhcp_dns_b']
+    打开浏览器
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    ${None}    8.8.8.8    9.9.9.9
+    设置应该成功
+    remoteDHCPTestLib.start_dhcp_server    100.0.0.200    100.0.0.210    100.0.0.0    255.255.0.0    ${remote_lib_ip}    8.8.8.8
+    ...    9.9.9.9    100.0.255.255    600    7200
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    2    页面显示DHCP分配到的WAN口IP    100.0.0.200    100.0.0.210
+    ${wan_ip}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
+    DHCPTestLib.nslookup    www.163.com
+    dns_test    8.8.8.8    9.9.9.9    ${wan_ip}    www.163.com
+    [Teardown]    清理测试
+
+DHCP接入DNS配置测试4
+    [Documentation]    @['save_wan_set','conntype','dhcp_dns_a','dhcp_dns_b']
+    打开浏览器
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    ${None}    ${EMPTY}    ${EMPTY}
+    设置应该成功
+    remoteDHCPTestLib.start_dhcp_server    100.0.0.200    100.0.0.210    100.0.0.0    255.255.0.0    ${remote_lib_ip}    8.8.8.8
+    ...    9.9.9.9    100.0.255.255    600    7200
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    2    页面显示DHCP分配到的WAN口IP    100.0.0.200    100.0.0.210
+    ${wan_ip}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
+    DHCPTestLib.nslookup    www.163.com
+    dns_test    ${EMPTY}    ${EMPTY}    ${wan_ip}    www.163.com
+    [Teardown]    清理测试
+
+DHCP接入获取和静态IP冲突的地址测试
+    [Documentation]    @['save_wan_set','conntype']
+    [Tags]    include
+    remoteDHCPTestLib.down_eth1
+    打开浏览器
+    转到DHCP设置页面
+    设置dhcp接入的参数    ${None}    ${None}    ${None}    ${None}
+    设置应该成功
+    remoteDHCPTestLib.start_dhcp_server    100.0.0.200    100.0.0.210    100.0.0.0    255.255.0.0    ${remote_lib_ip}    8.8.8.8
+    ...    9.9.9.9    100.0.255.255    600    7200
+    转到接口状态页面
+    Wait Until Keyword Succeeds    20    2    页面显示DHCP分配到的WAN口IP    100.0.0.200    100.0.0.210
+    ${wan_ip}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
+    断开路由器WAN口连接
+    Wait Until Keyword Succeeds    20    1    WAN口IP应该是    0.0.0.0
+    remoteDHCPTestLib.up_eth1    ${wan_ip}    ${host_wan_mask}
+    start_dhcp_decline_sniff_thread    ${wan_ip}
+    启用路由器WAN口连接
+    dhcp_decline_test_should_ok
+    Wait Until Keyword Succeeds    20    2    页面显示DHCP分配到的WAN口IP    100.0.0.200    100.0.0.210
+    ${wan_ip2}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
+    Should Not Be Equal    ${wan_ip2}    ${wan_ip}
+    remoteDHCPTestLib.down_eth1
+    ping_wan_side_host_should_get_reply    ${remote_lib_ip}
+    [Teardown]    静态IP地址冲突测试清理
+
+*** Keywords ***
+清理测试
+    转到接口状态页面
+    ${wan_ip}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
+    Run Keyword If    '${wan_ip}' != '0.0.0.0'    断开路由器WAN口连接
+    remoteDHCPTestLib.close_dhcp_server
+    Wait Until Keyword Succeeds    20    1    WAN口IP应该是    0.0.0.0
+    Close Browser
+
+静态IP地址冲突测试清理
+    转到接口状态页面
+    ${wan_ip}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
+    Run Keyword If    '${wan_ip}' != '0.0.0.0'    断开路由器WAN口连接
+    Wait Until Keyword Succeeds    20    1    路由器WAN口IP为0.0.0.0
+    remoteDHCPTestLib.close_dhcp_server
+    remoteDHCPTestLib.down_eth1
+    Close Browser
+    Sleep    15
+
+清空pcap目录
+    Remove Files    dhcp_pcap/*
+
+页面显示DHCP分配到的WAN口IP
+    [Arguments]    ${dhcp_pool_start_ip}    ${dhcp_pool_end_ip}
+    goto_spec_page    interface
+    ${s}    Get Text    xpath=//div[@id="content_layer"]/div[1]/div[2]/div[3]/span
+    dhcp_wan_ip_should_in_ip_pool    ${dhcp_pool_start_ip}    ${dhcp_pool_end_ip}    ${s}

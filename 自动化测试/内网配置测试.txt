@@ -1,0 +1,66 @@
+*** Settings ***
+Resource          keyword.txt
+Library           lanConfigTestLib.py    ${host_lan_ip}    WITH NAME    lanConfigTestLib
+
+*** Test Cases ***
+路由器LAN口MAC地址测试
+    [Documentation]    LAN口MAC地址修改前后，LAN口和内网主机通信的数据流在MAC地址上发生变化
+    ...    @['lan_mac','save_lan_mac']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=lan_mac
+    ${mac}    Get Value    id=lan_mac
+    ${ping_cmd}    Catenate    ping \    ${router_lan_ip}    -n 20
+    Start Process    ${ping_cmd}
+    should_be_mac    ${mac}
+    Stop All Processes
+    设置LAN口MAC    50-44-33-22-11-00
+    设置应该成功
+    ${ping_cmd}    Catenate    ping \    ${router_lan_ip}    -n 20
+    Start Process    ${ping_cmd}
+    should_be_mac    50-44-33-22-11-00
+    [Teardown]    关闭浏览器和所有后台程序
+
+路由器LAN口IP测试1
+    [Documentation]    主机和路由器LAN口IP在同一个子网内，可以进行相互访问
+    ...    @['lan_ip','lan_mask']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=lan_ip
+    ${ip}    Get Value    id=lan_ip
+    ${mask}    Get Value    id=lan_mask
+    Should Be Equal    ${ip}    192.168.1.1
+    Should Be Equal    ${mask}    255.255.255.0
+    set_host_lan_addr    ${host_lan_ip}    255.255.255.0    ${EMPTY}
+    ${cmd}    Catenate    ping    ${ip}
+    ${result}    Run    ${cmd}
+    Should Contain    ${result}    Reply from
+    [Teardown]    路由器LAN口IP测试清理
+
+路由器LAN口IP测试2
+    [Documentation]    主机和路由器LAN口IP不在同一个子网内，无法进行相互访问
+    ...    @['lan_ip','lan_mask']
+    [Tags]    include
+    打开浏览器
+    goto_test_case_page
+    Wait Until Page Contains Element    id=lan_ip
+    ${ip}    Get Value    id=lan_ip
+    ${mask}    Get Value    id=lan_mask
+    Should Be Equal    ${ip}    192.168.1.1
+    Should Be Equal    ${mask}    255.255.255.0
+    set_host_lan_addr    192.168.10.100    255.255.0.0    ${EMPTY}
+    ${cmd}    Catenate    ping    ${ip}
+    ${result}    Run    ${cmd}
+    Should Not Contain    ${result}    Reply from
+    [Teardown]    路由器LAN口IP测试清理
+
+*** Keywords ***
+关闭浏览器和所有后台程序
+    Close Browser
+    Stop All Processes
+
+路由器LAN口IP测试清理
+    set_host_lan_addr    ${host_lan_ip}    255.255.255.0    ${router_lan_ip}
+    Close Browser

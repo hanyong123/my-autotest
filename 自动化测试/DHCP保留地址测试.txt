@@ -1,0 +1,64 @@
+*** Settings ***
+Resource          keyword.txt
+Library           dhcpServerTestLib.py    ${host_lan_ip}    ${router_lan_ip}    WITH NAME    dhcpServerTestLib
+
+*** Test Cases ***
+DHCP保留地址获取IP测试
+    [Documentation]    设置保留地址后，路由器收到指定MAC地址发来的DHCP discover，路由器将该MAC对对应的IP地址携带在DHCP offer中发出@['descrip','reserve_ip','reserve_mac','add_reservation']
+    [Tags]    include
+    打开浏览器
+    转到DHCP保留地址配置页面
+    添加保留地址    aa    192.168.1.12    de:8e:3f:06:7f:fc
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_add}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    start_dhcp_client    ${None}
+    ${client_ip}    get_dhcp_client_ip
+    dhcp_release
+    Should Be Equal    ${client_ip}    192.168.1.12
+    [Teardown]    关闭浏览器并且清除所有保留地址
+
+DHCP保留地址：保留地址和当前静态IP存在冲突
+    [Documentation]    当保留地址的IP和当前局域网内已存在的一个静态IP发生冲突时，仍然分配保留地址的IP给指定主机@['descrip','reserve_ip','reserve_mac','add_reservation']
+    [Tags]    include
+    打开浏览器
+    转到DHCP保留地址配置页面
+    添加保留地址    aa    192.168.1.12    de:8e:3f:06:7f:fc
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_add}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    start_dhcp_client    ${None}
+    ${client_ip}    get_dhcp_client_ip
+    Should Be Equal    ${client_ip}    192.168.1.12
+    dhcp_decline
+    start_dhcp_client    ${None}
+    ${client_ip}    get_dhcp_client_ip
+    Should Be Equal    ${client_ip}    192.168.1.12
+    [Teardown]    静态IP冲突测试清理
+
+DHCP保留地址获取IP不在地址池范围内测试
+    [Documentation]    设置保留地址后，路由器收到指定MAC地址发来的DHCP discover，该MAC对对应的IP地址不在当前的DHCP地址池范围中，路由器回应DHCP offer中携带IP在地址池范围中@['descrip','reserve_ip','reserve_mac','add_reservation']
+    [Tags]    include
+    打开浏览器
+    goto_spec_page    lan_dhcp_serer_set
+    Wait Until Page Contains Element    dhcp_start_ip
+    设置LAN口DHCP服务器    ${None}    192.168.1.2    192.168.1.33
+    设置应该成功
+    转到DHCP保留地址配置页面
+    添加保留地址    aa    192.168.1.50    de:8e:3f:06:7f:fc
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_add}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    start_dhcp_client    ${None}
+    ${client_ip}    get_dhcp_client_ip
+    dhcp_release
+    Should Not Be Equal    ${client_ip}    192.168.1.50
+    [Teardown]    关闭浏览器并且清除所有保留地址
+
+*** Keywords ***
+关闭浏览器并且清除所有保留地址
+    删除全部保留Ip地址
+    Close Browser
+
+静态IP冲突测试清理
+    删除全部保留Ip地址
+    转到系统恢复缺省页面
+    恢复缺省
+    Close Browser

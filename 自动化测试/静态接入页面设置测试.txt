@@ -1,0 +1,159 @@
+*** Settings ***
+Suite Setup       初始化测试
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
+*** Variables ***
+${string_25}      aaaaaaaaaaaaaaaaaaaaaaaaa
+
+*** Test Cases ***
+静态接入MAC配置输入框超出17个字符后无法输入
+    [Documentation]    @['wan_ip','wan_mask','wan_gw','save_wan_set','mac_addr']
+    [Tags]    include
+    goto_test_case_page
+    Wait Until Page Contains Element    id=wan_ip
+    Input Text    id=mac_addr    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    ${mac}    Get Value    id=mac_addr
+    Length Should Be    ${mac}    17
+
+静态接入使用MAC克隆，MAC地址框内容被填为当前登录路由器WEB系统的设备的MAC地址
+    [Documentation]    @['wan_ip','wan_mask','wan_gw','save_wan_set','mac_addr']
+    [Tags]    include
+    goto_test_case_page
+    Wait Until Page Contains Element    id=wan_ip
+    Click Button    xpath=(//input[@id='mac_addr'])[2]
+    Sleep    2
+    ${lan_mac}    staticTest.re_host_lan_mac
+    ${v}    Get Value    xpath=(//input[@id='mac_addr'])[1]
+    Should Be Equal    ${lan_mac}    ${v}
+
+静态接入使用缺省MAC地址恢复,缺省MAC地址符合规范
+    [Documentation]    @['wan_ip','wan_mask','wan_gw','save_wan_set','mac_addr']
+    [Tags]    include
+    goto_test_case_page
+    Wait Until Page Contains Element    id=wan_ip
+    Click Button    xpath=(//input[@id='mac_addr'])[2]
+    Sleep    2
+    Click Button    xpath=(//input[@id='mac_addr'])[3]
+    Sleep    2
+    ${default_mac}    Get Value    xpath=(//input[@id='mac_addr'])[1]
+    Should Be Equal    ${default_mac}    ${default_wan_mac}
+
+静态接入备用DNS服务器输入框超过15个字符后，无法输入
+    [Documentation]    @['wan_ip','wan_mask','wan_gw','save_wan_set','dns_a','dns_b']
+    [Tags]    include
+    goto_test_case_page
+    Wait Until Page Contains Element    id=wan_ip
+    Input Text    id=dns_b    aaaaaaaaaaaaaaaaaaaaaaaaa
+    ${dns2}    Get Value    id=dns_b
+    Length SHould Be    ${dns2}    15
+
+静态接入首选DNS服务器输入框超过15个字符后，无法输入
+    [Documentation]    @['wan_ip','wan_mask','wan_gw','save_wan_set','dns_a','dns_b']
+    [Tags]    include
+    goto_test_case_page
+    Wait Until Page Contains Element    id=wan_ip
+    Input Text    id=dns_a    ${string_25}
+    ${dns1}    Get Value    id=dns_a
+    Length SHould Be    ${dns1}    15
+
+静态接入IP地址输入框超过15个字符后，无法输入
+    [Documentation]    @['wan_ip','wan_mask','wan_gw','save_wan_set']
+    [Tags]    include
+    goto_test_case_page
+    Wait Until Page Contains Element    id=wan_ip
+    Input Text    id=wan_ip    ${string_25}
+    ${ip}    Get Value    id=wan_ip
+    Length Should Be    ${ip}    15
+
+静态接入设置非法的IP会失败
+    [Documentation]    @['wan_ip','wan_mask','wan_gw','save_wan_set']
+    [Tags]    include
+    [Template]    设置错误的页面参数会提示失败
+    : FOR    ${ip}    IN    @{invalid_ip}
+    \    ${ip}    255.255.255.0    2.2.2.1    ${None}    ${None}    ${None}
+    \    ...    ${None}
+
+静态接入子网掩码输入框超过15个字符后，无法输入
+    [Documentation]    @['wan_ip','wan_mask','wan_gw','save_wan_set']
+    [Tags]    include
+    goto_test_case_page
+    Wait Until Page Contains Element    id=wan_ip
+    Input Text    id=wan_mask    ${string_25}
+    ${mask}    Get Value    id=wan_mask
+    Length Should Be    ${mask}    15
+
+静态接入设置非法掩码会失败
+    [Documentation]    @['wan_ip','wan_mask','wan_gw','save_wan_set']
+    [Tags]    include
+    [Template]    设置错误的页面参数会提示失败
+    : FOR    ${mask}    IN    @{invalid_mask}
+    \    ${router_wan_ip}    ${mask}    ${host_wan_ip}    ${None}    ${None}    ${None}
+    \    ...    ${None}
+
+静态接入默认网关输入框超过15个字符后，无法输入
+    [Documentation]    @['wan_ip','wan_mask','wan_gw','save_wan_set']
+    [Tags]    include
+    goto_test_case_page
+    Wait Until Page Contains Element    id=wan_ip
+    Input Text    id=wan_gw    ${string_25}
+    ${gw}    Get Value    id=wan_gw
+    Length Should Be    ${gw}    15
+
+静态接入设置非法的网关地址会失败
+    [Documentation]    @['wan_ip','wan_mask','wan_gw','save_wan_set']
+    [Tags]    include
+    [Template]    设置错误的页面参数会提示失败
+    : FOR    ${ip}    IN    @{invalid_gateway}
+    \    ${router_wan_ip}    ${router_wan_mask}    ${ip}    ${None}    ${None}    ${None}
+    \    ...    ${None}
+
+静态接入向MTU输入框中输入字符长度超过4个之后，将不能输入
+    [Documentation]    @['wan_ip','wan_mask','wan_gw','save_wan_set','static_mtu']
+    [Tags]    include
+    goto_test_case_page
+    Wait Until Page Contains Element    id=wan_ip
+    Input Text    id=static_mtu    444444444
+    ${mtu}    Get Value    id=static_mtu
+    Length Should Be    ${mtu}    4
+
+静态接入设置错误的MTU值会失败
+    [Documentation]    @['wan_ip','wan_mask','wan_gw','save_wan_set','static_mtu']
+    [Tags]    include
+    [Template]    设置错误的页面参数会提示失败
+    : FOR    ${mtu}    IN    @{invalid_mtu}
+    \    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}    ${None}    ${mtu}    ${None}
+    \    ...    ${None}
+
+静态接入设置非法的MAC地址会失败
+    [Documentation]    @['wan_ip','wan_mask','wan_gw','save_wan_set','mac_addr']
+    [Tags]    include
+    [Template]    设置错误的页面参数会提示失败
+    : FOR    ${mac}    IN    @{invalid_mac}
+    \    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}    ${mac}    ${None}    ${None}
+    \    ...    ${None}
+
+静态接入设置非法的DNS会失败
+    [Documentation]    @['wan_ip','wan_mask','wan_gw','save_wan_set','dns_a','dns_b']
+    [Tags]    include
+    [Template]    设置错误的页面参数会提示失败
+    : FOR    ${DNS}    IN    @{invalid_dns}
+    \    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}    ${None}    ${None}    ${DNS}
+    \    ...    9.9.9.9
+    : FOR    ${DNS}    IN    @{invalid_dns}
+    \    ${router_wan_ip}    ${router_wan_mask}    ${host_wan_ip}    ${None}    ${None}    9.9.9.9
+    \    ...    ${DNS}
+
+*** Keywords ***
+初始化测试
+    打开浏览器
+
+设置错误的页面参数会提示失败
+    [Arguments]    ${wan_ip}    ${mask}    ${gateway}    ${mac}    ${mtu}    ${dns1}
+    ...    ${dns2}
+    goto_test_case_page
+    Wait Until Page Contains Element    id=wan_ip
+    设置静态接入的参数    ${wan_ip}    ${mask}    ${gateway}    ${mac}    ${mtu}    ${dns1}
+    ...    ${dns2}
+    Wait Until Keyword Succeeds    15    0    弹出设置失败消息对话框
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失

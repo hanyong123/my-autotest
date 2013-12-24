@@ -1,0 +1,96 @@
+*** Settings ***
+Suite Setup       初始化测试套件
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
+*** Test Cases ***
+内网配置MAC配置输入框超出17个字符后无法输入
+    [Documentation]    @['lan_mac']
+    [Tags]    include
+    goto_test_case_page
+    Wait Until Page Contains Element    id=lan_mac
+    Input Text    id=lan_mac    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    ${mac}    Get Value    id=lan_mac
+    Length Should Be    ${mac}    17
+
+内网配置设置非法的MAC应该失败
+    [Documentation]    @['lan_ip','save_lan_mac']
+    [Tags]    include
+    [Template]    设置错误的MAC应该提示失败
+    : FOR    ${mac}    IN    @{invalid_mac}
+    \    ${mac}
+
+内网配置MAC地址符合格式规范成功保存并生效
+    [Documentation]    @['lan_ip','save_lan_mac']
+    [Tags]    include
+    goto_test_case_page
+    Wait Until Page Contains Element    id=lan_mac
+    设置LAN口MAC    08-10-74-00-00-1E
+    设置应该成功
+
+内网配置设置非法的Lan口IP应该会失败
+    [Documentation]    @['lan_ip','lan_mask','save_lan_set']
+    [Tags]    include
+    [Template]    设置错误的IP或MASK会失败
+    : FOR    ${ip}    IN    @{invalid_ip}
+    \    ${ip}    255.255.255.0
+
+内网配置设置非法的Lan口Mask会失败
+    [Documentation]    @['lan_ip','lan_mask','save_lan_set']
+    [Tags]    include
+    [Template]    设置错误的IP或MASK会失败
+    : FOR    ${mask}    IN    @{invalid_mask}
+    \    192.168.1.1    ${mask}
+
+内网配置IP地址输入框超过15个字符后无法输入
+    [Documentation]    @['lan_ip']
+    [Tags]    include
+    goto_test_case_page
+    Wait Until Page Contains Element    id=lan_ip
+    Input Text    id=lan_ip    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    ${ip}    Get Value    id=lan_ip
+    Length Should Be    ${ip}    15
+
+内网配置子网掩码输入框超过15个字符后无法输入
+    [Documentation]    @['lan_mask']
+    [Tags]    include
+    goto_test_case_page
+    Wait Until Page Contains Element    id=lan_mask
+    Input Text    id=lan_mask    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    ${mask}    Get Value    id=lan_mask
+    Length Should Be    ${mask}    15
+
+内网配置输入正确的LAN口IP正确的LAN口子网掩码点击“保存生效”按钮保存生效并重启成功
+    [Documentation]    @['lan_ip','lan_mask','save_lan_set']
+    [Tags]    include
+    设置LAN口IP和MASK    192.168.1.1    255.255.255.0
+    ${message}    Confirm Action
+    Should Be Equal    ${message}    ${common_reboot_tip}
+    Sleep    5
+    ${style}    Get Element Attribute    ${lock_bg_locator}@style
+    Should Contain    ${style}    display: block
+    Wait Until Keyword Succeeds    120    10    从定向到首页
+
+*** Keywords ***
+初始化测试套件
+    打开浏览器
+
+设置错误的MAC应该提示失败
+    [Arguments]    ${mac}
+    goto_test_case_page
+    Wait Until Page Contains Element    id=lan_mac
+    设置LAN口MAC    ${mac}
+    Wait Until Keyword Succeeds    15    0    弹出设置失败消息对话框
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+
+设置错误的IP或MASK会失败
+    [Arguments]    ${ip}    ${mask}
+    goto_test_case_page
+    Wait Until Page Contains Element    id=lan_ip
+    设置LAN口IP和MASK    ${ip}    ${mask}
+    Wait Until Keyword Succeeds    15    0    弹出设置失败消息对话框
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+
+从定向到首页
+    ${title}    Get Title
+    Should Be Equal    ${title}    Welcome

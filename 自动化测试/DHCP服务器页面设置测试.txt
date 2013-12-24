@@ -1,0 +1,71 @@
+*** Settings ***
+Suite Setup       初始化测试套件
+Suite Teardown    关闭浏览器
+Resource          keyword.txt
+
+*** Test Cases ***
+DHCP服务器起始IP地址输入框超过15个字符后，无法输入
+    [Documentation]    @['dhcp_start_ip']
+    [Tags]    include
+    goto_test_case_page
+    Wait Until Page Contains Element    id=dhcp_start_ip
+    Input Text    id=dhcp_start_ip    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    ${start_ip}    Get Value    id=dhcp_start_ip
+    Length Should Be    ${start_ip}    15
+
+DHCP服务器设置错误的IP地址会提示IP地址无效
+    [Documentation]    @['dhcp_start_ip','dhcp_end_ip','save_dhcp_server']
+    [Tags]    include
+    [Template]    设置错误的IP地址会提示IP地址无效
+    : FOR    ${ip}    IN    @{invalid_ip}
+    \    ${ip}    192.168.1.33
+    : FOR    ${ip}    IN    @{invalid_ip}
+    \    192.168.1.2    ${ip}
+
+设置DHCP服务器地址池起始IP小于结束IP，保存成功
+    [Documentation]    @['dhcp_start_ip','dhcp_end_ip','save_dhcp_server']
+    [Tags]    include
+    goto_test_case_page
+    Wait Until Page Contains Element    id=dhcp_start_ip
+    设置LAN口DHCP服务器    ${None}    192.168.1.2    192.168.1.33
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+
+设置DHCP服务器地址池起始IP等于结束IP，保存成功
+    [Documentation]    @['dhcp_start_ip','dhcp_end_ip','save_dhcp_server']
+    [Tags]    include
+    goto_test_case_page
+    Wait Until Page Contains Element    id=dhcp_start_ip
+    设置LAN口DHCP服务器    ${lan_dhcp_server_on_radio}    192.168.1.2    192.168.1.2
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_unlock_save}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+
+设置DHCP服务器地址池起始IP大于结束IP，保存失败，提示“地址池起始IP地址不能大于结束IP地址”
+    [Documentation]    @['dhcp_start_ip','dhcp_end_ip','save_dhcp_server']
+    [Tags]    include
+    goto_test_case_page
+    Wait Until Page Contains Element    id=dhcp_start_ip
+    设置LAN口DHCP服务器    ${None}    192.168.1.33    192.168.1.2
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_cmp_ip_err}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+
+DHCP服务器结束IP地址输入框超过15个字符后，无法输入
+    [Documentation]    @['dhcp_start_ip','dhcp_end_ip','save_dhcp_server']
+    [Tags]    include
+    goto_test_case_page
+    Wait Until Page Contains Element    id=dhcp_start_ip
+    Input Text    id=dhcp_end_ip    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    ${end_ip}    Get Value    id=dhcp_end_ip
+    Length Should Be    ${end_ip}    15
+
+*** Keywords ***
+初始化测试套件
+    打开浏览器
+
+设置错误的IP地址会提示IP地址无效
+    [Arguments]    ${start_ip}    ${end_ip}
+    goto_test_case_page
+    Wait Until Page Contains Element    id=dhcp_start_ip
+    设置LAN口DHCP服务器    ${None}    ${start_ip}    ${end_ip}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${common_ip_addr_err}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失

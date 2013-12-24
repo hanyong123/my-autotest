@@ -1,0 +1,176 @@
+*** Settings ***
+Suite Setup       打开浏览器
+Suite Teardown    Close Browser
+Resource          keyword.txt
+Library           PPPoETestLib
+
+*** Variables ***
+
+*** Test Cases ***
+PPPOE接入非法的用户名会设置失败
+    [Documentation]    @['pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    [Template]    在页面设置非法的参数会显示设置失败消息
+    : FOR    ${user}    IN    @{invalid_pppoe_users}
+    \    ${user}    969090
+
+PPPOE接入设置非法的密码会设置失败
+    [Documentation]    @['pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    [Template]    在页面设置非法的参数会显示设置失败消息
+    : FOR    ${passwd}    IN    @{invalid_pppoe_passwds}
+    \    hany    ${passwd}
+
+PPPOE接入用户名不能输入超过31个字符
+    [Documentation]    @['pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    转到PPPoE配置页面
+    Input Text    id=pppoe_username    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    ${user_name}    Get Value    id=pppoe_username
+    Length Should Be    ${user_name}    31
+
+PPPOE接入密码不能输入超过31个字符
+    [Documentation]    @['pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    转到PPPoE配置页面
+    Input Text    id=pppoe_pwd    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    ${passwd}    Get Value    id=pppoe_pwd
+    Length Should Be    ${passwd}    31
+
+PPPOE接入不能设置错误的按需连接时间
+    [Documentation]    @['ppp_connect_mode_time','ppp_time','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    [Template]    在页面设置非法的参数会显示设置失败消息
+    : FOR    ${item}    IN    @{invalid_out_time}
+    \    hany    969090    connect_mode_radio=ppp_connect_mode_time    outtime=${item}
+
+PPPOE接入按需连接老化时间不能超过两个字符
+    [Documentation]    @['ppp_connect_mode_time','ppp_time','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    转到PPPoE配置页面
+    Click Element    id=ppp_connect_mode_time
+    Input Text    id=ppp_time    1234
+    ${time}    Get Value    id=ppp_time
+    Length Should Be    ${time}    2
+
+PPPOE接入不能设置非法的DNS地址
+    [Documentation]    @['dns_a','dns_b','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    [Template]    在页面设置非法的参数会显示设置失败消息
+    : FOR    ${item}    IN    @{invalid_dns}
+    \    hany    969090    DNS1=${item}
+    : FOR    ${item}    IN    @{invalid_dns}
+    \    hany    969090    DNS2=${item}
+
+PPPOE接入首选DNS服务器输入框超过15个字符后无法输入
+    [Documentation]    @['dns_a','dns_b','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    转到PPPoE配置页面
+    Input Text    id=dns_a    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    ${dns}    Get Value    id=dns_a
+    Length Should Be    ${dns}    15
+
+PPPOE接入备用DNS服务器输入框超过15个字符后无法输入
+    [Documentation]    @['dns_a','dns_b','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    转到PPPoE配置页面
+    Input Text    id=dns_b    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    ${dns}    Get Value    id=dns_b
+    Length Should Be    ${dns}    15
+
+PPPOE接入不能设置非法的服务名
+    [Documentation]    @['pppoe_service_name','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    [Template]    在页面设置非法的参数会显示设置失败消息
+    : FOR    ${serviceName}    IN    @{invalid_pppoe_service_names}
+    \    hany    969090    ${serviceName}
+
+PPPOE接入不能设置非法的AC名
+    [Documentation]    @['pppoe_ac_name','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    [Template]    在页面设置非法的参数会显示设置失败消息
+    : FOR    ${AC}    IN    @{invalid_pppoe_ac_name}
+    \    hany    969090    acname=${AC}
+
+PPPOE接入服务名不能超过31个字符
+    [Documentation]    @['pppoe_service_name','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    转到PPPoE配置页面
+    Input Text    id=pppoe_service_name    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    ${serviceName}    Get Value    id=pppoe_service_name
+    Length Should Be    ${serviceName}    31
+
+PPPOE接入AC名不能超过31个字符
+    [Documentation]    @['pppoe_ac_name','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    转到PPPoE配置页面
+    Input Text    id=pppoe_ac_name    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    ${ac}    Get Value    id=pppoe_ac_name
+    Length Should Be    ${ac}    31
+
+PPPOE接入MAC配置输入框超出17个字符后无法输入
+    [Documentation]    @['mac_addr','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    转到PPPoE配置页面
+    Input Text    id=mac_addr    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    ${mac}    Get Value    id=mac_addr
+    Length Should Be    ${mac}    17
+
+PPPOE接入使用MAC克隆，MAC地址框内容被填为当前登录路由器WEB系统的设备的MAC地址
+    [Documentation]    @['mac_addr','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    转到PPPoE配置页面
+    Click Button    xpath=(//input[@id='mac_addr'])[2]
+    Sleep    2
+    ${lan_mac}    re_host_lan_mac
+    ${v}    Get Value    xpath=(//input[@id='mac_addr'])[1]
+    Should Be Equal    ${lan_mac}    ${v}
+
+PPPOE接入使用缺省MAC地址恢复,缺省MAC地址符合规范
+    [Documentation]    @['mac_addr','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    转到PPPoE配置页面
+    Click Button    xpath=(//input[@id='mac_addr'])[2]
+    Sleep    2
+    Click Button    xpath=(//input[@id='mac_addr'])[3]
+    Sleep    2
+    ${default_mac}    Get Value    xpath=(//input[@id='mac_addr'])[1]
+    Should Be Equal    ${default_mac}    ${default_wan_mac}
+
+PPPOE接入设置非法的MAC地址会失败
+    [Documentation]    @['mac_addr','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    [Template]    在页面设置非法的参数会显示设置失败消息
+    : FOR    ${mac}    IN    @{invalid_mac}
+    \    hany    969090    Mac=${mac}
+
+PPPOE接入设置错误的MTU值会失败
+    [Documentation]    @['pppoe_mtu','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    [Template]    在页面设置非法的参数会显示设置失败消息
+    : FOR    ${mtu}    IN    @{invalid_mtu}
+    \    hany    969090    MTU=${mtu}
+
+PPPOE接入向MTU输入框中输入字符长度超过4个之后，将不能输入
+    [Documentation]    @['pppoe_mtu','pppoe_username','pppoe_pwd','save_wan_set']
+    [Tags]    include
+    转到PPPoE配置页面
+    Input Text    id=pppoe_mtu    444444444
+    ${mtu}    Get Value    id=pppoe_mtu
+    Length Should Be    ${mtu}    4
+
+*** Keywords ***
+在页面设置非法的参数会显示设置失败消息
+    [Arguments]    ${user}    ${passwd}    ${servicename}=${None}    ${acname}=${None}    ${Mac}=${None}    ${MTU}=${None}
+    ...    ${DNS1}=${None}    ${DNS2}=${None}    ${connect_mode_radio}=${None}    ${outtime}=5
+    转到PPPoE配置页面
+    配置PPPoE参数    ${user}    ${passwd}    ${servicename}    ${acname}    ${Mac}    ${MTU}
+    ...    ${DNS1}    ${DNS2}    ${connect_mode_radio}    ${outtime}
+    Wait Until Keyword Succeeds    15    0    弹出设置失败消息对话框
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+
+PPPoE页面设置测试初始化
+    打开浏览器
+
+PPPoE页面设置测试清理
+    Close Browser

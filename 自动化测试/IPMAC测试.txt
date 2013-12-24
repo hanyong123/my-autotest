@@ -1,0 +1,43 @@
+*** Settings ***
+Resource          keyword.txt
+Library           IPMACBindTest.py    ${host_lan_ip}    ${router_lan_ip}    ${router_wan_ip}    ${host_wan_ip}    WITH NAME    IPMACBindTest
+
+*** Test Cases ***
+IP/MAC绑定实现：手动绑定到LAN口
+    [Documentation]    在路由器上PING指定内网IP，目的MAC为IP/MAC绑定条目的对应MAC
+    打开浏览器
+    转到IP/MAC绑定页面
+    删除所有的IPMAC绑定
+    ${ping_cmd}    Catenate    ping \    ${router_lan_ip}    -t
+    Start Process    ${ping_cmd}
+    arp_spoof_should_success
+    ${mac}    get_host_iface_mac    ${host_lan_ip}
+    添加IP/MAC绑定    aa    ${host_lan_ip}    ${mac}    ${ip_mac_bind_lan_port_label}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${operate_success_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Run Keyword And Expect Error    arp spoof fail    arp_spoof_should_success
+    [Teardown]    测试清理
+
+IP/MAC绑定实现：手动绑定到WAN口
+    打开浏览器
+    转到到静态配置页面
+    设置静态接入的参数    ${router_wan_ip}    ${host_wan_mask}    ${host_wan_ip}    ${default_wan_mac}    ${static_default_mtu}    8.8.8.8
+    ...    9.9.9.9
+    设置应该成功
+    转到IP/MAC绑定页面
+    删除所有的IPMAC绑定
+    ${ping_cmd}    Catenate    ping \    ${router_wan_ip}    -t
+    Start Process    ${ping_cmd}
+    wan_arp_spoof_should_success
+    ${mac}    get_host_iface_mac    ${host_wan_ip}
+    添加IP/MAC绑定    aa    ${host_wan_ip}    ${mac}    ${ip_mac_bind_wan_port_label}
+    Wait Until Keyword Succeeds    15    0    弹出对话框    ${operate_success_string}
+    Wait Until Keyword Succeeds    15    0    弹出对话框消失
+    Run Keyword And Expect Error    arp spoof fail    wan_arp_spoof_should_success
+    [Teardown]    测试清理
+
+*** Keywords ***
+测试清理
+    删除所有的IPMAC绑定
+    kill_ping_proc
+    关闭浏览器
